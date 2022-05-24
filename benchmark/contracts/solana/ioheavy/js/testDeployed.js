@@ -29,7 +29,7 @@ const main = async () => {
         signers.push(dataAccount);
     } else if ([0].includes(parsed.id)) {
         dataAccount = readFromFile('dataAccount');
-        tx.add(aux.noWriteIx(dataAccount, parsed.instruction_data, parsed.programId));
+        tx.add(aux.writeIx(dataAccount, parsed.instruction_data, parsed.programId));
     } else {
         dataAccount = readFromFile('dataAccount');
         tx.add(aux.writeIx(dataAccount, parsed.instruction_data, parsed.programId));

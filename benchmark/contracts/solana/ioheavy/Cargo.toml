@@ -8,6 +8,8 @@ edition = "2021"
 [dependencies]
 solana-program = "1.10.15"
 borsh = "0.9.3"
+bigint = "4.4.3"
+hex = "0.4.3"
 
 [lib]
 crate-type = ["cdylib", "lib"]

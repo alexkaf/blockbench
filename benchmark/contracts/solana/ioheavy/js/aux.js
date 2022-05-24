@@ -45,23 +45,49 @@ const parseArguments = () => {
             cmd['id'] = 1;
             const ixTag = new Uint8Array([1]);
             cmd['key'] = stringToBytes20(arguments[2]);
-            cmd['value'] = new BN(arguments[3]).toArray('le', 8);
+            cmd['value'] = new TextEncoder().encode(arguments[3]);
             cmd['instruction_data'] = new Uint8Array([
                 ...ixTag,
                 ...cmd['key'],
                 ...cmd['value'],
-            ])
+            ]);
+            break;
         }
         case 'write': {
             cmd['id'] = 2;
             const ixTag = new Uint8Array([2]);
-            cmd['key'] = stringToBytes20(arguments[2]);
-            cmd['value'] = new BN(arguments[3]).toArray('le', 8);
+            cmd['startKey'] = new BN(arguments[2]).toArray('le', 8);
+            cmd['size'] = new BN(arguments[3]).toArray('le', 8);
             cmd['instruction_data'] = new Uint8Array([
                 ...ixTag,
-                ...cmd['key'],
-                ...cmd['value'],
-            ])
+                ...cmd['startKey'],
+                ...cmd['size'],
+            ]);
+            break;
+        }
+        case 'scan': {
+            cmd['id'] = 3;
+            const ixTag = new Uint8Array([3]);
+            cmd['startKey'] = new BN(arguments[2]).toArray('le', 8);
+            cmd['size'] = new BN(arguments[3]).toArray('le', 8);
+            cmd['instruction_data'] = new Uint8Array([
+                ...ixTag,
+                ...cmd['startKey'],
+                ...cmd['size'],
+            ]);
+            break;
+        }
+        case 'revscan': {
+            cmd['id'] = 4;
+            const ixTag = new Uint8Array([4]);
+            cmd['startKey'] = new BN(arguments[2]).toArray('le', 8);
+            cmd['size'] = new BN(arguments[3]).toArray('le', 8);
+            cmd['instruction_data'] = new Uint8Array([
+                ...ixTag,
+                ...cmd['startKey'],
+                ...cmd['size'],
+            ]);
+            break;
         }
     }
     return cmd;
