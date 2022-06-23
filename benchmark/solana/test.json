@@ -1,0 +1,29 @@
+[
+  {
+    "ipAddress": "135.181.4.42",
+    "identityPubkey": "CbX2P79NvL35osmCqHGRBTuMB86J1mpntjJN6LyT9qky",
+    "gossipPort": 8001,
+    "tpuPort": 8003,
+    "rpcHost": "135.181.4.42:8899",
+    "version": "1.10.8",
+    "featureSet": 1122441720
+  },
+  {
+    "ipAddress": "135.181.4.42",
+    "identityPubkey": "CbX2P79NvL35osmCqHGRBTuMB86J1mpntjJN6LyT9qky",
+    "gossipPort": 8001,
+    "tpuPort": 8003,
+    "rpcHost": "135.181.4.42:8899",
+    "version": "1.10.8",
+    "featureSet": 1122441720
+  },
+  {
+    "ipAddress": "135.181.4.42",
+    "identityPubkey": "CbX2P79NvL35osmCqHGRBTuMB86J1mpntjJN6LyT9qky",
+    "gossipPort": 8001,
+    "tpuPort": 8003,
+    "rpcHost": "135.181.4.42:8899",
+    "version": "1.10.8",
+    "featureSet": 1122441720
+  }
+]

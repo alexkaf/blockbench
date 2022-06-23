@@ -1,64 +1,115 @@
-use borsh::{BorshSerialize};
+use std::borrow::Borrow;
+use borsh::{BorshSerialize, BorshDeserialize};
 use solana_program::{
-    entrypoint_deprecated::ProgramResult,
+    pubkey::{self, Pubkey, MAX_SEED_LEN, MAX_SEEDS},
+    log::sol_log,
     account_info::{AccountInfo, next_account_info},
-    msg
+    entrypoint::ProgramResult,
+    system_instruction::create_account,
+    sysvar::{rent::Rent, Sysvar},
+    program::invoke_signed,
 };
-use solana_program::program_error::ProgramError;
-use crate::instruction::Instruction;
+
+use crate::instruction::{
+    SetIx,
+    Instruction,
+};
 use crate::state::Data;
 
 pub struct Processor {}
 
+
 impl Processor {
-    pub fn process(
+    const VALUE_LEN: usize = 2000;
+    pub fn process_instruction(
+        program_id: &Pubkey,
         accounts: &[AccountInfo],
         instruction_data: &[u8],
     ) -> ProgramResult {
-        let accounts_iter = &mut accounts.iter();
-        let data_account = next_account_info(accounts_iter)?;
+        let instruction = Instruction::unpack(&instruction_data);
 
-        let instruction = Instruction::unpack(&instruction_data)?;
-        Ok(match instruction {
-            Instruction::Set(key, value) => {
-                Self::process_set_value(data_account, key, value).ok();
+        match instruction {
+            Instruction::Log(value) => {
+                sol_log(&format!("Log: {}", value));
+            },
+            Instruction::Set(set_struct) => {
+                Self::process_set(program_id, accounts, &set_struct);
             },
             Instruction::Get(key) => {
-                Self::process_get_value(data_account, key).ok();
+                Self::process_get(accounts, key);
             }
-        })
+            Instruction::Other => {}
+        };
+        Ok(())
     }
 
-    fn process_set_value(
-        data_account: &AccountInfo,
-        key: String,
-        value: String,
-    ) -> ProgramResult {
-        let usize_len = (usize::BITS / 8) as usize;
+    fn process_get(accounts: &[AccountInfo], key: String) -> ProgramResult {
 
-        let mut stored_data_raw = data_account.try_borrow_mut_data()?;
+        let mut accounts_iter = &mut accounts.into_iter();
+        let _fee_payer = next_account_info(accounts_iter)?;
+        let pda = next_account_info(accounts_iter)?;
+        let system_program = next_account_info(accounts_iter)?;
 
-        let mut stored_data = Data::unpack(&stored_data_raw).unwrap();
+        if pda.owner != system_program.key {
+            let data = pda.try_borrow_data()?;
+            let object = Data::unpack(&data);
+            sol_log(&format!("{}", object.value()));
+        } else {
+            sol_log(&format!("No entry"));
+        }
 
-        stored_data.data.insert(key, value);
+        Ok(())
+    }
+    fn process_set(
+        program_id: &Pubkey,
+        accounts: &[AccountInfo],
+        set_struct: &SetIx) -> ProgramResult {
 
-        let mut serialized_object = stored_data.try_to_vec().unwrap();
-        let object_size = serialized_object.len().to_le_bytes();
-        serialized_object[..usize_len].copy_from_slice(&object_size);
-        stored_data_raw[..serialized_object.len()].copy_from_slice(&serialized_object);
+        let mut accounts_iter = &mut accounts.into_iter();
+        let fee_payer = next_account_info(accounts_iter).unwrap();
+        let pda = next_account_info(accounts_iter).unwrap();
+        let system_program = next_account_info(accounts_iter).unwrap();
+
+        let bytestring = set_struct.key.as_bytes();
+        let mut pda_seeds = Self::create_kvstore_seed(bytestring);
+
+        let (_pda, bump) = Pubkey::find_program_address(&pda_seeds[..], program_id);
+
+        if pda.owner == system_program.key {
+            invoke_signed(&create_account(
+                fee_payer.key,
+                pda.key,
+                Rent::get()?.minimum_balance(Self::VALUE_LEN),
+                Self::VALUE_LEN as u64,
+                program_id),
+   &[fee_payer.clone(), pda.clone(), system_program.clone()],
+   &[&[&pda_seeds[..], &[&[bump]]].concat()[..]]
+            );
+        }
+        let mut data = pda.try_borrow_mut_data()?;
+
+        Data::store(&set_struct.value, &mut data);
 
         Ok(())
     }
 
-    fn process_get_value(
-        data_account: &AccountInfo,
-        key: String,
-    ) -> ProgramResult {
-        let mut stored_data_raw = data_account.try_borrow_mut_data()?;
+    fn create_kvstore_seed(input: &[u8]) -> Vec<&[u8]> {
+        assert!(input.len() <= MAX_SEEDS * MAX_SEED_LEN);
 
-        let stored_data = Data::unpack(&stored_data_raw).unwrap();
-        let value = stored_data.data.get(&key).ok_or(ProgramError::InvalidArgument).unwrap();
-        msg!("{}", value);
-        Ok(())
+        let number_of_chunks = input.len() / MAX_SEED_LEN;
+        let last_chunk_size = input.len() % MAX_SEED_LEN;
+        let mut chunks = Vec::<&[u8]>::new();
+
+        for chunk in 0..number_of_chunks {
+            let start = chunk * MAX_SEED_LEN;
+            let end = (chunk + 1) * MAX_SEED_LEN;
+            chunks.push(&input[start..end]);
+        }
+        if last_chunk_size != 0 {
+            let start = number_of_chunks * MAX_SEED_LEN;
+            chunks.push(&input[start..])
+        }
+        chunks
     }
+
 }

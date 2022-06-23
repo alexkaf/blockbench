@@ -1,5 +1,6 @@
 #include "evm_utils.h"
 #include <iostream>
+#include <iomanip>
 
 namespace BBUtils {
 namespace EVMUtils {
@@ -11,6 +12,15 @@ const std::string UNLOCK_ACCOUNT_PREFIX =
   \"method\": \"personal_unlockAccount\", \
   \"params\": [\"";
 
+const std::string GET_NONCE_PREFIX =
+    "{\
+  \"jsonrpc\": \"2.0\", \
+  \"method\": \"eth_getTransactionCount\", \
+  \"params\": [\"";
+
+const std::string GET_NONCE_SUFFIX =
+    "\", \"latest\"], \"id\":1}";
+
 const std::string UNLOCK_ACCOUNT_SUFFIX =
     "\",\"\",null], \
       \"id\": 1}";
@@ -19,16 +29,16 @@ const std::string SEND_TXN_PREFIX =
     "{\
   \"jsonrpc\": \"2.0\", \
   \"method\": \"eth_sendTransaction\", \
-  \"params\": [{ \"gas\": \"100000\", \
-                \"gasPrice\": \"0x0\", \
+  \"params\": [{ \"gas\": \"0xa00000\", \
+                \"gasPrice\": \"0xa\", \
                 \"from\": \"";
 
 const std::string CALL_PREFIX =
     "{\
   \"jsonrpc\": \"2.0\", \
   \"method\": \"eth_call\", \
-  \"params\": [{ \"gas\": \"100000\",\
-                \"gasPrice\": \"0x0\", \
+  \"params\": [{ \"gas\": \"0xa00000\",\
+                \"gasPrice\": \"0x0a\", \
                 \"from\": \"";
 
 const std::string GET_TXN_PREFIX =
@@ -38,6 +48,7 @@ const std::string GET_TXN_PREFIX =
   \"params\": [\"";
 
 const std::string MIDDLE_PART_1 = "\", \"to\": \"";
+const std::string NONCE_PART = "\", \"nonce\": \"0x";
 const std::string MIDDLE_PART_2 = "\", \"data\": \"";
 const std::string SEND_TXN_SUFFIX = "\"}],\"id\":1}";
 const std::string CALL_SUFFIX = "\"},\"latest\"],\"id\":1}";
@@ -73,17 +84,17 @@ const std::string GET_ACCOUNTS =
 const std::string DEPLOY_SMARTCONTRACT_PREFIX =
     " {\"jsonrpc\":\"2.0\",\
   \"method\":\"eth_sendTransaction\",\
-  \"params\": [{ \"gas\": \"100000\",\
-                \"gasPrice\": \"0x0\", \
+  \"params\": [{ \"gas\": \"0xa00000\",\
+                \"gasPrice\": \"0x1\", \
                \"from\": \"";
 
 const std::string DEPLOY_DONOTHING_SMARTCONTRACT_SUFFIX =
     "\", \"data\": "
-    "\"0x60606040523415600b57fe5b5b60788061001a6000396000f30060606040526000357c"
-    "0100000000000000000000000000000000000000000000000000000000900463ffffffff16"
-    "8063448f30a314603a575bfe5b3415604157fe5b60476049565b005b5b5600a165627a7a72"
-    "30582006401d873570c51618d5e2963a0048502e8f49f465e30cf2624369a1c7db3fa00029"
-    "\"}],\"id\":1}";
+    "\"0x6080604052348015600f57600080fd5b5060868061001e6000396000f300608060405260"
+    "043610603f576000357c010000000000000000000000000000000000000000000000000000"
+    "0000900463ffffffff168063448f30a3146044575b600080fd5b348015604f57600080fd5b"
+    "5060566058565b005b5600a165627a7a723058204aec2cdeccc71948759111bc75997d8cc8"
+    "252c6793b136ef1e311ec462c92f1f0029\"}],\"id\":1}";
 
 const std::string DEPLOY_KV_SMARTCONTRACT_SUFFIX =
     "\", \"data\": "
@@ -207,10 +218,11 @@ const std::string GET_SMART_CONTRACT_ADDRESS_PREFIX =
 
 const std::string GET_SMART_CONTRACT_ADDRESS_SUFFIX = "\"],\"id\":1}";
 
-const std::string DONOTHING_METHOD_SIG = "0x448f30a3";
+const std::string DONOTHING_METHOD_SIG = "448f30a3";
 const std::string SET_METHOD_SIG =
     "0xe942b51600000000000000000000000000000000000000000000000000000000000000"
     "40";
+
 const std::string GET_METHOD_SIG =
     "0x693ec85e00000000000000000000000000000000000000000000000000000000000000"
     "20";
@@ -228,8 +240,11 @@ std::string encode_get(const std::string &key) {
 }
 
 std::string compose_donothing_tx_data(const std::string &from_address,
-                                      const std::string &to_address) {
-  return SEND_TXN_PREFIX + from_address + MIDDLE_PART_1 + to_address +
+                                      const std::string &to_address,
+                                      const int nonce) {
+  std::stringstream hexNonce;
+  hexNonce << std::setbase(16) << nonce;
+  return SEND_TXN_PREFIX + from_address + MIDDLE_PART_1 + to_address + NONCE_PART + hexNonce.str() +
          MIDDLE_PART_2 + DONOTHING_METHOD_SIG + SEND_TXN_SUFFIX;
 }
 
@@ -261,6 +276,14 @@ int get_tip_block_number(const std::string &endpoint) {
       "result"));
 }
 
+int collect_nonce(const std::string &endpoint,
+                  const std::string &accountAddress) {
+    std::string request_body = GET_NONCE_PREFIX + accountAddress + GET_NONCE_SUFFIX;
+    std::string r = send_jsonrpc_request(endpoint, REQUEST_HEADERS, request_body);
+
+    return decode_hex(get_json_field(r, "result"));
+}
+
 unsigned int get_txn_block_number(const std::string &endpoint,
                                   const std::string &txn_hash) {
   auto r = send_jsonrpc_request(endpoint, REQUEST_HEADERS,
@@ -289,7 +312,6 @@ std::vector<std::string> poll_txs_by_block_number(const std::string &endpoint,
   std::string request = GET_BLOCK_BY_NUMBER_PREFIX +
                         ("0x" + encode_hex(block_number)) +
                         GET_BLOCK_BY_NUMBER_SUFFIX;
-
   auto r = send_jsonrpc_request(endpoint, REQUEST_HEADERS, request);
 
   std::vector<std::string> ret = get_list_field(r, "transactions");
@@ -337,10 +359,11 @@ std::string lookup_smart_contract_address_or_die(const std::string &endpoint,
 
 std::string submit_do_nothing_txn(const std::string &endpoint,
                                   const std::string &from_address,
-                                  const std::string &to_address) {
+                                  const std::string &to_address,
+                                  const int nonce) {
   auto r =
       send_jsonrpc_request(endpoint, REQUEST_HEADERS,
-                           compose_donothing_tx_data(from_address, to_address));
+                           compose_donothing_tx_data(from_address, to_address, nonce));
   return get_json_field(r, "result");
 }
 
@@ -348,6 +371,7 @@ std::string submit_set_txn(const std::string &endpoint, const std::string &key,
                            const std::string &val,
                            const std::string &from_address,
                            const std::string &to_address) {
+
   auto r =
       send_jsonrpc_request(endpoint, REQUEST_HEADERS,
                            compose_write(key, val, from_address, to_address));

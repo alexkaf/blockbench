@@ -30,7 +30,7 @@ const unsigned int PARITY_CONFIRM_BLOCK_LENGTH = 1;
 std::unordered_map<string, double> pendingtx;
 // locking the pendingtx queue
 SpinLock txlock;
-
+SpinLock nonceLock;
 void UsageMessage(const char *command);
 bool StrStartWith(const char *str, const char *pre);
 string ParseCommandLine(int argc, const char *argv[], utils::Properties &props);
@@ -129,7 +129,7 @@ int main(const int argc, const char *argv[]) {
   }
 
   int current_tip = db->GetTip();
-  db->Init(&pendingtx, &txlock);
+  db->Init(&pendingtx, &txlock, &nonceLock);
 
   cout << "Current TIP = " << current_tip << endl;
   ycsbc::CoreWorkload wl;

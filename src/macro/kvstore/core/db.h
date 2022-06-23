@@ -31,7 +31,7 @@ class DB {
 
   /// Initialize blockchain db with empty pending tx queue and its lock.
   virtual void Init(std::unordered_map<std::string, double> *pendingtx,
-                    SpinLock *lock) {}
+                    SpinLock *lock, SpinLock *other_lock) {}
   ///
   /// Clears any state for accessing this DB.
   /// Called once per DB client (thread); there is a single DB instance

@@ -3,7 +3,8 @@
         "chainId": 10,
         "homesteadBlock": 0,
         "eip155Block": 0,
-        "eip158Block": 0
+        "eip158Block": 0,
+        "eip150Block": 0
     },
   "alloc": {
     "0x12f029d57082315085bfb4d4d8345c92c5cdd881": {"balance": "888888888888"}, 
@@ -19,7 +20,7 @@
   },
   "coinbase"   : "0x0000000000000000000000000000000000000000",
   "difficulty" : "0x01",
-  "extraData"  : "",
+  "extraData"  : "0x00",
   "gasLimit"   : "0xff000000000000",
   "nonce"      : "0x0000000000000042",
   "mixhash"    : "0x0000000000000000000000000000000000000000000000000000000000000000",

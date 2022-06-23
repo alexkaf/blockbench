@@ -1,4 +1,6 @@
+extern crate core;
+
 pub mod entrypoint;
-pub mod state;
-pub mod instruction;
 pub mod processor;
+pub mod instruction;
+pub mod state;

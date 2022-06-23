@@ -34,13 +34,17 @@ EVMDB::EVMDB(const string &endpoint, const string &dbname,
 int EVMDB::Read(const string &table, const string &key,
                 const vector<string> *fields, vector<KVPair> &result) {
   if (evmtype_ == EVMType::Parity) unlock_address(endpoint_, from_address_);
+  nonceLock_->lock();
   double start_time = utils::time_now();
   std::string txn_hash =
       (sctype_ == BBUtils::SmartContractType::DoNothing)
-          ? submit_do_nothing_txn(endpoint_, from_address_, to_address_)
+          ? submit_do_nothing_txn(endpoint_, from_address_, to_address_, nonce_++)
           : submit_get_txn(endpoint_, key, from_address_, to_address_);
+  nonceLock_->unlock();
   txlock_->lock();
+  if (txn_hash != ":"){
   (*pendingtx_)[txn_hash] = start_time;
+  }
   txlock_->unlock();
   return DB::kOK;
 }
@@ -55,13 +59,17 @@ int EVMDB::Update(const string &table, const string &key,
   }
   if (evmtype_ == EVMType::Parity) unlock_address(endpoint_, from_address_);
 
+  nonceLock_->lock();
   double start_time = utils::time_now();
   std::string txn_hash =
       (sctype_ == BBUtils::SmartContractType::DoNothing)
-          ? submit_do_nothing_txn(endpoint_, from_address_, to_address_)
+          ? submit_do_nothing_txn(endpoint_, from_address_, to_address_, nonce_++)
           : submit_set_txn(endpoint_, key, val, from_address_, to_address_);
+  nonceLock_->unlock();
   txlock_->lock();
-  (*pendingtx_)[txn_hash] = start_time;
+  if (txn_hash != ":"){
+    (*pendingtx_)[txn_hash] = start_time;
+  }
   txlock_->unlock();
 
   return DB::kOK;

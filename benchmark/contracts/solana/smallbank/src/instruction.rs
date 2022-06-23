@@ -1,71 +1,99 @@
-use solana_program::program_error::ProgramError;
-use crate::error::EscrowError::InvalidInstruction;
+use std::fmt::format;
+use bigint::U256;
+use borsh::{BorshDeserialize, BorshSerialize};
+use crate::instruction::Instruction::Almagate;
 
 #[derive(Debug)]
 pub enum Instruction {
     Almagate(String, String),
     GetBalance(String),
-    UpdateBalance(String, usize),
-    UpdateSaving(String, usize),
-    SendPayment(String, String, usize),
-    WriteCheck(String, usize),
+    UpdateBalance(String, U256),
+    UpdateSaving(String, U256),
+    SendPayment(String, String, U256),
+    WriteCheck(String, U256),
     Other,
 }
 
+#[derive(BorshDeserialize)]
+pub struct AlmagateIx {
+    arg0: String,
+    arg1: String,
+}
+
+#[derive(BorshDeserialize)]
+pub struct GetBalanceIx {
+    arg0: String,
+}
+
+#[derive(BorshDeserialize)]
+pub struct UpdateBalanceIx {
+    arg0: String,
+    arg1: [u8; 32],
+}
+
+#[derive(BorshDeserialize)]
+pub struct SendPaymentIx {
+    arg0: String,
+    arg1: String,
+    arg2: [u8; 32],
+}
+
+#[derive(BorshDeserialize)]
+pub struct WriteCheckIx {
+    arg0: String,
+    arg1: [u8; 32],
+}
+
 impl Instruction {
-    pub fn unpack(instruction_data: &[u8]) -> Result<Self, ProgramError> {
-        let (tag, rest) = instruction_data.split_first().ok_or(InvalidInstruction)?;
-        Ok(match tag {
+    pub fn unpack(instruction_data: &[u8]) -> Self {
+        let (tag, rest) = instruction_data.split_first().unwrap();
+
+        match tag {
             0 => {
-                let (arg0, arg1) = Self::unpack_string_string(rest).unwrap();
-                Self::Almagate(arg0, arg1)
-            },
+                let unfolded = AlmagateIx::try_from_slice(&rest).unwrap();
+                Instruction::Almagate(
+                    unfolded.arg0,
+                    unfolded.arg1
+                )
+            }
             1 => {
-                let arg0 = String::from_utf8(rest.to_vec()).unwrap();
-                Self::GetBalance(arg0)
-            },
+                let unfolded = GetBalanceIx::try_from_slice(&rest).unwrap();
+                Instruction::GetBalance(
+                    unfolded.arg0,
+                )
+            }
             2 => {
-                let (arg0, arg1) = Self::unpack_string_usize(rest).unwrap();
-                Self::UpdateBalance(arg0, arg1)
-            },
+                let unfolded = UpdateBalanceIx::try_from_slice(&rest).unwrap();
+                Instruction::UpdateBalance(
+                    unfolded.arg0,
+                    U256::from_little_endian(&unfolded.arg1),
+                )
+            }
             3 => {
-                let (arg0, arg1) = Self::unpack_string_usize(rest).unwrap();
-                Self::UpdateSaving(arg0, arg1)
+                let unfolded = UpdateBalanceIx::try_from_slice(&rest).unwrap();
+                Instruction::UpdateSaving(
+                    unfolded.arg0,
+                    U256::from_little_endian(&unfolded.arg1),
+                )
             }
             4 => {
-                let (arg0, arg1, arg2) = Self::unpack_string_string_usize(rest).unwrap();
-                Self::SendPayment(arg0, arg1, arg2)
-            },
+                let unfolded = SendPaymentIx::try_from_slice(&rest).unwrap();
+                Instruction::SendPayment(
+                    unfolded.arg0,
+                    unfolded.arg1,
+                    U256::from_little_endian(&unfolded.arg2),
+                )
+            }
             5 => {
-                let (arg0, arg1) = Self::unpack_string_usize(rest).unwrap();
-                Self::WriteCheck(arg0, arg1)
-            },
-            _ => Self::Other
-        })
-    }
-
-    fn unpack_string_string(rest: &[u8]) -> Result<(String, String), ProgramError> {
-        let decoded_input = String::from_utf8(rest.to_vec()).unwrap();
-        let mut input_iterator = decoded_input.split_whitespace();
-
-        Ok((String::from(input_iterator.next().unwrap()),
-            String::from(input_iterator.next().unwrap())))
-    }
-
-    fn unpack_string_usize(rest: &[u8]) -> Result<(String, usize), ProgramError> {
-        let decoded_input = String::from_utf8(rest.to_vec()).unwrap();
-        let mut input_iterator = decoded_input.split_whitespace();
-
-        Ok((String::from(input_iterator.next().unwrap()),
-            String::from(input_iterator.next().unwrap()).parse().unwrap()))
-    }
-
-    fn unpack_string_string_usize(rest: &[u8]) -> Result<(String, String, usize), ProgramError> {
-        let decoded_input = String::from_utf8(rest.to_vec()).unwrap();
-        let mut input_iterator = decoded_input.split_whitespace();
-
-        Ok((String::from(input_iterator.next().unwrap()),
-            String::from(input_iterator.next().unwrap()),
-            String::from(input_iterator.next().unwrap()).parse().unwrap()))
+                let unfolded = WriteCheckIx::try_from_slice(&rest).unwrap();
+                Instruction::WriteCheck(
+                    unfolded.arg0,
+                    U256::from_little_endian(&unfolded.arg1),
+                )
+            }
+            _ => {
+                Instruction::Other
+            }
+        }
     }
 }

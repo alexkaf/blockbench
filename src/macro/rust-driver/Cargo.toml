@@ -1,0 +1,13 @@
+[workspace]
+members = [
+    "driver",
+    "props",
+    "blockchain",
+    "generator",
+    "utils",
+]
+
+exclude = [
+
+]
+

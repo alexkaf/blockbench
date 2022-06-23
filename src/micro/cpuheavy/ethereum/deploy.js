@@ -17,6 +17,7 @@ var sorter = sorterContract.new(
     gas: '4700000'
   },
   function (e, contract) {
+      console.log(e)
     if (typeof contract.address !== 'undefined') {
       console.log("contract mined: " + contract.address);
       

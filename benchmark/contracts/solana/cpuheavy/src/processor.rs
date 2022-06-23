@@ -5,6 +5,7 @@ use solana_program::{
     msg,
     entrypoint_deprecated::ProgramResult,
 };
+use solana_program::log::sol_log;
 use solana_program::stake::instruction::initialize;
 use crate::state::U8ToUsizeArray;
 use crate::instruction::Instruction;
@@ -20,12 +21,13 @@ impl Processor {
         let mut account_iter = &mut accounts.into_iter();
         let data_account = next_account_info(account_iter)?;
 
-        let (size, signature) = Instruction::unpack(instruction_data);
+        let size = Instruction::unpack(instruction_data);
         let mut data = data_account.try_borrow_mut_data().unwrap();
 
         Self::initialize(&mut data, size);
         Self::quick_sort(&mut data, 0, size - 1);
 
+        sol_log(&"Done!");
         Ok(())
     }
 

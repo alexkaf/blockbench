@@ -119,7 +119,7 @@ const std::string SEND_TXN_PREFIX =
   \"jsonrpc\": \"2.0\", \
   \"method\": \"eth_sendTransaction\", \
   \"params\": [{ \"gas\": \"0x1000000\", \
-                \"gasPrice\": \"0x0\", \
+                \"gasPrice\": \"0x1\", \
                 \"from\": \"";
 
 const std::string CALL_PREFIX =
@@ -374,9 +374,9 @@ inline std::string submit_getBalance_txn(const std::string &arg,
   
   std::string request_json = SEND_TXN_PREFIX + from_address + MIDDLE_PART_1 + to_address +
          MIDDLE_PART_2 + encode_getBalance(arg) + SEND_TXN_SUFFIX;
-  //std::cout << "request_json:" << request_json << std::endl;
+//  std::cout << "request_json:" << request_json << std::endl;
   auto r = send_jsonrpc_request(endpoint, REQUEST_HEADERS, request_json);
-  //std::cout << "result:" << r << std::endl;
+//  std::cout << "result:" << r << std::endl;
   return get_json_field(r, "result");
 }
 

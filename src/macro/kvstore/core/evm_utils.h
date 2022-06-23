@@ -56,7 +56,8 @@ std::string lookup_smart_contract_address_or_die(const std::string& endpoint,
 /// @return transaction hash returned by server
 std::string submit_do_nothing_txn(const std::string& endpoint,
                                   const std::string& from_address,
-                                  const std::string& to_address);
+                                  const std::string& to_address,
+                                  const int nonce);
 
 ///
 /// submit a async set transaction to the server
@@ -72,6 +73,9 @@ std::string submit_set_txn(const std::string& endpoint, const std::string& key,
 std::string submit_get_txn(const std::string& endpoint, const std::string& key,
                            const std::string& from_address,
                            const std::string& to_address);
+
+int collect_nonce(const std::string &endpoint,
+                  const std::string &accountAddress);
 
 }  //  EVMUtils
 }  //  BBUtils

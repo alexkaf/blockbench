@@ -1,30 +1,45 @@
-use std::collections::HashMap;
 use borsh::{BorshSerialize, BorshDeserialize};
-use solana_program::program_error::ProgramError;
+use solana_program::log::sol_log;
 
-#[derive(BorshSerialize, BorshDeserialize, Debug, Clone)]
+#[derive(BorshDeserialize, BorshSerialize, Debug, Clone)]
 pub struct Data {
-    pub length: usize,
-    pub data: HashMap<String, String>,
+    length: usize,
+    content: String
 }
 
 impl Data {
-    pub fn unpack(dst: &[u8]) -> Result<Self, ProgramError>{
-        let stored_map;
-        let usize_len = (usize::BITS / 8) as usize;
-        let data_length = usize::try_from_slice(&dst[..usize_len]).unwrap();
-        match data_length {
+    const USIZE_LEN: usize = (usize::BITS / 8) as usize;
+
+    pub fn unpack(data: &[u8]) -> Self {
+        let (length_bytes, content) = data.split_at(Self::USIZE_LEN);
+        let length = usize::from_le_bytes(length_bytes.try_into().unwrap());
+        match length {
             0 => {
-                stored_map = HashMap::<String, String>::try_from_slice(&dst[usize_len..(usize_len + 4)]).unwrap();
-            }
+                Self {
+                    length,
+                    content: String::from(""),
+                }
+            },
             _ => {
-                stored_map = HashMap::<String, String>::try_from_slice(&dst[usize_len..data_length]).unwrap();
+                Self {
+                    length,
+                    content: String::try_from_slice(&content[..length]).unwrap(),
+                }
             }
         }
 
-        Ok(Data {
-            length: data_length,
-            data: stored_map,
-        })
+    }
+
+    pub fn store(content: &String, dst: &mut [u8]){
+
+        let mut serialized = Vec::new();
+        content.serialize(&mut serialized);
+
+        dst[..Self::USIZE_LEN].copy_from_slice(&serialized.len().to_le_bytes());
+        dst[Self::USIZE_LEN..(Self::USIZE_LEN + serialized.len())].copy_from_slice(&serialized);
+    }
+
+    pub fn value(&self) -> String {
+        self.content.clone()
     }
 }

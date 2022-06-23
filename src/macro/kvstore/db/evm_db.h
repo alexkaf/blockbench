@@ -19,9 +19,11 @@ class EVMDB : public DB {
         const std::string &wl_name, unsigned deploy_wait_sec);
 
   void Init(std::unordered_map<std::string, double> *pendingtx,
-            SpinLock *lock) {
+            SpinLock *lock, SpinLock *nonceLock) {
     pendingtx_ = pendingtx;
     txlock_ = lock;
+    nonceLock_ = nonceLock;
+    nonce_ = BBUtils::EVMUtils::collect_nonce(endpoint_, from_address_);
   }
 
   int Read(const std::string &table, const std::string &key,
@@ -49,7 +51,8 @@ class EVMDB : public DB {
  private:
   std::unordered_map<std::string, double> *pendingtx_;
   SpinLock *txlock_;
-
+  SpinLock *nonceLock_;
+  int nonce_ = 1;
   std::string from_address_, to_address_, endpoint_;
   std::vector<std::string> poll_tx_by_hash(std::string block_hash);
 

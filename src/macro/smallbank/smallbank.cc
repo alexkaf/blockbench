@@ -88,7 +88,8 @@ int StatusThread(DB* sb, string dbname, string endpoint, double interval, int st
 
   while(true){
     start_time = time_now(); 
-    int tip = sb->get_tip_block_number(); 
+    int tip = sb->get_tip_block_number();
+    cout << tip << endl;
     if (tip==-1) // fail
       sleep(interval); 
     while (cur_block_height + confirm_duration <= tip) {      
