@@ -21,7 +21,7 @@ git checkout v1.10.24
 cargo build --release
 
 # Add solana tools in path
-export PATH=$PATH:$(pwd)/target/release
+echo export PATH="$PATH:$PWD/target/release" >> ~/.bashrc
 
 #sh -c "$(curl -sSfL https://release.solana.com/v1.10.24/install)"
 #export PATH="/root/.local/share/solana/install/active_release/bin:$PATH"
