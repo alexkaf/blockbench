@@ -1,5 +1,8 @@
 #!/bin/bash
 
+here=$(dirname "$0")
+source $here/env.sh
+
 # Install dependencies
 apt update && apt install -y git vim
 apt-get update
@@ -13,6 +16,8 @@ rustup component add rustfmt
 rustup update
 
 # Installs solana tools from source
+cd $BLOCKBENCH
+
 [[ ! -d solana ]] && git clone https://github.com/solana-labs/solana.git
 
 cd solana
