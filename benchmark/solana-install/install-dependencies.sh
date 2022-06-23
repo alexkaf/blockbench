@@ -4,7 +4,7 @@ here=$(dirname "$0")
 source $here/env.sh
 
 # Install dependencies
-apt update && apt install -y git vim
+apt update && apt install -y git vim npm nodejs
 apt-get update
 apt-get install -y libssl-dev libudev-dev pkg-config zlib1g-dev llvm clang cmake make libprotobuf-dev protobuf-compiler jq psmisc
 
