@@ -69,10 +69,6 @@ else
 
   solana create-stake-account validator-stake-keypair.json 5
 
-  solana catchup validator-keypair.json
-
-  solana delegate-stake validator-stake-keypair.json vote-account-keypair.json
-
   args+=(
     --identity $ACCOUNTS/validator-keypair.json
     --no-poh-speed-test
@@ -87,5 +83,9 @@ else
     --rpc-faucet-address $BOOTSTRAP_NODE:9900
   )
   solana-validator "${args[@]}" &
+
+  solana catchup validator-keypair.json
+
+  solana delegate-stake validator-stake-keypair.json vote-account-keypair.json
 
 fi
