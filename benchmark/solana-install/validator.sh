@@ -69,7 +69,8 @@ else
 
   solana create-stake-account validator-stake-keypair.json 5
 
-  sleep 30
+  solana catchup validator-keypair.json
+
   solana delegate-stake validator-stake-keypair.json vote-account-keypair.json
 
   args+=(
