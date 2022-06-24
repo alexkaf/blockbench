@@ -6,7 +6,7 @@ source $here/env.sh
 idx=0
 
 function install_serial() {
-  ssh -oStrictHostKeyChecking=no root@$1 $BLOCKBENCH/install-dependencies.sh
+  ssh -oStrictHostKeyChecking=no ubuntu@$1 $BLOCKBENCH/install-dependencies.sh
 
 #  if [ $2 -eq 0 ]
 #  then

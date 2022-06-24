@@ -1,4 +1,4 @@
-BLOCKBENCH=/root/assesments/blockbench/benchmark/solana-install
+BLOCKBENCH=/home/ubuntu/assesments/blockbench/benchmark/solana-install
 SOLANA=$BLOCKBENCH/solana
 VALIDATOR=$BLOCKBENCH/validator
 LOGS=$VALIDATOR/logs
