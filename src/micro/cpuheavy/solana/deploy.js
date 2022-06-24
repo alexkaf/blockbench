@@ -2,6 +2,7 @@
 
 const {
     Connection, Transaction, Keypair, SystemProgram, TransactionInstruction, sendAndConfirmTransaction, PublicKey,
+    ComputeBudgetProgram
 } = require('@solana/web3.js');
 const {
     readKeyPair,
@@ -26,7 +27,16 @@ const sort = (async () => {
 
     const tx = new Transaction();
     const signers = [feePayer, dataAccount];
+    const units_request = ComputeBudgetProgram.requestUnits({
+        additionalFee: 20000,
+        units: 4000000
+    });
+    const units = ComputeBudgetProgram.setComputeUnitLimit({
+        units: 4000000000
+    });
 
+    // tx.add(units_request);
+    tx.add(units);
     console.time(`Create and execute sort for ${arraySize} elements`);
     const createDataAccount = await SystemProgram.createAccount({
         fromPubkey: feePayer.publicKey,

@@ -6,7 +6,8 @@ source $here/env.sh
 # Install dependencies
 apt update
 curl -sL https://deb.nodesource.com/setup_14.x | sudo bash -
-apt install -y git vim npm nodejs
+apt install -y git vim npm nodejs g++
+npm i -g npm
 
 apt-get update
 apt-get install -y libssl-dev libudev-dev pkg-config zlib1g-dev llvm clang cmake make libprotobuf-dev protobuf-compiler jq psmisc
@@ -26,6 +27,7 @@ cd $BLOCKBENCH
 cd solana
 
 git checkout v1.10.24
+git apply $BLOCKBENCH/compute_budget.patch
 cargo build --release
 
 # Add solana tools in path

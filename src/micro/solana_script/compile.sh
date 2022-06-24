@@ -23,7 +23,7 @@ SCRIPT_DIR="$(dirname "$(realpath "${BASH_SOURCE-$0}")")"
 source "$SCRIPT_DIR/env.sh"
 parse "$@"
 
-for contract in $CONTRACTS;
+for contract in $CONTRACTS
 do
   echo "Compiling $contract"
   PROGRAM_PATH="$SOL_PROGRAMS_DIR/$contract"

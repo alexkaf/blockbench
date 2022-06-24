@@ -10,6 +10,10 @@ function start_client() {
 idx=0
 for host in $(cat hosts)
 do
+  if [ $idx -eq "$1" ]
+  then
+    exit 0
+  fi
   if [ $idx -eq 0 ]
   then
     ssh -oStrictHostKeyChecking=no root@$host $BLOCKBENCH/validator.sh $host $idx &
