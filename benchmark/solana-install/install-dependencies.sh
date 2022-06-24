@@ -5,7 +5,7 @@ source $here/env.sh
 
 # Install dependencies
 
-sudo apt-get update && apt-get upgrade -y && sudo apt install curl dirmngr apt-transport-https lsb-release ca-certificates vim
+sudo apt-get update && apt-get upgrade -y && sudo apt install -y curl dirmngr apt-transport-https lsb-release ca-certificates vim
 sudo apt-get install -y libssl-dev libudev-dev pkg-config zlib1g-dev llvm clang cmake make libprotobuf-dev protobuf-compiler jq psmisc git vim
 
 # Install node
