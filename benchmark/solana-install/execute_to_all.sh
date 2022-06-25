@@ -2,5 +2,7 @@
 
 for host in $(cat hosts)
 do
-  ssh ubuntu@$host $@
+  ssh ubuntu@$host "$@" &
 done
+
+wait
