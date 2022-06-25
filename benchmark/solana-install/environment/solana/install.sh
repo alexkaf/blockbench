@@ -2,6 +2,7 @@
 
 HERE=$(dirname "$0")
 source "$HERE/../../env.sh"
+source "$HOME/.cargo/env"
 
 # shellcheck disable=SC2164
 cd "$BLOCKBENCH"
