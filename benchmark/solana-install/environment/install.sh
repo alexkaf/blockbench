@@ -3,8 +3,9 @@
 HERE=$(dirname "$0")
 source "$HERE/../env.sh"
 PACKAGES=$HERE/packages
+SOLANA=$HERE/solana
 
 "$PACKAGES"/system.sh
 "$PACKAGES"/node.sh
 "$PACKAGES"/cargo.sh
-"$PACKAGES"/solana/install.sh
+"$SOLANA"/install.sh
