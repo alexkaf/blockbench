@@ -19,7 +19,7 @@ const feePayerPath = `${scriptDirectory}/../../solana_script/feePayer`;
 
 const connection = new Connection('http://localhost:8899/');
 
-const sort = (async () => {
+const sort = async () => {
     const programId = readKeyPair(contractFile);
     const feePayer = readKeyPair(feePayerPath);
 
@@ -56,12 +56,21 @@ const sort = (async () => {
     });
     tx.add(sortIx);
 
+    const startTime = Date.now();
+
     const txId = await sendAndConfirmTransaction(connection, tx, signers, {
         skipPreflight: true,
         commitment: "confirmed",
         preflightCommitment: "confirmed",
     });
 
-    console.log(`TX: ${txId}`);
-    console.timeEnd(`Create and execute sort for ${arraySize} elements`);
-})();
+    const endTime = Date.now();
+
+    return {
+        'hash': txId,
+        'latency': (endTime - startTime)
+    }
+}
+
+const a = sort();
+console.log(a);
