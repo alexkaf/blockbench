@@ -1,11 +1,13 @@
 #!/bin/bash
 
 HERE=$(dirname "$0")
-INSTALLS=assesments/blockbench/benchmark/solana-install/environment
+source "$HERE/../env.sh"
+
+INSTALLS=$BLOCKBENCH/environment
 
 function install() {
 
-  ssh -oStrictHostKeyChecking=no ubuntu@"$1" "cd $INSTALLS && ./install.sh"
+  ssh -oStrictHostKeyChecking=no "$CURRENT_USER"@"$1" "cd $INSTALLS && ./install.sh"
 }
 
 # shellcheck disable=SC2013

@@ -4,7 +4,7 @@ here=$(dirname "$0")
 source $here/env.sh
 
 function start_client() {
-    ssh -oStrictHostKeyChecking=no $CURRENT_USER@$host $BLOCKBENCH/validator.sh $host $idx &
+    ssh -oStrictHostKeyChecking=no ubuntu@$host $BLOCKBENCH/validator.sh $host $idx &
 }
 
 idx=0
@@ -16,7 +16,7 @@ do
   fi
   if [ $idx -eq 0 ]
   then
-    ssh -oStrictHostKeyChecking=no $CURRENT_USER@$host $BLOCKBENCH/validator.sh $host $idx &
+    ssh -oStrictHostKeyChecking=no ubuntu@$host $BLOCKBENCH/validator.sh $host $idx &
     sleep 60
     echo WAITING FOR LEADER TO GENERATE FIRST SNAPSHOT
   else
