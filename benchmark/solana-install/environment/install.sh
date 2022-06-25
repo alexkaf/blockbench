@@ -1,5 +1,8 @@
 #!/bin/bash
 
 HERE=$(dirname "$0")
+PACKAGES=$HERE/packages
 
-"$HERE"/fetch-repo.sh
+"$PACKAGES"/system.sh
+"$PACKAGES"/node.sh
+"$PACKAGES"/cargo.sh
