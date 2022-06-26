@@ -77,6 +77,7 @@ impl Processor {
 
     pub fn process_scan(store: &mut HashMap<[u8; 20], String>, start_key: usize, size: usize) {
         for i in 0..size {
+            sol_log(&format!("{:?}", store.len()));
             Self::process_get(
                 store,
                 Self::get_key(start_key + i).value,
@@ -96,6 +97,7 @@ impl Processor {
 
     fn process_set(store: &mut HashMap<[u8; 20], String>, key: [u8; 20], value: String) {
         store.insert(key, value);
+        sol_log(&format!("{:?}", store.len()));
     }
 
     fn process_get(store: &HashMap<[u8; 20], String>, key: [u8; 20]) -> Option<&String> {

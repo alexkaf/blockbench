@@ -14,6 +14,7 @@ do
   then
     exit 0
   fi
+
   if [ $idx -eq 0 ]
   then
     ssh -oStrictHostKeyChecking=no $CURRENT_USER@$host $BLOCKBENCH/validator.sh $host $idx &

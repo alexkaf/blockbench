@@ -20,8 +20,7 @@ mkdir -p deployed_programs
 
 SCRIPT_DIR="$(dirname "$(realpath "${BASH_SOURCE-$0}")")"
 
-solana-keygen new --no-bip39-passphrase -f -o "$SCRIPT_DIR/feePayer"
-solana airdrop 1000 -k "$SCRIPT_DIR/feePayer"
+solana airdrop 100000 -k "$SCRIPT_DIR/feePayer"
 
 source "$SCRIPT_DIR/env.sh"
 parse "$@"
@@ -32,10 +31,7 @@ do
   PROGRAM_PATH="$SOL_PROGRAMS_DIR/$contract"
 
   cd "$PROGRAM_PATH" || exit
-  PROGRAM_ID=$(solana program deploy -k $SCRIPT_DIR/feePayer "$PROGRAM_PATH/target/deploy/$contract.so")
-  echo $PROGRAM_ID
-  read -ra pids <<< "$PROGRAM_ID"
-  echo "${pids[2]}" > "$SCRIPT_DIR/deployed_programs/$contract"
+  PROGRAM_ID=$(solana program deploy --program-id "$SCRIPT_DIR/deployed_programs/$contract" -k $SCRIPT_DIR/feePayer "$PROGRAM_PATH/target/deploy/$contract.so")
 
   cd "$SCRIPT_DIR" || exit
 done

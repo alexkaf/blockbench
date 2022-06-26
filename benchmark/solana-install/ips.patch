@@ -1,0 +1,12 @@
+diff --git a/net-utils/src/lib.rs b/net-utils/src/lib.rs
+index 442365565c..1f306aab86 100644
+--- a/net-utils/src/lib.rs
++++ b/net-utils/src/lib.rs
+@@ -352,6 +352,7 @@ pub fn parse_host(host: &str) -> Result<IpAddr, String> {
+     if ips.is_empty() {
+         Err(format!("Unable to resolve host: {}", host))
+     } else {
++        info!("IPS ARE {:?}", ips);
+         Ok(ips[0])
+     }
+ }

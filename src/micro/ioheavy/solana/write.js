@@ -2,6 +2,7 @@
 
 const {
     Connection, Transaction, Keypair, SystemProgram, TransactionInstruction, sendAndConfirmTransaction, PublicKey,
+    ComputeBudgetProgram
 } = require('@solana/web3.js');
 const {
     readKeyPair,
@@ -18,40 +19,57 @@ const instruction_data = new Uint8Array([
     ...new BN(start_key).toArray('le', 8),
     ...new BN(total_key_num).toArray('le', 8),
 ])
-const bytesToAllocate = 1048576;
+const bytesToAllocate = 10485760;
 
 
 const scriptDirectory = __dirname;
 const contractFile = `${scriptDirectory}/../../solana_script/deployed_programs/ioheavy`;
 const feePayerPath = `${scriptDirectory}/../../solana_script/feePayer`;
+const dataAccount = `${scriptDirectory}/dataAccount`;
 
 const connection = new Connection('http://localhost:8899/');
 
 const write = (async () => {
+    let dataKeyPair;
     const programId = readKeyPair(contractFile);
     const feePayer = readKeyPair(feePayerPath);
-
-    const dataAccount = new Keypair();
-
     const tx = new Transaction();
-    const signers = [feePayer, dataAccount];
+    let signers = [feePayer];
+
+    try {
+        dataKeyPair = readKeyPair(dataAccount);
+    } catch {
+        dataKeyPair = new Keypair();
+    }
+
+    let data = (await connection.getAccountInfo(dataKeyPair.publicKey, 'confirmed'));
+    if (data == null) {
+        const createDataAccount = await SystemProgram.createAccount({
+            fromPubkey: feePayer.publicKey,
+            newAccountPubkey: dataKeyPair.publicKey,
+            lamports: await connection.getMinimumBalanceForRentExemption(bytesToAllocate),
+            space: bytesToAllocate,
+            programId: programId.publicKey,
+        });
+        tx.add(createDataAccount);
+        signers.push(dataKeyPair);
+    }
+
+    const units_limit = ComputeBudgetProgram.setComputeUnitLimit({
+        units: 4000000000
+    });
+
+    tx.add(units_limit);
 
     console.time(`Create and execute write`)
-    const createDataAccount = await SystemProgram.createAccount({
-        fromPubkey: feePayer.publicKey,
-        newAccountPubkey: dataAccount.publicKey,
-        lamports: await connection.getMinimumBalanceForRentExemption(bytesToAllocate),
-        space: bytesToAllocate,
-        programId: programId,
-    });
-    tx.add(createDataAccount);
+
 
     const sortIx = new TransactionInstruction({
         keys: [
-            { pubkey: dataAccount.publicKey, isSigner: false, isWritable: true},
+            { pubkey: dataKeyPair.publicKey, isSigner: false, isWritable: true},
         ],
         data: instruction_data,
-        programId: programId,
+        programId: programId.publicKey,
     });
     tx.add(sortIx);
 

@@ -29,6 +29,7 @@ impl Data {
 
     pub fn pack(src: &HashMap<[u8; 20], String>, dst: &mut [u8]) {
         let serialized_object = &src.try_to_vec().unwrap();
+        sol_log(&format!("Here"));
         let object_length = (serialized_object.len() as usize).to_le_bytes();
         let object_end = serialized_object.len() + Self::USIZE_BYTES;
 

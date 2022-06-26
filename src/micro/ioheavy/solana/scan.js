@@ -2,6 +2,7 @@
 
 const {
     Connection, Transaction, Keypair, SystemProgram, TransactionInstruction, sendAndConfirmTransaction, PublicKey,
+    ComputeBudgetProgram
 } = require('@solana/web3.js');
 const {
     readKeyPair,
@@ -24,34 +25,50 @@ const bytesToAllocate = 1048576;
 const scriptDirectory = __dirname;
 const contractFile = `${scriptDirectory}/../../solana_script/deployed_programs/ioheavy`;
 const feePayerPath = `${scriptDirectory}/../../solana_script/feePayer`;
+const dataAccount = `${scriptDirectory}/dataAccount`;
 
 const connection = new Connection('http://localhost:8899/');
 
 const write = (async () => {
+    let dataKeyPair;
     const programId = readKeyPair(contractFile);
     const feePayer = readKeyPair(feePayerPath);
+    let tx = new Transaction();
+    let signers = [feePayer];
 
-    const dataAccount = new Keypair();
+    try {
+        dataKeyPair = readKeyPair(dataAccount);
+    } catch {
+        dataKeyPair = new Keypair();
+    }
 
-    const tx = new Transaction();
-    const signers = [feePayer, dataAccount];
+    let data = (await connection.getAccountInfo(dataKeyPair.publicKey, 'confirmed'));
+    if (data == null) {
+        const createDataAccount = await SystemProgram.createAccount({
+            fromPubkey: feePayer.publicKey,
+            newAccountPubkey: dataKeyPair.publicKey,
+            lamports: await connection.getMinimumBalanceForRentExemption(bytesToAllocate),
+            space: bytesToAllocate,
+            programId: programId.publicKey,
+        });
+        tx.add(createDataAccount);
+        signers.push(dataKeyPair);
+    }
+
+
+    const units_limit = ComputeBudgetProgram.setComputeUnitLimit({
+        units: 4000000000
+    });
+
+    tx.add(units_limit);
 
     console.time(`Create and execute scan`)
-    const createDataAccount = await SystemProgram.createAccount({
-        fromPubkey: feePayer.publicKey,
-        newAccountPubkey: dataAccount.publicKey,
-        lamports: await connection.getMinimumBalanceForRentExemption(bytesToAllocate),
-        space: bytesToAllocate,
-        programId: programId,
-    });
-    tx.add(createDataAccount);
-
     const sortIx = new TransactionInstruction({
         keys: [
-            { pubkey: dataAccount.publicKey, isSigner: false, isWritable: true},
+            { pubkey: dataKeyPair.publicKey, isSigner: false, isWritable: true},
         ],
         data: instruction_data,
-        programId: programId,
+        programId: programId.publicKey,
     });
     tx.add(sortIx);
 
