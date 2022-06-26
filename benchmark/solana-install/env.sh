@@ -1,4 +1,4 @@
-ASSESMENTS=/root/assesments-new
+ASSESMENTS=/home/ubuntu/assesments-new
 BLOCKBENCH=$ASSESMENTS/blockbench/benchmark/solana-install
 SOLANA=$BLOCKBENCH/solana
 VALIDATOR=$BLOCKBENCH/validator
@@ -6,4 +6,4 @@ LOGS=$VALIDATOR/logs
 LEDGER=$VALIDATOR/ledger
 ACCOUNTS=$VALIDATOR/accounts
 REPO=$BLOCKBENCH/solana
-CURRENT_USER=root
+CURRENT_USER=ubuntu
