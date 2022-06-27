@@ -80,6 +80,7 @@ impl Solana {
     }
 
     fn deploy(contract: &str) {
+        println!("Contract {:?}", contract);
         let contract_directory = fs::canonicalize(
             format!("../../../benchmark/contracts/solana/{}", contract)).unwrap();
         let program_path =

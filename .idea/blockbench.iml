@@ -11,6 +11,8 @@
       <sourceFolder url="file://$MODULE_DIR$/src/macro/kvstore/solana/parser/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/macro/kvstore/solana/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/macro/streamer/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/benchmark/contracts/solana/ioheavy_2/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/benchmark/contracts/solana/ioheavy_db/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/benchmark/contracts/solana/donothing/target" />
       <excludeFolder url="file://$MODULE_DIR$/benchmark/contracts/solana/cpuheavy/target" />
       <excludeFolder url="file://$MODULE_DIR$/benchmark/contracts/solana/ioheavy/target" />
@@ -19,6 +21,8 @@
       <excludeFolder url="file://$MODULE_DIR$/src/macro/kvstore/solana/parser/target" />
       <excludeFolder url="file://$MODULE_DIR$/src/macro/kvstore/solana/target" />
       <excludeFolder url="file://$MODULE_DIR$/src/macro/streamer/target" />
+      <excludeFolder url="file://$MODULE_DIR$/benchmark/contracts/solana/ioheavy_2/target" />
+      <excludeFolder url="file://$MODULE_DIR$/benchmark/contracts/solana/ioheavy_db/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

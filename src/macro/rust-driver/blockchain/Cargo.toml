@@ -1,0 +1,22 @@
+[package]
+name = "blockchain-driver"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+solana-sdk = "1.10.24"
+solana-client = "1.10.24"
+solana-program = "1.10.24"
+solana-transaction-status = "1.10.24"
+
+utils = { path = "../utils" }
+chrono = "0.4.19"
+borsh = "0.9.3"
+bigint = "4.4.3"
+
+[lib]
+crate-type = ["lib"]
+name = "blockchain_driver"
+

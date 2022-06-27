@@ -8,7 +8,7 @@
 
 recordcount=10000
 operationcount=10000
-workload=ycsb
+workload=kvstore
 
 readallfields=true
 

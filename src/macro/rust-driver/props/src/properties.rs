@@ -80,7 +80,7 @@ impl Properties {
             Some(user_value) => user_value,
             None => { return Err(PropertiesError::MissingFlagValue); }
         };
-
+        // println!("{:?}", flag);
         match flag {
             "-threads" => {
                 Self::set_property(self, "threadcount", &user_value);
@@ -107,6 +107,7 @@ impl Properties {
                 Self::set_property(self, "recordcount", &user_value);
             }
             _ => {
+                println!("{:?}", flag);
                 return Err(PropertiesError::InvalidFlag)
             }
         }
