@@ -4,9 +4,9 @@ cd `dirname ${BASH_SOURCE-$0}`
 . env.sh
 
 i=0
-for host in `cat $HOSTS`; do
+for host in `cat hosts`; do
   if [[ $i -lt $1 ]]; then
-    ssh -oStrictHostKeyChecking=no root@$host $ETH_HOME/init.sh $1
+    ssh -oStrictHostKeyChecking=no $CURRENT_USER@$host $ETH_HOME/init.sh $1
     echo done node $host
   fi
   let i=$i+1

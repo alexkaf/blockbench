@@ -21,7 +21,7 @@ const scriptDirectory = __dirname;
 const contractFile = `${scriptDirectory}/../../solana_script/deployed_programs/cpuheavy`;
 const feePayerPath = `${scriptDirectory}/../../solana_script/feePayer`;
 
-const connection = new Connection('http://localhost:8899/');
+const connection = new Connection('http://10.201.252.8:8899/');
 
 const sort = async (size) => {
     if (size === undefined) size = start;
@@ -65,6 +65,12 @@ const sort = async (size) => {
     });
 
     const endTime = Date.now();
+    console.log({
+        'size': size,
+        'hash': txId,
+        'latency': (endTime - startTime)
+    });
+
     return {
         'size': size,
         'hash': txId,

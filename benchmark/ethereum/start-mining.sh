@@ -13,11 +13,7 @@ geth --datadir=$ETH_DATA \
      --unlock 0 \
      --password <(echo -n "") \
      --mine \
-     --nat extip:10.201.252.8 \
+     --nat extip:$1 \
      --miner.threads 8 > $ETH_DATA/log 2>&1 &
 
-sleep 1
-
-for com in `cat $ETH_HOME/addPeer.txt`; do
-  geth --exec $com attach ipc:$ETH_DATA/geth.ipc
-done
+sleep 10
