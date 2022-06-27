@@ -82,7 +82,7 @@ else
     --enable-cpi-and-log-storage
     --vote-account $ACCOUNTS/vote-account-keypair.json
     --rpc-faucet-address $BOOTSTRAP_NODE:9900
-    --allow-private-address
+    --allow-private-addr
   )
   solana-validator "${args[@]}" &
 
