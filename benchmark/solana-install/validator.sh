@@ -35,7 +35,7 @@ then
                         --enable-rpc-transaction-history \
                         --enable-cpi-and-log-storage \
                         --gossip-host $1 \
-                        --allow-private-address \
+                        --allow-private-addr \
                         --log $LOGS/validator.log &
 else
   [ ! -d $ACCOUNTS ] && mkdir -p $ACCOUNTS
