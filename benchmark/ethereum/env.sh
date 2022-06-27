@@ -1,4 +1,4 @@
-ETH_HOME=/root/assesments/blockbench/benchmark/ethereum
+ETH_HOME=/home/ubuntu/assesments-new/blockbench/benchmark/ethereum
 HOSTS=$ETH_HOME/hosts
 CLIENTS=$ETH_HOME/clients
 ETH_DATA=/root/ethereum/data
