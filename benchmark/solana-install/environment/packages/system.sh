@@ -20,7 +20,7 @@ sudo apt install -y curl \
                     protobuf-compiler \
                     jq \
                     psmisc \
-                    vim
+                    vim \
                     wget \
                     build-essential \
                     software-properties-common \
