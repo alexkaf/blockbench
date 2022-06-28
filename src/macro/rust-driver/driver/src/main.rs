@@ -145,7 +145,7 @@ fn client_thread(db: Rc<RefCell<Solana>>, props: Rc<RefCell<Properties>>, num_op
 
 fn status_thread(db: Rc<RefCell<Solana>>, props: Arc<Wrap<Properties>>, total_ops: u64, pending_transactions: Arc<Mutex<PendingTransactions>>) {
     let props = props.value.try_borrow().unwrap();
-    let file_name = format!("{}_{}_{}_{}", props["dbname"], props["txrate"], props["threadcount"], props["recordcount"]);
+    let file_name = format!("{}_{}_{}_{}", props["workload"], props["txrate"], props["threadcount"], props["recordcount"]);
 
     let mut results_file = File::create(file_name).unwrap();
 
@@ -159,24 +159,20 @@ fn status_thread(db: Rc<RefCell<Solana>>, props: Arc<Wrap<Properties>>, total_op
         last_tip += 1;
         let current_block = db.borrow().poll_transaction_by_block(current_tip);
         let mut pending_transactions = pending_transactions.lock().unwrap();
-        let mut first_record_time = Utc::now();
-        let mut tx_found_in_block = 0;
+        let mut end_time = Utc::now();
         match current_block {
             Some(transactions) => {
                 for transaction in transactions {
                     if let EncodedTransaction::Json(contents) = transaction.transaction {
                         if pending_transactions.contains_key(&contents.signatures[0]) {
-                            tx_found_in_block += 1;
-                            if tx_found_in_block == 1 {
-                                if let &TransactionInfo::Started(started_at) = pending_transactions.get(&contents.signatures[0]).unwrap() {
-                                    first_record_time = started_at;
-                                }
+                            if let TransactionInfo::Started(start_time) = pending_transactions.get(&contents.signatures[0]).unwrap() {
+                                results_file.write_all(format!("{:?}, {:?}\n", current_tip, end_time.timestamp_millis() - start_time.timestamp_millis()).as_bytes());
+                                found += 1;
                             }
-                            found += 1;
                         }
                     }
                 }
-                results_file.write_all(format!("{:?}, {:?}, {:?}\n", current_tip, tx_found_in_block, current_time.timestamp_millis() - first_record_time.timestamp_millis()).as_bytes());
+                // results_file.write_all(format!("{:?}, {:?}, {:?}\n", current_tip, tx_found_in_block, current_time.timestamp_millis() - s.timestamp_millis()).as_bytes());
                 println!("[{}]: {}txs", current_tip, found);
                 current_tip += 1;
             }
