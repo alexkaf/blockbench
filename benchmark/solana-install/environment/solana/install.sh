@@ -18,6 +18,8 @@ git apply "$BLOCKBENCH/ips.patch"
 cargo build --release
 
 sh -c "$(curl -sSfL https://release.solana.com/v1.10.24/install)"
-mv "$HOME"/.local/share/solana/install/active_release/bin/sdk . "$HOME"/assesments-new/blockbench/benchmark/solana-install/solana/target/release
+mv "$HOME"/.local/share/solana/install/active_release/bin/sdk "$HOME"/assesments/blockbench/benchmark/solana-install/solana/target/release
 
-export PATH="$PATH":"$HOME"/assesments-new/blockbench/benchmark/solana-install/solana/target/release
+export PATH="$PATH":"$HOME"/assesments/blockbench/benchmark/solana-install/solana/target/release
+
+awk "NR != `wc -l < text.file`" text.file &> newtext.fil
