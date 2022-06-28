@@ -13,6 +13,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src/macro/streamer/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/benchmark/contracts/solana/ioheavy_2/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/benchmark/contracts/solana/ioheavy_db/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/micro/analytic/solana/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/benchmark/contracts/solana/donothing/target" />
       <excludeFolder url="file://$MODULE_DIR$/benchmark/contracts/solana/cpuheavy/target" />
       <excludeFolder url="file://$MODULE_DIR$/benchmark/contracts/solana/ioheavy/target" />
@@ -23,6 +24,7 @@
       <excludeFolder url="file://$MODULE_DIR$/src/macro/streamer/target" />
       <excludeFolder url="file://$MODULE_DIR$/benchmark/contracts/solana/ioheavy_2/target" />
       <excludeFolder url="file://$MODULE_DIR$/benchmark/contracts/solana/ioheavy_db/target" />
+      <excludeFolder url="file://$MODULE_DIR$/src/micro/analytic/solana/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

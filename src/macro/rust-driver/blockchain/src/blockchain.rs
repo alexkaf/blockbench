@@ -1,5 +1,5 @@
 use chrono::{DateTime, Utc};
-use solana_program::clock::Slot;
+use solana_program::clock::{Slot, UnixTimestamp};
 use solana_transaction_status::EncodedTransactionWithStatusMeta;
 use crate::solana::driver::Solana;
 

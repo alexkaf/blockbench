@@ -8,8 +8,6 @@ vendor/
 *log*
 log.txt
 *vscode*
-driver
+kvstore/driver
 *.o
 tmp
-
-virt-install --name a --os-variant ubuntu20.04 --vcpus 8 --ram 10048 --cdrom /root/vm/ubuntu-22.04-live-server-amd64.iso --network bridge=virbr0,model=virtio --graphics none

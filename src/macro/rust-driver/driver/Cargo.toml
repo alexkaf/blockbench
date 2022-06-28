@@ -1,0 +1,19 @@
+[package]
+name = "driver"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+properties = { path = "../props" }
+generator = { path = "../generator" }
+blockchain-driver = { path = "../blockchain" }
+solana-sdk = "1.10.24"
+solana-transaction-status = "1.10.24"
+
+rayon = "1.5.3"
+
+chrono = "0.4.19"
+rand = "0.8.5"
+zipf = "7.0.0"

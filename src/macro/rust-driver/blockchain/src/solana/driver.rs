@@ -14,6 +14,7 @@ use std::fmt::{Debug, Display, Formatter};
 use std::sync::{Arc, Mutex, RwLock};
 use chrono::Utc;
 use solana_client::rpc_config::{RpcBlockConfig, RpcSendTransactionConfig};
+use solana_program::clock::UnixTimestamp;
 use solana_sdk::commitment_config::CommitmentLevel;
 use solana_sdk::signature::Signature;
 use crate::blockchain::{BlockChain, TransactionInfo};
@@ -44,7 +45,7 @@ impl Solana {
         let fee_payer = Keypair::new();
         let program = Keypair::new();
 
-        let hash = connection.request_airdrop(&Signer::pubkey(&fee_payer), 10_000_000_000).unwrap();
+        let hash = connection.request_airdrop(&Signer::pubkey(&fee_payer), 100_000_000_000_000).unwrap();
 
         while connection
             .confirm_transaction_with_commitment(&hash, CommitmentConfig::confirmed())
@@ -87,17 +88,23 @@ impl Solana {
             contract_directory.as_path().join(format!("target/deploy/{}.so", contract));
 
 
-        Command::new("cargo-build-bpf")
+        let build = Command::new("cargo-build-bpf")
             .current_dir(contract_directory)
-            .stdout(Stdio::null())
-            .status()
-            .expect(&format!("Could not build: {}", contract));
-
-        Command::new("solana")
-            .args(["program", "deploy", "--keypair", "feePayer.json", "--program-id", "programId.json", program_path.to_str().unwrap()])
-            .stdout(Stdio::null())
             .output()
-            .expect(&format!("Could not deploy: {}", contract));
+            .unwrap();
+            // .stdout(Stdio::null())
+            // .status()
+            // .expect(&format!("Could not build: {}", contract));
+
+        let deploy = Command::new("solana")
+            .args(["program", "deploy", "--keypair", "feePayer.json", "--program-id", "programId.json", program_path.to_str().unwrap()])
+            // .stdout(Stdio::null())
+            .output()
+            // .expect(&format!("Could not deploy: {}", contract));
+            .unwrap();
+
+        println!("{:?}", build);
+        println!("{:?}", deploy);
     }
 }
 
@@ -182,7 +189,7 @@ impl BlockChain for Solana {
         self.connection.get_block_height_with_commitment(CommitmentConfig::confirmed()).unwrap()
     }
 
-    fn poll_transaction_by_block(&self, block_number: u64) -> Option<Vec<EncodedTransactionWithStatusMeta>>{
+    fn poll_transaction_by_block(&self, block_number: u64) -> Option<Vec<EncodedTransactionWithStatusMeta>> {
 
         let block = self.connection.get_block_with_config(block_number, self.rpc_block_config);
         match block {
