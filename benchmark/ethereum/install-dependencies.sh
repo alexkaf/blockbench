@@ -19,3 +19,13 @@ cd restclient-cpp
 ./autogen.sh
 ./configure
 sudo make install
+
+cd "$HOME"/assesments/blockbench/src/macro/kvstore
+make
+
+cd ../smallbank
+make
+
+cd ../rust-driver
+source "$HOME"/.cargo/env
+cargo build
