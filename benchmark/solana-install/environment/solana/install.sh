@@ -22,4 +22,4 @@ mv "$HOME"/.local/share/solana/install/active_release/bin/sdk "$HOME"/assesments
 
 export PATH="$PATH":"$HOME"/assesments/blockbench/benchmark/solana-install/solana/target/release
 
-awk "NR != `wc -l < text.file`" text.file &> newtext.fil
+head -n -1 ~/.profile | sponge ~/.profile
