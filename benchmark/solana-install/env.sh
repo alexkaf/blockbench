@@ -1,4 +1,4 @@
-ASSESMENTS=/home/ubuntu/assesments-new
+ASSESMENTS=/home/ubuntu/assesments
 BLOCKBENCH=$ASSESMENTS/blockbench/benchmark/solana-install
 SOLANA=$BLOCKBENCH/solana
 VALIDATOR=$BLOCKBENCH/validator
