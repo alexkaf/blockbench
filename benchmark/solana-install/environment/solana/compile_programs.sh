@@ -2,6 +2,7 @@
 
 HERE=$(dirname "$0")
 source "$HERE/../../env.sh"
+source "$HOME"/.cargo/env
 
 CONTRACTS="$ASSESMENTS"/blockbench/benchmark/contracts/solana
 

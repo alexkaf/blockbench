@@ -9,3 +9,4 @@ SOLANA=$HERE/solana
 "$PACKAGES"/node.sh
 "$PACKAGES"/cargo.sh
 "$SOLANA"/install.sh
+"$SOLANA"/compile_programs.sh
