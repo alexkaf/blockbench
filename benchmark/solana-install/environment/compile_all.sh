@@ -5,7 +5,7 @@ source "$HERE/../env.sh"
 source "$HOME/.cargo/env"
 
 for host in $(cat ../hosts); do
-  ssh -oStrictHostKeyChecking=no "$CURRENT_USER@$host" "source ~/.bashrc && echo \$PATH" &
+  ssh -oStrictHostKeyChecking=no "$CURRENT_USER@$host" "$BLOCKBENCH/environment/solana/compile_programs.sh" &
 done
 
 wait

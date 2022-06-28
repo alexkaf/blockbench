@@ -18,7 +18,6 @@ geth --datadir=$ETH_DATA \
 
 sleep 20
 
-rm -rf addPeer.txt
 ./gather.sh $2
 
 for com in $(cat addPeer.txt); do
