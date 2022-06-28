@@ -7,7 +7,7 @@ CONTRACTS="$ASSESMENTS"/blockbench/benchmark/contracts/solana
 
 PROGRAMS=( "kvstore" "donothing" "smallbank" "ioheavy" "cpuheavy" )
 
-for program in $PROGRAMS; do
+for program in ${PROGRAMS[@]}; do
   cd "$CONTRACTS"/"$program"
   cargo build-bpf
-donex
+done
