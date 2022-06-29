@@ -74,7 +74,7 @@ int StatusThread(string dbname, ycsbc::DB *db, double interval,
   else
     confirm_duration = HL_CONFIRM_BLOCK_LENGTH;
 
-    ofstream resultsFile("test.txt");
+    ofstream resultsFile("/home/ubuntu/test.txt");
     resultsFile << "Block, Hash, Latency\n";
 
   while (true) {
