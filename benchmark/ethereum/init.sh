@@ -8,11 +8,3 @@ cp $ETH_HOME/CustomGenesis.json ~/ethereum/genesis.json
 
 geth --datadir=$ETH_DATA init /home/ubuntu/ethereum/genesis.json
 geth --datadir=$ETH_DATA --password <(echo -n "") account new
-geth --datadir=$ETH_DATA --password <(echo -n "") account new
-geth --datadir=$ETH_DATA --password <(echo -n "") account new
-geth --datadir=$ETH_DATA --password <(echo -n "") account new
-geth --datadir=$ETH_DATA --password <(echo -n "") account new
-geth --datadir=$ETH_DATA --password <(echo -n "") account new
-geth --datadir=$ETH_DATA --password <(echo -n "") account new
-geth --datadir=$ETH_DATA --password <(echo -n "") account new
-geth --datadir=$ETH_DATA --password <(echo -n "") account new
