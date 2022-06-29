@@ -2,6 +2,6 @@
 cd `dirname ${BASH_SOURCE-$0}`
 . env.sh
 
-sudo killall -KILL geth
+sudo killall -KILL geth driver
 rm -rf $ETH_DATA
 rm -rf ~/.eth*

@@ -13,7 +13,7 @@ i=0
 for client in $(cat clients); do
   echo "Starting $client..."
   ssh -oStrictHostKeyChecking=no "$CURRENT_USER@$client" "mkdir -p $LOG_DIR"
-  ssh -oStrictHostKeyChecking=no "$CURRENT_USER@$client" "LD_LIBRARY_PATH=/usr/local/lib nohup $EXE_HOME/driver -db ethereum -threads $1 -P $EXE_HOME/workloads/workloada.spec -endpoint $client:8545 -txrate $4 -wt 60 > $LOG_DIR/client_$client"_"$1 2>&1 &"
+  ssh -oStrictHostKeyChecking=no "$CURRENT_USER@$client" "LD_LIBRARY_PATH=/usr/local/lib nohup $EXE_HOME/driver -db ethereum -threads $1 -P $EXE_HOME/workloads/workloada.spec -endpoint localhost:8545 -txrate $4 -wt 60 > $LOG_DIR/client_$client"_"$1 2>&1 &"
 done
 #for host in `cat $HOSTS`; do
 #  let n=i/2

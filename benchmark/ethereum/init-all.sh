@@ -11,3 +11,6 @@ for host in `cat hosts`; do
   fi
   let i=$i+1
 done
+
+wait
+echo DONE
