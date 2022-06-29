@@ -19,8 +19,8 @@ geth --datadir=$ETH_DATA \
 echo Waiting 60 seconds...
 sleep 60
 
-./gather.sh $2
-
-for com in $(cat addPeer.txt); do
-  ssh -oStrictHostKeyChecking=no "$CURRENT_USER@$host" "geth attach ~/ethereum/data/geth.ipc --exec $com"
-done
+#./gather.sh $2
+#
+#for com in $(cat addPeer.txt); do
+#  ssh -oStrictHostKeyChecking=no "$CURRENT_USER@$host" "geth attach ~/ethereum/data/geth.ipc --exec $com"
+#done
