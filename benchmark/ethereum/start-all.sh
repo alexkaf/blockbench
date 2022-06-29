@@ -14,5 +14,5 @@ done
 
 wait
 
-./connect_all $1
+./connect_all.sh $1
 #sleep 3
