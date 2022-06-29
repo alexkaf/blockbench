@@ -9,6 +9,7 @@
 #include <cstring>
 #include <string>
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <future>
 #include <atomic>
@@ -73,6 +74,9 @@ int StatusThread(string dbname, ycsbc::DB *db, double interval,
   else
     confirm_duration = HL_CONFIRM_BLOCK_LENGTH;
 
+    ofstream resultsFile("test.txt");
+    resultsFile << "Block, Hash, Latency\n";
+
   while (true) {
     start_time = utils::time_now();
     int tip = db->GetTip();
@@ -93,6 +97,7 @@ int StatusThread(string dbname, ycsbc::DB *db, double interval,
         if (pendingtx.find(s) != pendingtx.end()) {
           txcount++;
           latency += (block_time - pendingtx[s]);
+          resultsFile << cur_block_height << ", " << s << ", " << block_time - pendingtx[s] << "\n";
           // then remove
           pendingtx.erase(s);
         }
