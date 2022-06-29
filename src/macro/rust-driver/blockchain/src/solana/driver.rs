@@ -87,7 +87,8 @@ impl Solana {
         let program_path =
             contract_directory.as_path().join(format!("target/deploy/{}.so", contract));
 
-
+        println!("{:?}", contract_directory);
+        println!("{:?}", program_path);
         let build = Command::new("cargo-build-bpf")
             .current_dir(contract_directory)
             .output()
@@ -95,7 +96,7 @@ impl Solana {
             // .stdout(Stdio::null())
             // .status()
             // .expect(&format!("Could not build: {}", contract));
-        println!("{:?}", program_path);
+
         let deploy = Command::new("solana")
             .args(["program", "deploy", "--keypair", "feePayer.json", "--program-id", "programId.json", program_path.to_str().unwrap()])
             // .stdout(Stdio::null())
