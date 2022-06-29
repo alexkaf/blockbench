@@ -95,7 +95,7 @@ impl Solana {
             // .stdout(Stdio::null())
             // .status()
             // .expect(&format!("Could not build: {}", contract));
-
+        println!("{:?}", program_path);
         let deploy = Command::new("solana")
             .args(["program", "deploy", "--keypair", "feePayer.json", "--program-id", "programId.json", program_path.to_str().unwrap()])
             // .stdout(Stdio::null())
