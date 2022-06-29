@@ -3,7 +3,7 @@
 cd `dirname ${BASH_SOURCE-$0}`
 . env.sh
 
-./gather.sh $2
+./gather.sh $1
 
 function copy_and_connect() {
   scp addPeer.txt "$CURRENT_USER@$1:$ETH_HOME"
@@ -15,7 +15,7 @@ function copy_and_connect() {
 }
 
 for host in $(cat hosts); do
-  copy_and_connect $host
+  copy_and_connect $host &
 done
 
 wait
