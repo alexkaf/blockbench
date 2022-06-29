@@ -8,7 +8,7 @@ const fileName = process.argv[2];
 const txsPerBlock = `${fileName}_txsPerBlock`;
 const txsPerSecond = `${fileName}_txsPerSecond`;
 
-const connection = new Connection('http://localhost:8899');
+const connection = new Connection('http://65.21.204.112:8899');
 
 const monitor = async () => {
     let txs = 0;

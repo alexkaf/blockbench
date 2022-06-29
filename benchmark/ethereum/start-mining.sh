@@ -14,7 +14,7 @@ geth --datadir=$ETH_DATA \
      --password <(echo -n "") \
      --mine \
      --nat extip:$1 \
-     --miner.threads 8 > $ETH_DATA/log 2>&1 &
+     --miner.threads 6 > $ETH_DATA/log 2>&1 &
 
 echo Waiting 20 seconds...
 sleep 20

@@ -1,3 +1,5 @@
+import sys
+
 import matplotlib.pyplot as plt
 import itertools
 
@@ -29,11 +31,16 @@ def tx_per_block(value_map):
     return txs
 
 
-results = 'results'
+results = sys.argv[1]
+from_block = int(sys.argv[2])
+to_block = int(sys.argv[3])
+
 
 analytics = group_by_block(results)
 avg = average_latency(analytics)
 txs_per_block = tx_per_block(analytics)
 
-print(avg)
-print(txs_per_block)
+# print(avg)
+# print(txs_per_block)
+
+print(sys.argv)
