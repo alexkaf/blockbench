@@ -13,4 +13,6 @@ for host in `cat hosts`; do
 done
 
 wait
+
+./connect_all $1
 #sleep 3
