@@ -89,13 +89,14 @@ fn main() {
     airdrop_accounts(&client, &keypairs);
 
     println!("Accounts airdropped.");
-    println!("Waiting 20 seconds...");
+    println!("Waiting 60 seconds...");
     sleep(Duration::from_secs(20));
 
     println!("Started making transactions...");
     if let (first_hash, last_hash) = execute_random_transactions(tx_count, &client, &keypairs) {
 
-        sleep(Duration::from_secs(2));
+        println!("Waiting 20 seconds...");
+        sleep(Duration::from_secs(20));
         let first_block_slot = client.get_transaction_with_config(&first_hash, config);
         println!("First: {:?}", first_block_slot.unwrap().slot);
 
