@@ -87,8 +87,8 @@ const execTxs = async (accounts, txn_cnt) => {
         if (tx.blockNumber < minBlockNumber) minBlockNumber = tx.blockNumber;
         if (tx.blockNumber > maxBlockNumber) maxBlockNumber = tx.blockNumber;
     }
-    console.log(`Min: ${minBlockNumber}`);
-    console.log(`Max: ${maxBlockNumber}`);
+    console.log(`First: ${minBlockNumber}`);
+    console.log(`Last: ${maxBlockNumber}`);
     console.log('Done')
 }
 // const createAccounts = (account_cnt) => {
