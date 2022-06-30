@@ -44,7 +44,6 @@ const loadAccounts = async () => {
     for (let pair of temp_accounts) {
 
         let nonce = await providers[0].eth.getTransactionCount(pair[0]);
-        console.log(nonce)
         accounts.push({
             publicKey: pair[0],
             privateKey: pair[1],
