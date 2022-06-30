@@ -1,18 +1,23 @@
 const Web3 = require('web3');
 const fs = require("fs");
 
-const file = process.argv[2];
+const file = process.argv[3];
 
 let web3 = new Web3();
-web3.setProvider(new Web3.providers.WebsocketProvider('ws://10.0.1.27:8546'));
+while (true) {
+    try {
+        web3.setProvider(new Web3.providers.WebsocketProvider(process.argv[2]));
+        break;
+    } catch (_) {
 
-fs.appendFileSync(file, 'Block Number, TxCount, Datetime');
+    }
+}
 
 const monitor = async () => {
     const subscription = web3.eth.subscribe('newBlockHeaders', async (_, data) => {
         let block = await web3.eth.getBlock(data.number);
-        console.log(`${block.number}, ${block.transactions.length}, ${Date.now()}`);
-        fs.appendFileSync(file, `${block.number}, ${block.transactions.length}, ${Date.now()}\n`);
+        console.log(`${block.number}, ${block.transactions.length}, ${block.miner}, ${Date.now()}`);
+        fs.appendFileSync(file, `${block.number}, ${block.transactions.length}, ${block.miner}, ${Date.now()}\n`);
     })
 }
 
