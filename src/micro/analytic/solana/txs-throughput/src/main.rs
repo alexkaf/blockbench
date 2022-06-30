@@ -13,20 +13,20 @@ use solana_sdk::transaction::Transaction;
 use solana_transaction_status::UiTransactionEncoding;
 
 fn make_keypairs(vec_to_fill: &mut Vec<Keypair>) -> &Vec<Keypair> {
-    for _ in 0..5_000 {
+    for _ in 0..10 {
         vec_to_fill.push(Keypair::new());
     }
     vec_to_fill
 }
 
-fn airdrop_accounts(rpc_endpoint: &RpcClient, keypairs: &Vec<Keypair>) {
+fn airdrop_accounts(rpc_endpoints: &Vec<RpcClient>, keypairs: &Vec<Keypair>) {
     for pair in keypairs.into_iter() {
-        rpc_endpoint.request_airdrop(&pair.pubkey(), 5_000_000_000).unwrap();
+        rpc_endpoints[0].request_airdrop(&pair.pubkey(), 500_000_000_000).unwrap();
     }
 }
 
 fn execute_random_transactions(tx_count: u64,
-                               client: &RpcClient,
+                               clients: &Vec<RpcClient>,
                                keypairs: &Vec<Keypair>) -> (Signature, Signature){
     let keypair_cnt = keypairs.len();
     let mut rng = rand::thread_rng();
@@ -36,6 +36,8 @@ fn execute_random_transactions(tx_count: u64,
     let mut recent_blockhash;
     let mut transfer_ix;
     let mut tx;
+    let mut client_idx;
+    let total_clients = client.len();
     let mut idx = 0;
     let mut first_hash = Signature::new_unique();
     let mut last_hash= Signature::new_unique();
@@ -44,14 +46,16 @@ fn execute_random_transactions(tx_count: u64,
         from = &keypairs[rng.gen_range(0..keypair_cnt)];
         to = &keypairs[rng.gen_range(0..keypair_cnt)];
         amount = rng.gen_range(1..5_000);
-        recent_blockhash = client.get_latest_blockhash().unwrap();
+        client_idx = rng.gen_range(0..total_clients);
+
+        recent_blockhash = clients[client_idx].get_latest_blockhash().unwrap();
 
         transfer_ix = transfer(&from.pubkey(), &to.pubkey(), amount);
         tx = Transaction::new_signed_with_payer(&[transfer_ix],
                                                 Some(&from.pubkey()),
                                                 &[from],
                                                 recent_blockhash);
-        let hash = client.send_transaction(&tx);
+        let hash = clients[client_idx].send_transaction(&tx);
 
         if idx == 0 {
             first_hash = hash.unwrap();
@@ -70,11 +74,23 @@ fn execute_random_transactions(tx_count: u64,
 
 fn main() {
     let mut args = env::args().into_iter();
+    let mut clients = vec![];
+
     args.next().unwrap();
-    let endpoint = args.next().unwrap();
     let tx_count = u64::from_str(&args.next().unwrap()).unwrap();
-    let client = RpcClient::new(&endpoint);
-    client.get_health();
+
+    let mut endpoints = vec![];
+
+    loop {
+        let current_endpoint = args.next();
+        match current_endpoint {
+            Some(value) => endpoints.push(value),
+            _ => break
+        }
+    }
+    for _endpoint in endpoints {
+        clients.push(RpcClient::new(&_endpoint));
+    }
 
     let mut to_fill = vec![];
     let keypairs = make_keypairs(&mut to_fill);
@@ -86,7 +102,7 @@ fn main() {
     };
 
     println!("Airdropping accounts...");
-    airdrop_accounts(&client, &keypairs);
+    airdrop_accounts(&clients, &keypairs);
 
     println!("Accounts airdropped.");
     println!("Waiting 60 seconds...");
@@ -97,10 +113,10 @@ fn main() {
 
         println!("Waiting 60 seconds...");
         sleep(Duration::from_secs(60));
-        let first_block_slot = client.get_transaction_with_config(&first_hash, config);
+        let first_block_slot = clients[0].get_transaction_with_config(&first_hash, config);
         println!("First: {:?}", first_block_slot.unwrap().slot);
 
-        let last_block_slot = client.get_transaction_with_config(&last_hash, config);
+        let last_block_slot = clients[0].get_transaction_with_config(&last_hash, config);
         println!("Last: {:?}", last_block_slot.unwrap().slot);
     }
 }
