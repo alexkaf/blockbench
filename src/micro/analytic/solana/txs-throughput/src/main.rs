@@ -37,7 +37,7 @@ fn execute_random_transactions(tx_count: u64,
     let mut transfer_ix;
     let mut tx;
     let mut client_idx;
-    let total_clients = client.len();
+    let total_clients = clients.len();
     let mut idx = 0;
     let mut first_hash = Signature::new_unique();
     let mut last_hash= Signature::new_unique();
@@ -109,7 +109,7 @@ fn main() {
     sleep(Duration::from_secs(60));
 
     println!("Started making transactions...");
-    if let (first_hash, last_hash) = execute_random_transactions(tx_count, &client, &keypairs) {
+    if let (first_hash, last_hash) = execute_random_transactions(tx_count, &clients, &keypairs) {
 
         println!("Waiting 60 seconds...");
         sleep(Duration::from_secs(60));
