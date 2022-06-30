@@ -2,6 +2,9 @@ const Web3 = require('web3');
 const fs = require("fs");
 const BN = require('bn.js');
 
+
+let account_idx = parseInt(process.env.ACCOUNT_IDX);
+
 const tx_cnt = parseInt(process.argv[2]);
 const endpoints = process.argv.slice(4);
 
@@ -59,7 +62,7 @@ const execTxs = async (accounts, txn_cnt) => {
         from = Math.floor(Math.random() * accountLen);
         to = Math.floor(Math.random() * accountLen);
         amount = Math.floor(Math.random() * 1000000 + 1);
-        provider = Math.floor(Math.random() * providers.length);
+        provider = account_idx;
 
         txn = {
             from: accounts[from].publicKey,
@@ -67,9 +70,9 @@ const execTxs = async (accounts, txn_cnt) => {
             value: new BN(amount),
             gas: new BN('0x6000'),
             gasPrice: new BN('0'),
-            nonce: await providers[provider].eth.getTransactionCount(accounts[from]),
+            nonce: accounts[from].nonce,
         };
-        accounts[from].nonce = txn.nonce + 1;
+        accounts[from].nonce += 1;
 
         txn = await providers[provider].eth.accounts.signTransaction(txn, accounts[from].privateKey);
         // console.log(txn.rawTransaction)
