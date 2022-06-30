@@ -4,6 +4,7 @@ const BN = require('bn.js');
 
 
 let account_idx = parseInt(process.env.ACCOUNT_IDX);
+console.log(account_idx)
 
 const tx_cnt = parseInt(process.argv[2]);
 const endpoints = process.argv.slice(4);
