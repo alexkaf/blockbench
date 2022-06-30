@@ -67,9 +67,9 @@ const execTxs = async (accounts, txn_cnt) => {
             value: new BN(amount),
             gas: new BN('0x6000'),
             gasPrice: new BN('0'),
-            nonce: accounts[from].nonce,
+            nonce: await providers[provider].eth.getTransactionCount(accounts[from]),
         };
-        accounts[from].nonce += 1;
+        accounts[from].nonce = txn.nonce + 1;
 
         txn = await providers[provider].eth.accounts.signTransaction(txn, accounts[from].privateKey);
         // console.log(txn.rawTransaction)
