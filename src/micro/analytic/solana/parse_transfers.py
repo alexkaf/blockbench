@@ -5,6 +5,10 @@ results = sys.argv[1]
 from_block = int(sys.argv[2])
 to_block = int(sys.argv[3])
 
+results_e = sys.argv[4]
+from_block_e = int(sys.argv[5])
+to_block_e = int(sys.argv[6])
+
 
 def filter_by_block(file_name, start_block, end_block):
     block_number = []
@@ -13,10 +17,13 @@ def filter_by_block(file_name, start_block, end_block):
         for line in results_file.readlines():
             line = line.strip('\n')
             split = line.split(', ')
-            block = int(split[0])
+            try:
+                block = int(split[0])
+            except:
+                continue
 
             if start_block <= block <= end_block:
-                block_number += [block]
+                block_number += [int(split[0])]
                 txs_per_second += [int(split[1])]
 
     return block_number, txs_per_second
@@ -38,9 +45,22 @@ def triple_average(filtered_blocks, filtered_pace):
 blocks, pace = filter_by_block(results, from_block, to_block)
 tr_blocks, tr_pace = triple_average(blocks, pace)
 
-plt.plot(blocks, pace)
-plt.plot(tr_blocks, tr_pace)
+blocks_e, pace_e = filter_by_block(results_e, from_block_e, to_block_e)
+tr_blocks_e, tr_pace_e = triple_average(blocks_e, pace_e)
+
+sum_e = sum(pace_e) / len(blocks_e)
+print(sum_e)
+for _ in range(50):
+    tr_blocks, tr_pace = triple_average(tr_blocks, tr_pace)
+
+for _ in range(50):
+    tr_blocks_e, tr_pace_e = triple_average(tr_blocks_e, tr_pace_e)
+
+plt.plot(list(range(0, len(tr_pace))), tr_pace)
+plt.plot(list(range(0, len(tr_pace_e))), tr_pace_e)
+# plt.plot(blocks, pace)
 plt.title('txs/sec: 40.000txs')
 plt.xlabel('Block Number')
 plt.ylabel('txs/sec')
+plt.legend(['Ethereum', 'Solana'])
 plt.show()
