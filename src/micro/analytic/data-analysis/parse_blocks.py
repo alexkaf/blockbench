@@ -61,7 +61,7 @@ def calculate_block_time(block_timestamps):
 
 
 if __name__ == '__main__':
-    blocks_file = '../ethereum/blocks_4_nodes'
+    blocks_file = '../ethereum/blocks_2_new'
     difficulties_file = '../ethereum/diff_4'
     times, blocks, miners = get_blocks(blocks_file)
     block_times = calculate_block_time(times)
