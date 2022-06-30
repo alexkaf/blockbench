@@ -1,0 +1,14 @@
+{
+  "name": "ethereum",
+  "version": "1.0.0",
+  "description": "At first, use `npm start` or [start_ethereum.sh](../../ethereum_script/start_ethereum.sh) to start geth client, then open another terminal to do next step",
+  "main": "bench_q1.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "web3": "^1.7.4"
+  }
+}
