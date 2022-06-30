@@ -4,7 +4,6 @@ const BN = require('bn.js');
 
 
 let account_idx = parseInt(process.env.ACCOUNT_IDX);
-console.log(account_idx)
 
 const tx_cnt = parseInt(process.argv[2]);
 const endpoints = process.argv.slice(4);
@@ -44,6 +43,7 @@ const loadAccounts = async () => {
     for (let pair of temp_accounts) {
 
         let nonce = await providers[0].eth.getTransactionCount(pair[0]);
+        console.log(nonce)
         accounts.push({
             publicKey: pair[0],
             privateKey: pair[1],
@@ -59,10 +59,10 @@ const execTxs = async (accounts, txn_cnt) => {
     const accountLen = accounts.length;
     while(txn_cnt > 0) {
         console.log(txn_cnt);
-        from = Math.floor(Math.random() * accountLen);
+        from = account_idx;
         to = Math.floor(Math.random() * accountLen);
         amount = Math.floor(Math.random() * 1000000 + 1);
-        provider = account_idx;
+        provider = Math.floor(Math.random() * providers.length);
 
         txn = {
             from: accounts[from].publicKey,
@@ -72,7 +72,7 @@ const execTxs = async (accounts, txn_cnt) => {
             gasPrice: new BN('0'),
             nonce: accounts[from].nonce,
         };
-        accounts[from].nonce += 1;
+        accounts[from].nonce = txn.nonce + 1;
 
         txn = await providers[provider].eth.accounts.signTransaction(txn, accounts[from].privateKey);
         // console.log(txn.rawTransaction)
