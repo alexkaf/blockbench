@@ -2,14 +2,14 @@ const Web3 = require('web3');
 const fs = require("fs");
 const BN = require('bn.js');
 
-const tx_cnt = parseInt(process.argv[3]);
+const tx_cnt = parseInt(process.argv[2]);
 const endpoints = process.argv.slice(4);
 
 let providers = []
 
 for (let endpoint of endpoints) {
     const web3 = new Web3();
-    web3.setProvider(`http://${process.argv[2]}`);
+    web3.setProvider(`http://${endpoint}`);
     providers.push(web3);
 }
 
