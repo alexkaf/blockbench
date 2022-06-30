@@ -30,7 +30,7 @@ const std::string SEND_TXN_PREFIX =
   \"jsonrpc\": \"2.0\", \
   \"method\": \"eth_sendTransaction\", \
   \"params\": [{ \"gas\": \"0xa00000\", \
-                \"gasPrice\": \"0xa\", \
+                \"gasPrice\": \"0x0\", \
                 \"from\": \"";
 
 const std::string CALL_PREFIX =
@@ -38,7 +38,7 @@ const std::string CALL_PREFIX =
   \"jsonrpc\": \"2.0\", \
   \"method\": \"eth_call\", \
   \"params\": [{ \"gas\": \"0xa00000\",\
-                \"gasPrice\": \"0x0a\", \
+                \"gasPrice\": \"0x0\", \
                 \"from\": \"";
 
 const std::string GET_TXN_PREFIX =
@@ -85,7 +85,7 @@ const std::string DEPLOY_SMARTCONTRACT_PREFIX =
     " {\"jsonrpc\":\"2.0\",\
   \"method\":\"eth_sendTransaction\",\
   \"params\": [{ \"gas\": \"0xa00000\",\
-                \"gasPrice\": \"0x1\", \
+                \"gasPrice\": \"0x0\", \
                \"from\": \"";
 
 const std::string DEPLOY_DONOTHING_SMARTCONTRACT_SUFFIX =
@@ -295,6 +295,7 @@ unsigned int get_txn_block_number(const std::string &endpoint,
 
 std::string get_from_address(const std::string &endpoint) {
   auto r = send_jsonrpc_request(endpoint, REQUEST_HEADERS, GET_ACCOUNTS);
+  std::cout << get_json_field(r, "result") << std::endl;
   return get_json_field(r, "result");
 }
 
