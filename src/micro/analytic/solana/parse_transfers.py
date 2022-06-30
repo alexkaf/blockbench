@@ -48,16 +48,17 @@ tr_blocks, tr_pace = triple_average(blocks, pace)
 blocks_e, pace_e = filter_by_block(results_e, from_block_e, to_block_e)
 tr_blocks_e, tr_pace_e = triple_average(blocks_e, pace_e)
 
-sum_e = sum(pace_e) / len(blocks_e)
+sum_e = sum(pace) / len(blocks)
 print(sum_e)
-for _ in range(50):
+
+for _ in range(10):
     tr_blocks, tr_pace = triple_average(tr_blocks, tr_pace)
 
-for _ in range(50):
+for _ in range(10):
     tr_blocks_e, tr_pace_e = triple_average(tr_blocks_e, tr_pace_e)
 
-plt.plot(list(range(0, len(tr_pace))), tr_pace)
-plt.plot(list(range(0, len(tr_pace_e))), tr_pace_e)
+plt.plot(list(range(0, len(pace))), pace)
+plt.plot(list(range(0, len(pace_e))), pace_e)
 # plt.plot(blocks, pace)
 plt.title('txs/sec: 40.000txs')
 plt.xlabel('Block Number')

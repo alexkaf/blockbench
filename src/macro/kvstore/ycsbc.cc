@@ -32,6 +32,8 @@ std::unordered_map<string, double> pendingtx;
 // locking the pendingtx queue
 SpinLock txlock;
 SpinLock nonceLock;
+
+ofstream resultsFile("/home/ubuntu/test.txt");
 void UsageMessage(const char *command);
 bool StrStartWith(const char *str, const char *pre);
 string ParseCommandLine(int argc, const char *argv[], utils::Properties &props);
@@ -73,9 +75,7 @@ int StatusThread(string dbname, ycsbc::DB *db, double interval,
     confirm_duration = PARITY_CONFIRM_BLOCK_LENGTH;
   else
     confirm_duration = HL_CONFIRM_BLOCK_LENGTH;
-
-    ofstream resultsFile("/home/ubuntu/test.txt");
-    resultsFile << "Block, Hash, Latency\n";
+  resultsFile << "Block, Hash, Latency\n";
 
   while (true) {
     start_time = utils::time_now();

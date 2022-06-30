@@ -61,8 +61,8 @@ def calculate_block_time(block_timestamps):
 
 
 if __name__ == '__main__':
-    blocks_file = '../ethereum/blocks_2_new'
-    difficulties_file = '../ethereum/diff_4'
+    blocks_file = '../ethereum/blocks_4_new'
+    difficulties_file = '../ethereum/diff_4_new'
     times, blocks, miners = get_blocks(blocks_file)
     block_times = calculate_block_time(times)
     miners = count_miners(miners)
@@ -71,7 +71,7 @@ if __name__ == '__main__':
     # plt.plot(blocks, times)
     plt.plot(block_times)
     plt.title('Average block time: {}s'.format(round(average_block_time(block_times) / 1000, 2)))
-    # plt.plot(canonicalize_difficulty(difficulties, block_times))
+    # plt.plot(difficulties)
 
     # plt.bar(list(miners.keys()), list(miners.values()))
     plt.show()

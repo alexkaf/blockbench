@@ -68,14 +68,14 @@ if __name__ == '__main__':
     throughput_log_sol = '../solana/40000_solana_txsPerSecond'
 
     sender_logs_eth = '/home/alexandros/Documents/blockbench/benchmark/solana-install/40000eth_logs.txt'
-    throughput_log_eth = '../ethereum/40000_eth_txsPerSecond'
+    throughput_log_eth = '../ethereum/40000_4_nodes.txt_txsPerSecond'
 
     thrput_sol, tstamps_sol = collect_throughput(sender_logs_sol, throughput_log_sol)
     thrput_nz_sol, tstamps_nz_sol = remove_zeros(thrput_sol, tstamps_sol)
 
     thrput_eth, tstamps_eth = collect_throughput(sender_logs_eth, throughput_log_eth)
     thrput_nz_eth, tstamps_nz_eth = remove_zeros(thrput_eth, tstamps_eth)
-
+    print(sum(thrput_eth))
     plt.plot(tstamps_nz_sol, thrput_nz_sol)
     plt.plot(tstamps_nz_eth, thrput_nz_eth)
     plt.legend(['Solana', 'Ethereum'])
