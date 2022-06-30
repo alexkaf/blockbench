@@ -3,9 +3,15 @@ const fs = require("fs");
 const BN = require('bn.js');
 
 const tx_cnt = parseInt(process.argv[3]);
+const endpoints = process.argv.slice(4);
 
-const web3 = new Web3();
-web3.setProvider(`http://${process.argv[2]}`)
+let providers = []
+
+for (let endpoint of endpoints) {
+    const web3 = new Web3();
+    web3.setProvider(`http://${process.argv[2]}`);
+    providers.push(web3);
+}
 
 // const loadAccounts = async() => {
 //     let to_return = [];
@@ -45,7 +51,7 @@ const loadAccounts = async () => {
 }
 
 const execTxs = async (accounts, txn_cnt) => {
-    let from, to, amount, txn;
+    let from, to, amount, txn, provider;
     let transactions = [];
     const accountLen = accounts.length;
     while(txn_cnt > 0) {
@@ -53,6 +59,8 @@ const execTxs = async (accounts, txn_cnt) => {
         from = Math.floor(Math.random() * accountLen);
         to = Math.floor(Math.random() * accountLen);
         amount = Math.floor(Math.random() * 1000000 + 1);
+        provider = Math.floor(Math.random() * providers.length);
+
         txn = {
             from: accounts[from].publicKey,
             to: accounts[from].publicKey,
@@ -63,12 +71,13 @@ const execTxs = async (accounts, txn_cnt) => {
         };
         accounts[from].nonce += 1;
 
-        txn = await web3.eth.accounts.signTransaction(txn, accounts[from].privateKey);
+        txn = await providers[provider].eth.accounts.signTransaction(txn, accounts[from].privateKey);
         // console.log(txn.rawTransaction)
-        transactions.push(web3.eth.sendSignedTransaction(txn.rawTransaction));
+        transactions.push(providers[provider].eth.sendSignedTransaction(txn.rawTransaction));
 
         txn_cnt -= 1;
     }
+
     console.log('Waiting for transactions...');
     await Promise.all(transactions);
     let minBlockNumber = 100000;
