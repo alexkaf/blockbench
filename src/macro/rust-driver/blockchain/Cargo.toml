@@ -11,6 +11,7 @@ solana-client = "1.10.24"
 solana-program = "1.10.24"
 solana-transaction-status = "1.10.24"
 rand = "0.8.5"
+duct_sh = "0.13.5"
 
 utils = { path = "../utils" }
 chrono = "0.4.19"

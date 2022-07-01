@@ -90,16 +90,19 @@ impl Solana {
         println!("{:?}", contract_directory);
         println!("{:?}", program_path);
 
-        let a = Command::new("/home/ubuntu/.cargo/bin/cargo build-bpf").current_dir(&contract_directory).output().unwrap();
-        println!("{:?}", a);
+        // let a = Command::new("/home/ubuntu/.cargo/bin/cargo build-bpf").current_dir(&contract_directory).output().unwrap();
+        // let a
+        // println!("{:?}", a);
+        //
+        // let b = Command::new("cd .. && pwd").output().unwrap();
+        // println!("{:?}", b);
 
-        let b = Command::new("cd .. && pwd").output().unwrap();
-        println!("{:?}", b);
-
-        let build = Command::new(&format!("source ~/.cargo/env && cd {:?} && cargo-build-bpf", contract_directory))
-            .current_dir(contract_directory)
-            .output()
-            .unwrap();
+        // let build = Command::new(&format!("source ~/.cargo/env && cd {:?} && cargo-build-bpf", contract_directory))
+        //     .current_dir(contract_directory)
+        //     .output()
+        //     .unwrap();
+        let build = duct_sh::sh(&format!("source ~/.cargo/env && cd {:?} && cargo-build-bpf", contract_directory)).read().unwrap();
+        println!("{}", build);
             // .stdout(Stdio::null())
             // .status()
             // .expect(&format!("Could not build: {}", contract));
