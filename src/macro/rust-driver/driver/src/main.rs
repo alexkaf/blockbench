@@ -172,7 +172,7 @@ fn status_thread(db: Rc<RefCell<Solana>>, props: Arc<Wrap<Properties>>, total_op
                         }
                     }
                 }
-                results_file.write_all(format!("{:?}, {:?}, {:?}\n", current_tip, tx_found_in_block, current_time.timestamp_millis() - s.timestamp_millis()).as_bytes());
+                // results_file.write_all(format!("{:?}, {:?}, {:?}\n", current_tip, tx_found_in_block, current_time.timestamp_millis() - s.timestamp_millis()).as_bytes());
                 println!("[{}]: {}txs", current_tip, found);
                 current_tip += 1;
             }
