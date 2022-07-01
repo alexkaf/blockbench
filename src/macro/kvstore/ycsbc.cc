@@ -110,9 +110,7 @@ int StatusThread(string dbname, ycsbc::DB *db, double interval,
     latency = 0;
 
     end_time = utils::time_now();
-    if (pendingtx.empty()) {
-        cout << "End, " << utils::time_now() << endl;
-    }
+
     // 2. Get all tx from cur_block_height until tip-CONFIRM_BLOCK_LENGTH
     // 3. Process the tx, update the stats
     // 4. Sleep for INTERVAL - (time taken to do 1-3)
@@ -120,6 +118,10 @@ int StatusThread(string dbname, ycsbc::DB *db, double interval,
     // sleep in nanosecond
     utils::sleep(interval - (end_time - start_time) / 1000000000.0);
     // std::this_thread::sleep_for(std::chrono::seconds(5));
+    if (pendingtx.empty()) {
+            resultsFile << "End, " << utils::time_now() << endl;
+            break;
+        }
   }
   return 0;
 }
