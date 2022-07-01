@@ -120,6 +120,7 @@ int StatusThread(string dbname, ycsbc::DB *db, double interval,
     // std::this_thread::sleep_for(std::chrono::seconds(5));
     if (pendingtx.empty()) {
             resultsFile << "End, " << utils::time_now() << endl;
+            cout << "Done!!!!" << end;
             break;
         }
   }
