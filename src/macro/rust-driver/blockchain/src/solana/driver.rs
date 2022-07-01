@@ -102,25 +102,25 @@ impl Solana {
         //     .output()
         //     .unwrap();
         let build_command = format!(". ~/.cargo/env && export PATH=$PATH:/home/ubuntu/assesments/blockbench/benchmark/solana-install/solana/target/release && cd {:?} && cargo build-bpf", contract_directory);
-        // let deploy_command = format!(". ~/.cargo/env && export PATH=$PATH:/home/ubuntu/assesments/blockbench/benchmark/solana-install/solana/target/release && cd {:?} && solana program", contract_directory);
-        let deploy_command = format!("pwd");
+        let deploy_command = format!(". ~/.cargo/env && export PATH=$PATH:/home/ubuntu/assesments/blockbench/benchmark/solana-install/solana/target/release && cd {:?} && solana program deploy --keypair feePayer.json --program-id programId.json", contract_directory);
+        // let deploy_command = format!("pwd");
         let build = duct_sh::sh_dangerous(&build_command).read().unwrap();
-        let pwd = duct_sh::sh_dangerous(&deploy_command).read().unwrap();
+        let deploy = duct_sh::sh_dangerous(&deploy_command).read().unwrap();
         println!("{}", build);
-        println!("------------------------------------------------>    {}", pwd);
+        println!("{}", deploy);
             // .stdout(Stdio::null())
             // .status()
             // .expect(&format!("Could not build: {}", contract));
 
-        let deploy = Command::new("solana")
-            .args(["program", "deploy", "--keypair", "feePayer.json", "--program-id", "programId.json", program_path.to_str().unwrap()])
-            // .stdout(Stdio::null())
-            .output()
-            // .expect(&format!("Could not deploy: {}", contract));
-            .unwrap();
-
-        println!("{:?}", build);
-        println!("{:?}", deploy);
+        // let deploy = Command::new("solana")
+        //     .args(["program", "deploy", "--keypair", "feePayer.json", "--program-id", "programId.json", program_path.to_str().unwrap()])
+        //     // .stdout(Stdio::null())
+        //     .output()
+        //     // .expect(&format!("Could not deploy: {}", contract));
+        //     .unwrap();
+        //
+        // println!("{:?}", build);
+        // println!("{:?}", deploy);
     }
 }
 
