@@ -90,7 +90,7 @@ impl Solana {
         println!("{:?}", contract_directory);
         println!("{:?}", program_path);
 
-        let a = Command::new("pwd").output().unwrap();
+        let a = Command::new("pwd").current_dir(&contract_directory).output().unwrap();
         println!("{:?}", a);
 
         let b = Command::new("cd .. && pwd").output().unwrap();
