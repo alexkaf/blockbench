@@ -89,7 +89,7 @@ impl Solana {
 
         println!("{:?}", contract_directory);
         println!("{:?}", program_path);
-        let build = Command::new("cargo-build-bpf")
+        let build = Command::new(&format!("source ~/.cargo/env && cd {:?} && cargo-build-bpf", contract_directory))
             .current_dir(contract_directory)
             .output()
             .unwrap();
