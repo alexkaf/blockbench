@@ -68,7 +68,7 @@ fn main() {
         let handle = thread::spawn(move || {
             match &workload[..] {
                 "smallbank" => client_thread(Rc::clone(&db.value), Rc::clone(&props.value), (total_ops / num_threads) as u64, txrate),
-                _ => delegate_client(Rc::clone(&db.value), Rc::clone(&props.value), (total_ops / num_threads) as u64, true, txrate),
+                _ => delegate_client(Rc::clone(&db.value), Rc::clone(&props.value), Arc::clone(&pending_transactions), (total_ops / num_threads) as u64, true, txrate),
             }
 
         });
@@ -91,11 +91,12 @@ fn main() {
     // println!("{:?}", pending_transactions.lock().unwrap().len());
 }
 
-fn delegate_client(db: Rc<RefCell<Solana>>, props: Rc<RefCell<Properties>>, num_ops: u64, is_loading: bool, txrate: u64) {
+fn delegate_client(db: Rc<RefCell<Solana>>, props: Rc<RefCell<Properties>>, pending_transactions: Arc<Mutex<HashMap<String, TransactionInfo>>>, num_ops: u64, is_loading: bool, txrate: u64) {
     let wl = Rc::new(RefCell::new(Workload::new()));
     wl.borrow_mut().init(&props.borrow());
-    //
-    let client = Client::new(Rc::clone(&db), Rc::clone(&wl));
+    let pros_data = props.try_borrow().unwrap();
+    // let client = Client::new(Rc::clone(&db), Rc::clone(&wl));
+    let client = Solana::new(&props_data.value.borrow()["endpoint"][..], &props_data.value.borrow()["workload"][..], Arc::clone(&pending_transactions));
     let sleep_time = time::Duration::from_millis(1000 / txrate);
     //
     let mut idx = 0;
