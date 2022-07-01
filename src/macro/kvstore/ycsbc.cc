@@ -110,7 +110,9 @@ int StatusThread(string dbname, ycsbc::DB *db, double interval,
     latency = 0;
 
     end_time = utils::time_now();
-
+    if (pendingtx.empty()) {
+        cout << "End, " << utils::time_now() << endl;
+    }
     // 2. Get all tx from cur_block_height until tip-CONFIRM_BLOCK_LENGTH
     // 3. Process the tx, update the stats
     // 4. Sleep for INTERVAL - (time taken to do 1-3)
@@ -144,6 +146,7 @@ int main(const int argc, const char *argv[]) {
 
   utils::Timer<double> stat_timer;
 
+    resultsFile << "Start, " << utils::time_now() << "\n";
   // Loads data
   vector<future<int>> actual_ops;
   int total_ops = stoi(props[ycsbc::CoreWorkload::RECORD_COUNT_PROPERTY]);
