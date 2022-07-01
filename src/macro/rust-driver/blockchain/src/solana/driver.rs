@@ -101,7 +101,7 @@ impl Solana {
         //     .current_dir(contract_directory)
         //     .output()
         //     .unwrap();
-        let build_command = format!(". ~/.cargo/env && cd {:?} && cargo build-bpf", contract_directory);
+        let build_command = format!(". ~/.cargo/env && export PATH=$PATH:/home/ubuntu/assesments/blockbench/benchmark/solana-install/solana/target/release && cd {:?} && cargo build-bpf", contract_directory);
         let build = duct_sh::sh_dangerous(&build_command).read().unwrap();
         println!("{}", build);
             // .stdout(Stdio::null())
