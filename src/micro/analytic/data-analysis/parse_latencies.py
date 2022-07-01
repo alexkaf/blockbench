@@ -51,7 +51,7 @@ def txs_per_block(block_list):
 
 
 if __name__ == '__main__':
-    file = '../../../macro/kvstore/results/eth/donothing/eth_12_nodes_latencies'
+    file = '../../../macro/kvstore/results/eth/donothing/eth_14_nodes_latencies'
     # file = '../../../../benchmark/solana-install/all'
 
     blocks, latencies, total_time = parse_file(file)

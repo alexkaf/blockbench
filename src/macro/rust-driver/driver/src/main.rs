@@ -145,7 +145,7 @@ fn client_thread(db: Rc<RefCell<Solana>>, props: Rc<RefCell<Properties>>, num_op
 
 fn status_thread(db: Rc<RefCell<Solana>>, props: Arc<Wrap<Properties>>, total_ops: u64, pending_transactions: Arc<Mutex<PendingTransactions>>) {
     let props = props.value.try_borrow().unwrap();
-    let file_name = format!("{}_{}_{}_{}", props["workload"], props["txrate"], props["threadcount"], props["recordcount"]);
+    let file_name = format!("/home/ubuntu/test.txt");
 
     let mut results_file = File::create(file_name).unwrap();
 
@@ -172,7 +172,7 @@ fn status_thread(db: Rc<RefCell<Solana>>, props: Arc<Wrap<Properties>>, total_op
                         }
                     }
                 }
-                // results_file.write_all(format!("{:?}, {:?}, {:?}\n", current_tip, tx_found_in_block, current_time.timestamp_millis() - s.timestamp_millis()).as_bytes());
+                results_file.write_all(format!("{:?}, {:?}, {:?}\n", current_tip, tx_found_in_block, current_time.timestamp_millis() - s.timestamp_millis()).as_bytes());
                 println!("[{}]: {}txs", current_tip, found);
                 current_tip += 1;
             }

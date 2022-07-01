@@ -12,7 +12,8 @@ for host in `cat hosts`; do
   let i=$i+1
 done
 
-wait
+echo Waiting 40 seconds...
+sleep 40
 
 ./connect_all.sh $1
 #sleep 3
