@@ -102,7 +102,7 @@ impl Solana {
         //     .output()
         //     .unwrap();
         let build_command = format!(". ~/.cargo/env && export PATH=$PATH:/home/ubuntu/assesments/blockbench/benchmark/solana-install/solana/target/release && cd {:?} && cargo build-bpf", contract_directory);
-        let deploy_command = format!(". ~/.cargo/env && export PATH=$PATH:/home/ubuntu/assesments/blockbench/benchmark/solana-install/solana/target/release && cd {:?} && solana program deploy --keypair feePayer.json --program-id programId.json", contract_directory);
+        let deploy_command = format!(". ~/.cargo/env && export PATH=$PATH:/home/ubuntu/assesments/blockbench/benchmark/solana-install/solana/target/release && cd {:?} && solana program deploy --keypair feePayer.json --program-id programId.json {}", contract_directory, program_path.to_str().unwrap());
         // let deploy_command = format!("pwd");
         let build = duct_sh::sh_dangerous(&build_command).read().unwrap();
         let deploy = duct_sh::sh_dangerous(&deploy_command).read().unwrap();
