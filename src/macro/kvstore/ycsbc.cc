@@ -75,7 +75,6 @@ int StatusThread(string dbname, ycsbc::DB *db, double interval,
     confirm_duration = PARITY_CONFIRM_BLOCK_LENGTH;
   else
     confirm_duration = HL_CONFIRM_BLOCK_LENGTH;
-  resultsFile << "Block, Hash, Latency\n";
 
   while (true) {
     start_time = utils::time_now();
