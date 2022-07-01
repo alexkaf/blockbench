@@ -102,7 +102,7 @@ impl Solana {
         //     .output()
         //     .unwrap();
         let build_command = format!("source ~/.cargo/env && cd {:?} && cargo-build-bpf", contract_directory);
-        let build = duct_sh::sh(&build_command[..]).read().unwrap();
+        let build = duct_sh::sh_dangerous(&build_command).read().unwrap();
         println!("{}", build);
             // .stdout(Stdio::null())
             // .status()
