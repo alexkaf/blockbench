@@ -16,8 +16,8 @@ geth --datadir=$ETH_DATA \
      --nat extip:$1 \
      --miner.threads 6 > $ETH_DATA/log 2>&1 &
 
-echo Waiting 20 seconds...
-sleep 20
+echo Waiting 40 seconds...
+sleep 40
 
 #./gather.sh $2
 #
