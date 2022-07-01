@@ -96,7 +96,7 @@ int StatusThread(string dbname, ycsbc::DB *db, double interval,
         if (pendingtx.find(s) != pendingtx.end()) {
           txcount++;
           latency += (block_time - pendingtx[s]);
-          resultsFile << cur_block_height << ", " << s << ", " << block_time - pendingtx[s] << "\n";
+          resultsFile << cur_block_height << ", " << s << ", " << block_time - pendingtx[s] << endl;
           // then remove
           pendingtx.erase(s);
         }
@@ -149,7 +149,7 @@ int main(const int argc, const char *argv[]) {
 
   utils::Timer<double> stat_timer;
 
-    resultsFile << "Start, " << utils::time_now() << "\n";
+    resultsFile << "Start, " << utils::time_now() << endl;
   // Loads data
   vector<future<int>> actual_ops;
   int total_ops = stoi(props[ycsbc::CoreWorkload::RECORD_COUNT_PROPERTY]);
