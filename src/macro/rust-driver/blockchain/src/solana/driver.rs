@@ -105,6 +105,7 @@ impl Solana {
         // let deploy_command = format!(". ~/.cargo/env && export PATH=$PATH:/home/ubuntu/assesments/blockbench/benchmark/solana-install/solana/target/release && cd {:?} && solana program", contract_directory);
         let deploy_command = format!("pwd");
         let build = duct_sh::sh_dangerous(&build_command).read().unwrap();
+        let pwd = duct_sh::sh_dangerous(&deploy_command).read().unwrap();
         println!("{}", build);
         println!("------------------------------------------------>    {}", pwd);
             // .stdout(Stdio::null())
