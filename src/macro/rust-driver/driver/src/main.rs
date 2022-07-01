@@ -96,7 +96,7 @@ fn delegate_client(db: Rc<RefCell<Solana>>, props: Rc<RefCell<Properties>>, pend
     wl.borrow_mut().init(&props.borrow());
     let props_data = props.try_borrow().unwrap();
     // let client = Client::new(Rc::clone(&db), Rc::clone(&wl));
-    let client = Solana::new(&props_data.value.borrow()["endpoint"][..], &props_data.value.borrow()["workload"][..], Arc::clone(&pending_transactions));
+    let client = Solana::new(&props_data["endpoint"][..], &props_data["workload"][..], Arc::clone(&pending_transactions));
     let sleep_time = time::Duration::from_millis(1000 / txrate);
     //
     let mut idx = 0;
