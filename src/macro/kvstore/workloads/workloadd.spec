@@ -11,16 +11,16 @@
 # which orders items purely by time, and demands the latest, is very different than 
 # workload here (which we believe is more typical of how people build systems.)
 
-recordcount=8333
-operationcount=8333
-workload=ycsb
+recordcount=1250
+operationcount=1250
+workload=donothing
 
 readallfields=true
 
-readproportion=0.95
+readproportion=0.5
 updateproportion=0
 scanproportion=0
-insertproportion=0.05
+insertproportion=0.5
 
-requestdistribution=latest
+requestdistribution=uniform
 

@@ -11,16 +11,16 @@
 # which orders items purely by time, and demands the latest, is very different than
 # workload here (which we believe is more typical of how people build systems.)
 
-recordcount=833
-operationcount=833
+recordcount=714
+operationcount=714
 workload=donothing
 
 readallfields=true
 
-readproportion=0.95
-updateproportion=0
+readproportion=0.5
+updateproportion=0.5
 scanproportion=0
-insertproportion=0.05
+insertproportion=0
 
 requestdistribution=uniform
 

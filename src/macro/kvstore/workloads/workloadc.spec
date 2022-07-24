@@ -6,18 +6,18 @@
 #   Default data size: 1 KB records (10 fields, 100 bytes each, plus key)
 #   Request distribution: zipfian
 
-recordcount=12500
-operationcount=12500
-workload=ycsb
+recordcount=2500
+operationcount=2500
+workload=donothing
 
 readallfields=true
 
-readproportion=0
-updateproportion=1
+readproportion=0.5
+updateproportion=0.5
 scanproportion=0
 insertproportion=0
 
-requestdistribution=zipfian
+requestdistribution=uniform
 
 
 
