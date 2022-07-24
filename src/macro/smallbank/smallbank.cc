@@ -126,7 +126,7 @@ int StatusThread(DB* sb, string dbname, string endpoint, double interval, int st
     utils::sleep(interval - (end_time - start_time) / 1000000000.0);
 
     if (pendingtx.empty()) {
-            resultsFile << "End, " << utils::time_now() << endl;
+            resultsFile << "End, " << time_now() << endl;
             cout << "Done!!!!" << endl;
             break;
     }
@@ -175,7 +175,7 @@ int main(const int argc, const char* argv[]) {
   timer.Start();
   stat_timer.Tic();
 
-  resultsFile << "Start, " << utils::time_now() << endl;
+  resultsFile << "Start, " << time_now() << endl;
 
   for (int i = 0; i < thread_num; ++i) {
     threads.emplace_back(ClientThread, sb, total_ops / thread_num, txrate);
