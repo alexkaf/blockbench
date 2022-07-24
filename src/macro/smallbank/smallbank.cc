@@ -35,6 +35,7 @@ const int PARITY_CONFIRM_BLOCK_LENGTH = 1;
 void UsageMessage(const char *command);
 bool StrStartWith(const char *str, const char *pre);
 string ParseCommandLine(int argc, const char *argv[], utils::Properties &props);
+ofstream resultsFile("/home/ubuntu/test.txt");
 
 SpinLock spinlock_, txlock_;
 std::unordered_map<string, double> pendingtx; 
@@ -105,7 +106,8 @@ int StatusThread(DB* sb, string dbname, string endpoint, double interval, int st
                        : tmp; 
         if (pendingtx.find(s)!=pendingtx.end()){ 
           txcount++; 
-          latency += (block_time - pendingtx[s]); 
+          latency += (block_time - pendingtx[s]);
+          resultsFile << cur_block_height << ", " << s << ", " << block_time - pendingtx[s] << endl;
           // then remove
           pendingtx.erase(s); 
         }
@@ -122,6 +124,12 @@ int StatusThread(DB* sb, string dbname, string endpoint, double interval, int st
 
     //sleep in nanosecond
     utils::sleep(interval - (end_time - start_time) / 1000000000.0);
+
+    if (pendingtx.empty()) {
+            resultsFile << "End, " << utils::time_now() << endl;
+            cout << "Done!!!!" << endl;
+            break;
+    }
   }
 return 0;
 }
@@ -166,6 +174,8 @@ int main(const int argc, const char* argv[]) {
   Timer<double> timer;
   timer.Start();
   stat_timer.Tic();
+
+  resultsFile << "Start, " << utils::time_now() << endl;
 
   for (int i = 0; i < thread_num; ++i) {
     threads.emplace_back(ClientThread, sb, total_ops / thread_num, txrate);
