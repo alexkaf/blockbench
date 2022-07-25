@@ -11,8 +11,8 @@
 # which orders items purely by time, and demands the latest, is very different than
 # workload here (which we believe is more typical of how people build systems.)
 
-recordcount=833
-operationcount=833
+recordcount=1250
+operationcount=1250
 workload=donothing
 
 readallfields=true
