@@ -83,7 +83,7 @@ impl Solana {
     fn deploy(contract: &str) {
         println!("Contract {:?}", contract);
         let contract_directory = fs::canonicalize(
-            format!("/home/ubuntu/assesments/blockbench/benchmark/contracts/solana/{}", contract)).unwrap();
+            format!("/root/assesments/blockbench/benchmark/contracts/solana/{}", contract)).unwrap();
         let program_path =
             contract_directory.as_path().join(format!("target/deploy/{}.so", contract));
 
