@@ -147,14 +147,14 @@ fn client_thread(db: Rc<RefCell<Solana>>, props: Rc<RefCell<Properties>>, num_op
     }
 }
 
-fn status_thread(db: Rc<RefCell<Solana>>, props: Arc<Wrap<Properties>>, total_ops: u64, pending_transactions: Arc<Mutex<PendingTransactions>>, current_tip: u64) {
+fn status_thread(db: Rc<RefCell<Solana>>, props: Arc<Wrap<Properties>>, total_ops: u64, pending_transactions: Arc<Mutex<PendingTransactions>>, tip: u64) {
     let props = props.value.try_borrow().unwrap();
     let file_name = format!("/root/test.txt");
 
     let new_db = Solana::new(&props["endpoint"][..], &props["workload"][..], Arc::clone(&pending_transactions));
     let mut results_file = File::create(file_name).unwrap();
 
-    // let mut current_tip = db.borrow().get_tip();
+    let mut current_tip = tip;
     let mut last_tip = current_tip;
 
     let mut found = 0u64;
