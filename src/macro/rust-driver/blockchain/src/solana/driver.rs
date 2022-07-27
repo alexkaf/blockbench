@@ -12,6 +12,9 @@ use std::fs::{self, File};
 use std::io::Write;
 use std::fmt::{Debug, Display, Formatter};
 use std::sync::{Arc, Mutex, RwLock};
+use std::thread::sleep;
+use std::time;
+use std::time::Duration;
 use chrono::Utc;
 use solana_client::rpc_config::{RpcBlockConfig, RpcSendTransactionConfig};
 use solana_program::clock::UnixTimestamp;
@@ -105,6 +108,8 @@ impl Solana {
         let deploy_command = format!(". ~/.cargo/env && export PATH=$PATH:/root/assesments/blockbench/benchmark/solana-install/solana/target/release && solana program deploy --keypair feePayer.json --program-id programId.json {}", program_path.to_str().unwrap());
         // let deploy_command = format!("pwd");
         let build = duct_sh::sh_dangerous(&build_command).read().unwrap();
+
+        sleep(Duration::from_secs(2));
         let deploy = duct_sh::sh_dangerous(&deploy_command).read().unwrap();
         println!("{}", build);
         println!("{}", deploy);
