@@ -170,7 +170,7 @@ fn status_thread(db: Rc<RefCell<Solana>>, props: Arc<Wrap<Properties>>, total_op
                             if ! found_v {
                                 println!("LAST KNOWN: {}", current_tip);
                             }
-                            found_v = True;
+                            found_v = true;
                             if let TransactionInfo::Started(start_time) = pending_transactions.get(&contents.signatures[0]).unwrap() {
                                 results_file.write_all(format!("{:?}, {:?}, {:?}\n", current_tip, &contents.signatures[0], end_time.timestamp_millis() - start_time.timestamp_millis()).as_bytes());
                                 found += 1;
