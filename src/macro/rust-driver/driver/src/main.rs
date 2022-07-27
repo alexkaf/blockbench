@@ -78,15 +78,15 @@ fn main() {
     let db = Arc::clone(&db);
     let pending_transactions_arc = Arc::clone(&pending_transactions);
     let props = Arc::clone(&props);
-    let status_handle = thread::spawn(move || {
-        status_thread(Rc::clone(&db.value) , props, total_ops, pending_transactions_arc);
-    });
+    // let status_handle = thread::spawn(move || {
+    //     status_thread(Rc::clone(&db.value) , props, total_ops, pending_transactions_arc);
+    // });
 
     for handle in handles {
         handle.join().unwrap();
     }
-    // println!("Sent! {}", pending_transactions.lock().unwrap().len());
-    status_handle.join().unwrap();
+    println!("Sent! {}", pending_transactions.lock().unwrap().len());
+    // status_handle.join().unwrap();
     // println!("{}", (Utc::now() - now).num_milliseconds());
     // println!("{:?}", pending_transactions.lock().unwrap().len());
 }
