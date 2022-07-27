@@ -107,6 +107,10 @@ fn delegate_client(db: Rc<RefCell<Solana>>, props: Rc<RefCell<Properties>>, num_
         } else {
             client.do_transaction();
         }
+
+        if idx % 1000 == 0 {
+            println!("idx: {}", idx);
+        }
     }
 }
 
