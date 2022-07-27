@@ -159,7 +159,9 @@ fn status_thread(db: Rc<RefCell<Solana>>, props: Arc<Wrap<Properties>>, total_op
 
     let mut found = 0u64;
     loop {
-        while new_db.get_tip() == last_tip {}
+        while new_db.get_tip() == last_tip {
+            sleep(Duration::from_millis(100));
+        }
         let current_time = Utc::now();
         last_tip += 1;
         let current_block = db.borrow().poll_transaction_by_block(current_tip);
