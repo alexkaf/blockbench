@@ -173,7 +173,7 @@ fn status_thread(db: Rc<RefCell<Solana>>, props: Arc<Wrap<Properties>>, total_op
                         if pending_transactions.contains_key(&contents.signatures[0]) {
                             if ! found_v {
                                 println!("LAST KNOWN: {}", current_tip);
-                                println!("{:?}", &contents);
+                                // println!("{:?}", &contents);
                             }
                             found_v = true;
                             if let TransactionInfo::Started(start_time) = pending_transactions.get(&contents.signatures[0]).unwrap() {
