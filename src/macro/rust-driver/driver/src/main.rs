@@ -166,6 +166,7 @@ fn status_thread(db: Rc<RefCell<Solana>>, props: Arc<Wrap<Properties>>, total_op
                 for transaction in transactions {
                     if let EncodedTransaction::Json(contents) = transaction.transaction {
                         if pending_transactions.contains_key(&contents.signatures[0]) {
+                            println!("LAST KNOWN: {}", current_tip);
                             if let TransactionInfo::Started(start_time) = pending_transactions.get(&contents.signatures[0]).unwrap() {
                                 results_file.write_all(format!("{:?}, {:?}, {:?}\n", current_tip, &contents.signatures[0], end_time.timestamp_millis() - start_time.timestamp_millis()).as_bytes());
                                 found += 1;
