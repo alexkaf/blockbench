@@ -36,7 +36,8 @@ then
                         --enable-cpi-and-log-storage \
                         --gossip-host $1 \
                         --allow-private-addr \
-                        --log $LOGS/validator.log &
+                        --log $LOGS/validator.log \
+                         --limit-ledger-size 10000 &
 else
   [ ! -d $ACCOUNTS ] && mkdir -p $ACCOUNTS
 
