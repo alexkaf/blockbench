@@ -23,7 +23,7 @@ then
 
   # Create genesis
   echo CREATING BOOTSTRAP NODE GENESIS
-  ./multinode-demo/setup.sh  --bootstrap-validator-stake-lamports 5000000000000
+  ./multinode-demo/setup.sh  --bootstrap-validator-stake-lamports 5000000000000 --cluster-type dev
 
   # Start faucet
   echo STARTING FAUCET
