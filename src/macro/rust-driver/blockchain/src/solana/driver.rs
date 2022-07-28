@@ -76,13 +76,6 @@ impl Solana {
 
         let hash = connection.request_airdrop(&Signer::pubkey(&fee_payer), 100_000_000_000_000).unwrap();
 
-        let a = connection
-            .confirm_transaction_with_commitment(&hash, CommitmentConfig::finalized())
-            .as_ref()
-            .unwrap().value;
-        println!("{:?}", a);
-        println!("{:?}", &Signer::pubkey(&fee_payer));
-
         while connection
             .confirm_transaction_with_commitment(&hash, CommitmentConfig::finalized())
             .as_ref()
@@ -119,7 +112,7 @@ impl Solana {
     fn deploy(contract: &str) {
         println!("Contract {:?}", contract);
         let contract_directory = fs::canonicalize(
-            format!("/root/assesments/blockbench/benchmark/contracts/solana/{}", contract)).unwrap();
+            format!("/home/ubuntu/assesments/blockbench/benchmark/contracts/solana/{}", contract)).unwrap();
         let program_path =
             contract_directory.as_path().join(format!("target/deploy/{}.so", contract));
 
@@ -137,8 +130,8 @@ impl Solana {
         //     .current_dir(contract_directory)
         //     .output()
         //     .unwrap();
-        let build_command = format!(". ~/.cargo/env && export PATH=$PATH:/root/.local/share/solana/install/active_release/bin && cd {:?} && cargo build-bpf", contract_directory);
-        let deploy_command = format!(". ~/.cargo/env && export PATH=$PATH:/root/.local/share/solana/install/active_release/bin && solana program deploy --keypair feePayer.json --program-id programId.json {}", program_path.to_str().unwrap());
+        let build_command = format!(". ~/.cargo/env && export PATH=$PATH:/home/ubuntu/.local/share/solana/install/active_release/bin && cd {:?} && cargo build-bpf", contract_directory);
+        let deploy_command = format!(". ~/.cargo/env && export PATH=$PATH:/home/ubuntu/.local/share/solana/install/active_release/bin && solana program deploy --keypair feePayer.json --program-id programId.json {}", program_path.to_str().unwrap());
         // let deploy_command = format!("pwd");
         let build = duct_sh::sh_dangerous(&build_command).read().unwrap();
 
