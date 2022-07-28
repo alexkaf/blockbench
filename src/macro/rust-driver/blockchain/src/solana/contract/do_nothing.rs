@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 use rand::Rng;
 use solana_client::rpc_config::RpcSendTransactionConfig;
 use solana_sdk::signature::Signature;
