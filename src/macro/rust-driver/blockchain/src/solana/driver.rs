@@ -50,13 +50,6 @@ impl Solana {
         let fee_payer = Keypair::new();
         let program = Keypair::new();
 
-        let hash = connection.request_airdrop(&Signer::pubkey(&fee_payer), 100_000_000_000_000).unwrap();
-
-        while connection
-            .confirm_transaction_with_commitment(&hash, CommitmentConfig::finalized())
-            .as_ref()
-            .unwrap().value {}
-
         let rpc_block_config = RpcBlockConfig {
             encoding: None,
             transaction_details: None,
@@ -82,6 +75,12 @@ impl Solana {
         let program = Keypair::new();
 
         let hash = connection.request_airdrop(&Signer::pubkey(&fee_payer), 100_000_000_000_000).unwrap();
+
+        let a = connection
+            .confirm_transaction_with_commitment(&hash, CommitmentConfig::finalized())
+            .as_ref()
+            .unwrap().value;
+        println!("{:?}", a);
 
         while connection
             .confirm_transaction_with_commitment(&hash, CommitmentConfig::finalized())
