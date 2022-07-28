@@ -40,7 +40,41 @@ pub struct Solana {
 }
 
 impl Solana {
-    
+
+    pub fn new_without_deploy(url: &str, contract_type: &str, pending_transactions: Arc<Mutex<HashMap<String, TransactionInfo>>>) -> Self {
+        let connection = RpcClient::new_with_commitment(url, CommitmentConfig::confirmed());
+        connection.get_health().unwrap();
+
+        let fee_payer = Keypair::new();
+        let program = Keypair::new();
+
+        let hash = connection.request_airdrop(&Signer::pubkey(&fee_payer), 100_000_000_000_000).unwrap();
+
+        while connection
+            .confirm_transaction_with_commitment(&hash, CommitmentConfig::finalized())
+            .as_ref()
+            .unwrap().value {}
+
+        Self::store_keypair(&fee_payer, "feePayer.json");
+        Self::store_keypair(&program, "programId.json");
+
+        let rpc_block_config = RpcBlockConfig {
+            encoding: None,
+            transaction_details: None,
+            rewards: None,
+            commitment: Some(CommitmentConfig::confirmed()),
+            max_supported_transaction_version: None
+        };
+        Self {
+            connection,
+            fee_payer,
+            contract_type: String::from(contract_type),
+            program: Signer::pubkey(&program),
+            pending_transactions,
+            rpc_block_config,
+        }
+    }
+
     pub fn new(url: &str, contract_type: &str, pending_transactions: Arc<Mutex<HashMap<String, TransactionInfo>>>) -> Self {
         let connection = RpcClient::new_with_commitment(url, CommitmentConfig::confirmed());
         connection.get_health().unwrap();
