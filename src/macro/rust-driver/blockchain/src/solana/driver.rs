@@ -84,7 +84,7 @@ impl Solana {
         while connection
             .confirm_transaction_with_commitment(&hash, CommitmentConfig::finalized())
             .as_ref()
-            .unwrap().value {}
+            .unwrap().value { println!("Inside!"); }
 
         Self::store_keypair(&fee_payer, "feePayer.json");
         Self::store_keypair(&program, "programId.json");
