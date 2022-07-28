@@ -36,7 +36,6 @@ then
                         --enable-cpi-and-log-storage \
                         --gossip-host $1 \
                         --allow-private-addr \
-                        --
                         --log $LOGS/validator.log &
 else
   [ ! -d $ACCOUNTS ] && mkdir -p $ACCOUNTS
