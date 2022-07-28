@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 use std::cell::RefCell;
 use std::rc::Rc;
 use crate::counter::CounterGenerator;

@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 pub trait Init0 {
     type Object;
 

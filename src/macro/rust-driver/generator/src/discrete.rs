@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 use crate::generator::Generator;
 use crate::get_random_double;
 

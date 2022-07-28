@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 pub trait GeneratorOps<T> {
     fn next(&mut self) -> T;
 

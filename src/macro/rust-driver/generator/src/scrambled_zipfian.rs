@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 use crate::fnv_hash_64;
 use crate::zipfian::ZipfianGenerator;
 use crate::generator::Generator;

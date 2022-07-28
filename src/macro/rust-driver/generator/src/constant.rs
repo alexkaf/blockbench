@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 use crate::generator::Generator;
 
 #[derive(Debug)]

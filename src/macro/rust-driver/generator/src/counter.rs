@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 use std::sync::atomic::{
     AtomicU64,
     Ordering,
