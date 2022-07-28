@@ -136,8 +136,8 @@ impl Solana {
         //     .current_dir(contract_directory)
         //     .output()
         //     .unwrap();
-        let build_command = format!(". ~/.cargo/env && export PATH=$PATH:/root/assesments/blockbench/benchmark/solana-install/solana/target/release && cd {:?} && cargo build-bpf", contract_directory);
-        let deploy_command = format!(". ~/.cargo/env && export PATH=$PATH:/root/assesments/blockbench/benchmark/solana-install/solana/target/release && solana program deploy --keypair feePayer.json --program-id programId.json {}", program_path.to_str().unwrap());
+        let build_command = format!(". ~/.cargo/env && export PATH=$PATH:/root/.local/share/solana/install/active_release/bin && cd {:?} && cargo build-bpf", contract_directory);
+        let deploy_command = format!(". ~/.cargo/env && export PATH=$PATH:/root/.local/share/solana/install/active_release/bin && solana program deploy --keypair feePayer.json --program-id programId.json {}", program_path.to_str().unwrap());
         // let deploy_command = format!("pwd");
         let build = duct_sh::sh_dangerous(&build_command).read().unwrap();
 
