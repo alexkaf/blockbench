@@ -81,6 +81,7 @@ impl Solana {
             .as_ref()
             .unwrap().value;
         println!("{:?}", a);
+        println!("{:?}", &Signer::pubkey(&fee_payer));
 
         while connection
             .confirm_transaction_with_commitment(&hash, CommitmentConfig::finalized())
