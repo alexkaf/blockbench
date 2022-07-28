@@ -69,7 +69,7 @@ fn main() {
         let handle = thread::spawn(move || {
             match &workload[..] {
                 "smallbank" => client_thread(Rc::clone(&db.value), Rc::clone(&props.value), (total_ops / num_threads) as u64, txrate),
-                _ => delegate_client(Rc::clone(&db.value), Rc::clone(&props.value), (2 * total_ops / num_threads) as u64, true, txrate, total_ops),
+                _ => delegate_client(Rc::clone(&db.value), Rc::clone(&props.value), (2 * total_ops / num_threads) as u64, true, txrate),
             }
 
         });
