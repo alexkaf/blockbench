@@ -55,9 +55,6 @@ impl Solana {
             .as_ref()
             .unwrap().value {}
 
-        Self::store_keypair(&fee_payer, "feePayer.json");
-        Self::store_keypair(&program, "programId.json");
-
         let rpc_block_config = RpcBlockConfig {
             encoding: None,
             transaction_details: None,
