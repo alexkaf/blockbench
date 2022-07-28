@@ -112,14 +112,14 @@ impl Solana {
     fn deploy(contract: &str) {
         println!("Contract {:?}", contract);
         let contract_directory = fs::canonicalize(
-            format!("/home/ubuntu/assesments/blockbench/benchmark/contracts/solana/{}", contract)).unwrap();
+            format!("/root/assesments/blockbench/benchmark/contracts/solana/{}", contract)).unwrap();
         let program_path =
             contract_directory.as_path().join(format!("target/deploy/{}.so", contract));
 
         println!("{:?}", contract_directory);
         println!("{:?}", program_path);
 
-        // let a = Command::new("/home/ubuntu/.cargo/bin/cargo build-bpf").current_dir(&contract_directory).output().unwrap();
+        // let a = Command::new("/root/.cargo/bin/cargo build-bpf").current_dir(&contract_directory).output().unwrap();
         // let a
         // println!("{:?}", a);
         //
@@ -130,8 +130,8 @@ impl Solana {
         //     .current_dir(contract_directory)
         //     .output()
         //     .unwrap();
-        let build_command = format!(". ~/.cargo/env && export PATH=$PATH:/home/ubuntu/assesments/blockbench/benchmark/solana-install/solana/target/release && cd {:?} && cargo build-bpf", contract_directory);
-        let deploy_command = format!(". ~/.cargo/env && export PATH=$PATH:/home/ubuntu/assesments/blockbench/benchmark/solana-install/solana/target/release && solana program deploy --keypair feePayer.json --program-id programId.json {}", program_path.to_str().unwrap());
+        let build_command = format!(". ~/.cargo/env && export PATH=$PATH:/root/.local/share/solana/install/active_release/bin && cd {:?} && cargo build-bpf", contract_directory);
+        let deploy_command = format!(". ~/.cargo/env && export PATH=$PATH:/root/.local/share/solana/install/active_release/bin && solana program deploy --keypair feePayer.json --program-id programId.json {}", program_path.to_str().unwrap());
         // let deploy_command = format!("pwd");
         let build = duct_sh::sh_dangerous(&build_command).read().unwrap();
 
