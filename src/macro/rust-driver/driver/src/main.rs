@@ -69,7 +69,7 @@ fn main() {
         let handle = thread::spawn(move || {
             match &workload[..] {
                 "smallbank" => client_thread(Rc::clone(&db.value), Rc::clone(&props.value), (total_ops / num_threads) as u64, txrate),
-                _ => delegate_client(Rc::clone(&db.value), Rc::clone(&props.value), (total_ops / num_threads) as u64, true, txrate),
+                _ => delegate_client(Rc::clone(&db.value), Rc::clone(&props.value), (2 * total_ops / num_threads) as u64, true, txrate, total_ops),
             }
 
         });
@@ -194,7 +194,7 @@ fn status_thread(db: Rc<RefCell<Solana>>, props: Arc<Wrap<Properties>>, total_op
                 println!("Retry tip");
             }
         }
-        if found == pending_transactions.len() as u64 {
+        if found == pending_transactions.len() as u64 || found == total_ops {
             break;
         }
         // sleep(Duration::from_millis(1000));
