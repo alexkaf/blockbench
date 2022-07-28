@@ -14,7 +14,7 @@ BOOTSTRAP_NODE=$(head -n 1 hosts)
 
 [[ ! -d $VALIDATOR ]] && mkdir -p $LOGS
 
-$(command -v solana-sys-tuner) --user $(whoami) > $LOGS/sys-tuner.log 2>&1 &
+#$(command -v solana-sys-tuner) --user $(whoami) > $LOGS/sys-tuner.log 2>&1 &
 
 if [ $2 -eq 0 ]
 then
@@ -36,6 +36,7 @@ then
                         --enable-cpi-and-log-storage \
                         --gossip-host $1 \
                         --allow-private-addr \
+                        --
                         --log $LOGS/validator.log &
 else
   [ ! -d $ACCOUNTS ] && mkdir -p $ACCOUNTS
