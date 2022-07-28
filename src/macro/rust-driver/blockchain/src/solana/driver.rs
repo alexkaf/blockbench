@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 use std::collections::HashMap;
 use solana_sdk::{
     signature::{ Keypair, Signer },

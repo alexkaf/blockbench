@@ -1,3 +1,4 @@
+#![allow(unused)]
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::str::FromStr;
@@ -151,7 +152,7 @@ fn status_thread(db: Rc<RefCell<Solana>>, props: Arc<Wrap<Properties>>, total_op
     let props = props.value.try_borrow().unwrap();
     let file_name = format!("/root/test.txt");
 
-    let new_db = Solana::new(&props["endpoint"][..], &props["workload"][..], Arc::clone(&pending_transactions));
+    let new_db = Solana::new_without_deploy(&props["endpoint"][..], &props["workload"][..], Arc::clone(&pending_transactions));
     let mut results_file = File::create(file_name).unwrap();
 
     let mut current_tip = tip;

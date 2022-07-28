@@ -1,3 +1,4 @@
+#![allow(unused)]
 use std::cell::RefCell;
 use std::rc::Rc;
 use blockchain_driver::solana::driver::Solana;

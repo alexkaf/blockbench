@@ -1,3 +1,4 @@
+#![allow(unused)]
 use chrono::{DateTime, Utc};
 use solana_program::clock::{Slot, UnixTimestamp};
 use solana_transaction_status::EncodedTransactionWithStatusMeta;
