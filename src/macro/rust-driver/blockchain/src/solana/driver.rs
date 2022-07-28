@@ -76,7 +76,7 @@ impl Solana {
 
         let hash = connection.request_airdrop(&Signer::pubkey(&fee_payer), 100_000_000_000_000).unwrap();
 
-        while connection
+        while !connection
             .confirm_transaction_with_commitment(&hash, CommitmentConfig::finalized())
             .as_ref()
             .unwrap().value { println!("Inside!"); }
