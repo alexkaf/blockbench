@@ -195,7 +195,7 @@ fn status_thread(db: Rc<RefCell<Solana>>, props: Arc<Wrap<Properties>>, total_op
             }
         }
         println!("Found: {}, Total: {}", found, total_ops);
-        if found == pending_transactions.len() as u64 || found == total_ops {
+        if found == pending_transactions.len() as u64 || found >= total_ops {
             break;
         }
         // sleep(Duration::from_millis(1000));
