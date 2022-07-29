@@ -36,6 +36,7 @@ then
                         --enable-cpi-and-log-storage \
                         --gossip-host $1 \
                         --allow-private-addr \
+                        --tpu-use-quic \
                         --log $LOGS/validator.log &
 else
   [ ! -d $ACCOUNTS ] && mkdir -p $ACCOUNTS
@@ -80,6 +81,7 @@ else
     --gossip-port 8001
     --enable-rpc-transaction-history
     --enable-cpi-and-log-storage
+    --tpu-use-quic
     --vote-account $ACCOUNTS/vote-account-keypair.json
     --rpc-faucet-address $BOOTSTRAP_NODE:9900
     --allow-private-addr
