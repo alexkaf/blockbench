@@ -233,7 +233,7 @@ impl BlockChain for Solana {
     type Object = Solana;
 
     fn get_tip(&self) -> u64 {
-        self.connection.get_block_height_with_commitment(CommitmentConfig::confirmed()).unwrap()
+        self.connection.get_block_height_with_commitment(CommitmentConfig::finalized()).unwrap()
     }
 
     fn poll_transaction_by_block(&self, block_number: u64) -> Option<Vec<EncodedTransactionWithStatusMeta>> {
