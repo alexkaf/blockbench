@@ -194,6 +194,7 @@ fn status_thread(db: Rc<RefCell<Solana>>, props: Arc<Wrap<Properties>>, total_op
                 println!("Retry tip");
             }
         }
+        println!("Found: {}, Total: {}", found, total_ops);
         if found == pending_transactions.len() as u64 || found == total_ops {
             break;
         }
