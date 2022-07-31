@@ -60,6 +60,7 @@ if __name__ == '__main__':
 
     plt.plot(blocks_list, txs_per_blk)
     # plt.show()
+    print('Total transactions: {}'.format(len(blocks)))
     print('Average latency: {}'.format(average))
     print('TPS: {}'.format(1e9 * len(latencies) / total_time))
     print('Total time: {}'.format(total_time / 1e9))
