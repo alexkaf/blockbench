@@ -184,6 +184,7 @@ fn status_thread(db: Rc<RefCell<Solana>>, props: Arc<Wrap<Properties>>, total_op
                             found_v = true;
                             if let TransactionInfo::Started(start_time) = pending_transactions.get(&contents.signatures[0]).unwrap() {
                                 results_file.write_all(format!("{:?}, {:?}, {:?}\n", current_tip, &contents.signatures[0], end_time.timestamp_nanos() - start_time.timestamp_nanos()).as_bytes());
+                                pending_transactions.remove(&contents.signatures[0]);
                                 found += 1;
                             }
                         }
