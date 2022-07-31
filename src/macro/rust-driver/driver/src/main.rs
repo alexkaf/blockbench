@@ -150,7 +150,7 @@ fn client_thread(db: Rc<RefCell<Solana>>, props: Rc<RefCell<Properties>>, num_op
 
 fn status_thread(db: Rc<RefCell<Solana>>, props: Arc<Wrap<Properties>>, total_ops: u64, pending_transactions: Arc<Mutex<PendingTransactions>>, tip: u64) {
     let props = props.value.try_borrow().unwrap();
-    let file_name = format!("/root/test.txt");
+    let file_name = format!("/home/ubuntu/test.txt");
 
     let new_db = Solana::new_without_deploy(&props["endpoint"][..], &props["workload"][..], Arc::clone(&pending_transactions));
     let mut results_file = File::create(file_name).unwrap();
@@ -159,6 +159,8 @@ fn status_thread(db: Rc<RefCell<Solana>>, props: Arc<Wrap<Properties>>, total_op
     let mut last_tip = current_tip;
 
     let mut found = 0u64;
+
+    results_file.write_all(format!("Start, {:?} \n", Utc::now().timestamp_nanos()).as_bytes());
 
     loop {
         while new_db.get_tip() == last_tip {
@@ -192,11 +194,16 @@ fn status_thread(db: Rc<RefCell<Solana>>, props: Arc<Wrap<Properties>>, total_op
                 current_tip += 1;
             }
             None => {
-                println!("Retry tip");
+                results_file.write_all(format!("End, {:?} \n", Utc::now().timestamp_nanos()).as_bytes());
+                println!("Stopped");
+                break;
+                
             }
         }
         println!("Found: {}, Total: {}", found, total_ops);
         if found == pending_transactions.len() as u64 || found >= total_ops {
+            results_file.write_all(format!("End, {:?} \n", Utc::now().timestamp_nanos()).as_bytes());
+            println!("Done!");
             break;
         }
         // sleep(Duration::from_millis(1000));
