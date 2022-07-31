@@ -29,7 +29,7 @@ def parse_file(file_name):
                     #     print(line)
                 except (ValueError, IndexError):
                     continue
-
+    print(start , end)
     return block, latency, end - start
 
 
@@ -51,16 +51,16 @@ def txs_per_block(block_list):
 
 
 if __name__ == '__main__':
-    file = '../../../macro/kvstore/results/eth/donothing/eth_14_nodes_latencies'
+    # file = '../../../macro/kvstore/results/eth/donothing/eth_14_nodes_latencies'
     # file = '../../../../benchmark/solana-install/all'
+    file = "/home/alexandros/alls"
 
     blocks, latencies, total_time = parse_file(file)
     average = average_latency(latencies)
-
     blocks_list, txs_per_blk = txs_per_block(blocks)
 
     plt.plot(blocks_list, txs_per_blk)
-    plt.show()
+    # plt.show()
     print(average)
     print(1e9 * len(latencies) / total_time)
     print(total_time / 1e9)
