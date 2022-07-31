@@ -29,7 +29,6 @@ def parse_file(file_name):
                     #     print(line)
                 except (ValueError, IndexError):
                     continue
-    print(start , end)
     return block, latency, end - start
 
 
@@ -61,7 +60,7 @@ if __name__ == '__main__':
 
     plt.plot(blocks_list, txs_per_blk)
     # plt.show()
-    print(average)
-    print(1e9 * len(latencies) / total_time)
-    print(total_time / 1e9)
+    print('Average latency: {}'.format(average))
+    print('TPS: {}'.format(1e9 * len(latencies) / total_time))
+    print('Total time: {}'.format(total_time / 1e9))
 
