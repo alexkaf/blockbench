@@ -159,8 +159,7 @@ fn status_thread(db: Rc<RefCell<Solana>>, props: Arc<Wrap<Properties>>, total_op
     let mut last_tip = current_tip;
 
     let mut found = 0u64;
-    let a = 2;
-    
+
     loop {
         while new_db.get_tip() == last_tip {
             sleep(Duration::from_millis(100));
