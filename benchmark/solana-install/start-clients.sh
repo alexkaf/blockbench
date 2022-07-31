@@ -6,7 +6,7 @@ source $here/env.sh
 
 idx=0
 for client in $(cat clients); do
-  if [$idx -eq $1] then 
+  if [ $idx -eq $1 ] then 
     exit 0
   done
 
