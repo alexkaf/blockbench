@@ -202,6 +202,8 @@ fn status_thread(db: Rc<RefCell<Solana>>, props: Arc<Wrap<Properties>>, total_op
         }
         println!("Found: {}, Total: {}", found, total_ops);
         if found == total_ops as u64 || found >= total_ops {
+            println!("{} {}", found, total_ops);
+            println!("{} {}", found == total_ops, found >= total_ops);
             results_file.write_all(format!("End, {:?} \n", Utc::now().timestamp_nanos()).as_bytes());
             println!("Done!");
             break;
