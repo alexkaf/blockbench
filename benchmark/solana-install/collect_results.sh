@@ -5,7 +5,7 @@ idx=0
 for client in $(cat clients); do
   if [ $idx -eq "$1" ]
   then
-    exit 0
+    break
   fi
 
   scp "ubuntu@$client:~/test.txt" "temp_$idx" &

@@ -171,10 +171,6 @@ fn status_thread(db: Rc<RefCell<Solana>>, props: Arc<Wrap<Properties>>, total_op
         let current_block = db.borrow().poll_transaction_by_block(current_tip);
         let mut pending_transactions = pending_transactions.lock().unwrap();
         let mut end_time = Utc::now();
-<<<<<<< HEAD
-        
-=======
->>>>>>> 43e26084aba749000cb1240e622976e88be02977
         match current_block {
             Some(transactions) => {
                 for transaction in transactions {
