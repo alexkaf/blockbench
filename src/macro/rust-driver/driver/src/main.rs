@@ -171,17 +171,12 @@ fn status_thread(db: Rc<RefCell<Solana>>, props: Arc<Wrap<Properties>>, total_op
         let current_block = db.borrow().poll_transaction_by_block(current_tip);
         let mut pending_transactions = pending_transactions.lock().unwrap();
         let mut end_time = Utc::now();
-        let mut found_v = false;
+        
         match current_block {
             Some(transactions) => {
                 for transaction in transactions {
                     if let EncodedTransaction::Json(contents) = transaction.transaction {
                         if pending_transactions.contains_key(&contents.signatures[0]) {
-                            if ! found_v {
-                                println!("LAST KNOWN: {}", current_tip);
-                                // println!("{:?}", &contents);
-                            }
-                            found_v = true;
                             if let TransactionInfo::Started(start_time) = pending_transactions.get(&contents.signatures[0]).unwrap() {
                                 results_file.write_all(format!("{:?}, {:?}, {:?}\n", current_tip, &contents.signatures[0], end_time.timestamp_nanos() - start_time.timestamp_nanos()).as_bytes());
                                 pending_transactions.remove(&contents.signatures[0]);
