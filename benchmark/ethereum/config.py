@@ -1,3 +1,7 @@
-NODES=['10.0.0.{}'.format(x) for x in range(3,11)]
+NODES = []
+with open('./hosts') as hosts:
+    for line in hosts.readlines():
+        NODES += [line.strip('\n')]
+
 partition_cmd = './partition.sh {} {} {} &'
 TIMEOUT=150
