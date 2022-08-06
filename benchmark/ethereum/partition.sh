@@ -15,11 +15,11 @@ echo NodeX: $nodeX
 echo NodeY: $nodeY
 echo Drop Time: $time  
 
-ssh $nodeX sudo iptables -w -A INPUT -p tcp -s $nodeY -j DROP
-ssh $nodeY sudo iptables -w -A INPUT -p tcp -s $nodeX -j DROP 
+ssh ubuntu@$nodeX "sudo iptables -w -A INPUT -p tcp -s $nodeY -j DROP"
+ssh ubuntu@$nodeY "sudo iptables -w -A INPUT -p tcp -s $nodeX -j DROP "
 sleep $time
-ssh $nodeX sudo iptables -w -D INPUT -p tcp -s $nodeY -j DROP
-ssh $nodeY sudo iptables -w -D INPUT -p tcp -s $nodeX -j DROP
+ssh ubuntu@$nodeX "sudo iptables -w -D INPUT -p tcp -s $nodeY -j DROP"
+ssh ubuntu@$nodeY "sudo iptables -w -D INPUT -p tcp -s $nodeX -j DROP"
 
 
 
