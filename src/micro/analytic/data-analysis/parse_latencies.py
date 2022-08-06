@@ -9,7 +9,7 @@ def parse_file(file_name):
     end = -start
 
     with open(file_name) as latencies:
-        for line in latencies.readlines()[1:]:
+        for line in latencies.readlines():
             split = line.strip('\n').split(', ')
 
             if split[0] == 'Start':
@@ -52,7 +52,7 @@ def txs_per_block(block_list):
 if __name__ == '__main__':
     # file = '../../../macro/kvstore/results/eth/donothing/eth_14_nodes_latencies'
     # file = '../../../../benchmark/solana-install/all'
-    file = "/home/alexandros/alls"
+    file = "/root/results.txt"
 
     blocks, latencies, total_time = parse_file(file)
     average = average_latency(latencies)
