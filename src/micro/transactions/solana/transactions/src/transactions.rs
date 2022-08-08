@@ -63,12 +63,13 @@ impl Transactions {
 
         let mut monitors = vec![];
 
-        let mut results = File::create("/root/results.txt").unwrap();
+        let mut results = File::create("/home/ubuntu/results.txt").unwrap();
         let mut pending = Arc::clone(&pending);
         let env = Arc::clone(&env);
 
         results.write_all(format!("Start, {}\n", Utc::now().timestamp_nanos()).as_bytes());
         let monitor = thread::spawn(move || {
+            println!("Started monitoriung transactions...");
             let client = &env.clients()[0];
 
             let mut current_slot = client.get_block_height().unwrap();
@@ -102,7 +103,7 @@ impl Transactions {
                         results.write_all(format!("{}, , {:?}\n", current_slot, (Utc::now().timestamp_nanos() - pending.read().unwrap().get(&signature).unwrap().timestamp_nanos())).as_bytes());
                     }
                 }
-                if pending.read().unwrap().len() == (total_threads * txs_per_thread) as usize {
+                if total_found == (total_threads * txs_per_thread) as usize {
                     println!("Done!");
                     results.write_all(format!("End, {}\n", Utc::now().timestamp_nanos()).as_bytes());
                     return ;
