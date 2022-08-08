@@ -50,26 +50,20 @@ impl Transactions {
             let env = Arc::clone(&env);
 
             let handle = thread::spawn(move || {
-                let mut client_cycle = env.clients().iter().cycle();
-                for tx_idx in start..end {
-                    let current_transaction = &transactions_list[tx_idx];
-                    let hash = client_cycle.next().unwrap().send_transaction_with_config(current_transaction, Self::CONFIGS).unwrap();
-                    pending.write().unwrap().insert(hash.to_string(), Utc::now());
-                    sleep(sleep_time);
-                }
+                Self::send_transactions(env, transactions_list, pending, start, end, sleep_time);
             });
             handles.push(handle);
         }
 
         let mut monitors = vec![];
 
-        let mut results = File::create("/home/ubuntu/results.txt").unwrap();
+        let mut results = File::create("/root/results.txt").unwrap();
         let mut pending = Arc::clone(&pending);
         let env = Arc::clone(&env);
 
         results.write_all(format!("Start, {}\n", Utc::now().timestamp_nanos()).as_bytes());
         let monitor = thread::spawn(move || {
-            println!("Started monitoriung transactions...");
+            println!("Started monitoring transactions...");
             let client = &env.clients()[0];
 
             let mut current_slot = client.get_block_height().unwrap();
@@ -97,20 +91,25 @@ impl Transactions {
                 for signature in block_signatures {
                     if pending.read().unwrap().contains_key(&signature) {
                         total_found += 1;
-                        if total_found % 1000 == 0 {
+                        if total_found % 100 == 0 {
                             println!("{}/{}", total_found, total_threads * txs_per_thread);
                         }
                         results.write_all(format!("{}, , {:?}\n", current_slot, (Utc::now().timestamp_nanos() - pending.read().unwrap().get(&signature).unwrap().timestamp_nanos())).as_bytes());
+                        pending.write().unwrap().remove(&signature);
                     }
                 }
+                
                 if total_found == (total_threads * txs_per_thread) as usize {
                     println!("Done!");
                     results.write_all(format!("End, {}\n", Utc::now().timestamp_nanos()).as_bytes());
                     return ;
+                } else {
+                    println!("{} left...", pending.read().unwrap().len());
                 }
             }
         });
         monitors.push(monitor);
+
 
         for handle in handles {
             handle.join().unwrap();
@@ -121,6 +120,16 @@ impl Transactions {
         }
 
 
+    }
+
+    fn send_transactions(env: Arc<Environment>, transactions_list: Arc<Vec<Transaction>>, pending: Arc<RwLock<HashMap<String, DateTime<Utc>>>>, start: usize, end: usize, sleep_time: Duration) {
+        let mut client_cycle = env.clients().iter().cycle();
+        for tx_idx in start..end {
+            let current_transaction = &transactions_list[tx_idx];
+            let hash = client_cycle.next().unwrap().send_transaction_with_config(current_transaction, Self::CONFIGS).unwrap();
+            pending.write().unwrap().insert(hash.to_string(), Utc::now());
+            sleep(sleep_time);
+        }
     }
 
     fn collect_signatures_from_block(block: UiConfirmedBlock) -> Vec<String> {
