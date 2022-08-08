@@ -63,55 +63,53 @@ impl Transactions {
 
         let mut monitors = vec![];
 
-        for (client_idx, _) in env.clients().iter().enumerate() {
-            let mut results = File::create("/root/results.txt").unwrap();
-            let mut pending = Arc::clone(&pending);
-            let env = Arc::clone(&env);
+        let mut results = File::create("/root/results.txt").unwrap();
+        let mut pending = Arc::clone(&pending);
+        let env = Arc::clone(&env);
 
-            results.write_all(format!("Start, {}\n", Utc::now().timestamp_nanos()).as_bytes());
-            let monitor = thread::spawn(move || {
-                let client = &env.clients()[client_idx];
+        results.write_all(format!("Start, {}\n", Utc::now().timestamp_nanos()).as_bytes());
+        let monitor = thread::spawn(move || {
+            let client = &env.clients()[0];
 
-                let mut current_slot = client.get_block_height().unwrap();
-                let mut total_found = 0;
-                loop {
-                    let next_slot = client.get_block_height_with_commitment(CommitmentConfig::confirmed()).unwrap();
+            let mut current_slot = client.get_block_height().unwrap();
+            let mut total_found = 0;
+            loop {
+                let next_slot = client.get_block_height_with_commitment(CommitmentConfig::confirmed()).unwrap();
 
-                    if next_slot == current_slot {
-                        sleep(Duration::from_millis(100));
-                        continue
-                    } else {
-                        current_slot = next_slot;
-                    }
+                if next_slot == current_slot {
+                    sleep(Duration::from_millis(100));
+                    continue
+                } else {
+                    current_slot = next_slot;
+                }
 
-                    let contents = client.get_block_with_config(current_slot, RpcBlockConfig {
-                        encoding: None,
-                        transaction_details: None,
-                        rewards: None,
-                        commitment: Some(CommitmentConfig::confirmed()),
-                        max_supported_transaction_version: None,
-                    }).unwrap();
+                let contents = client.get_block_with_config(current_slot, RpcBlockConfig {
+                    encoding: None,
+                    transaction_details: None,
+                    rewards: None,
+                    commitment: Some(CommitmentConfig::confirmed()),
+                    max_supported_transaction_version: None,
+                }).unwrap();
 
-                    let block_signatures = Self::collect_signatures_from_block(contents);
+                let block_signatures = Self::collect_signatures_from_block(contents);
 
-                    for signature in block_signatures {
-                        if pending.read().unwrap().contains_key(&signature) {
-                            total_found += 1;
-                            if total_found % 1000 == 0 {
-                                println!("{}/{}", total_found, total_threads * txs_per_thread);
-                            }
-                            results.write_all(format!("{}, , {:?}\n", current_slot, (Utc::now().timestamp_nanos() - pending.read().unwrap().get(&signature).unwrap().timestamp_nanos())).as_bytes());
+                for signature in block_signatures {
+                    if pending.read().unwrap().contains_key(&signature) {
+                        total_found += 1;
+                        if total_found % 1000 == 0 {
+                            println!("{}/{}", total_found, total_threads * txs_per_thread);
                         }
-                    }
-                    if pending.read().unwrap().len() == (total_threads * txs_per_thread) as usize {
-                        println!("Done!");
-                        results.write_all(format!("End, {}\n", Utc::now().timestamp_nanos()).as_bytes());
-                        return ;
+                        results.write_all(format!("{}, , {:?}\n", current_slot, (Utc::now().timestamp_nanos() - pending.read().unwrap().get(&signature).unwrap().timestamp_nanos())).as_bytes());
                     }
                 }
-            });
-            monitors.push(monitor);
-        }
+                if pending.read().unwrap().len() == (total_threads * txs_per_thread) as usize {
+                    println!("Done!");
+                    results.write_all(format!("End, {}\n", Utc::now().timestamp_nanos()).as_bytes());
+                    return ;
+                }
+            }
+        });
+        monitors.push(monitor);
 
         for handle in handles {
             handle.join().unwrap();
