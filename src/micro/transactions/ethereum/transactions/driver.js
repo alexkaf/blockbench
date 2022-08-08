@@ -4,4 +4,7 @@ const eth = require('./eth.js');
 const argsObject = parser();
 
 const p = eth.getProvider(argsObject["endpoint"][0]);
-console.log(p.eth.getBlockNumber());
+
+(async() => {
+    console.log(await p.eth.getBlockNumber());
+})();
