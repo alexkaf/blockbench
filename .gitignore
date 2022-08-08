@@ -11,4 +11,4 @@ log.txt
 kvstore/driver
 *.o
 tmp
-rust-driver
+target/
