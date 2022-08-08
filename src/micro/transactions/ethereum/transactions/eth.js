@@ -10,4 +10,5 @@ const collectAccounts = async (provider) => {
 
 module.exports = {
     getProvider: getProvider,
+    collectAccounts: collectAccounts,
 }
