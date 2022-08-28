@@ -1,6 +1,6 @@
 import math
 import matplotlib.pyplot as plt
-
+import sys
 
 def parse_file(file_name):
     block = []
@@ -50,8 +50,9 @@ def txs_per_block(block_list):
 
 
 if __name__ == '__main__':
-    file = '/home/alexandros/saturation_240tps2_sol'
-    # # file = '../../../../benchmark/solana-install/all'
+    # file = '/home/alexandros/Desktop/solana/tps100_s'
+    file = sys.argv[1]
+    # # file = '../../../../benchmark/solaninstall/all'
     # file = "/home/alexandros/alls"
 
     blocks, latencies, total_time = parse_file(file)
