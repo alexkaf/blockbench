@@ -14,6 +14,9 @@ geth --datadir=$ETH_DATA \
      --password <(echo -n "") \
      --mine \
      --nat extip:$1 \
+     --metrics \
+     --metrics.port 6061 \
+     --pprof \
      --miner.threads 6 > $ETH_DATA/log 2>&1 &
 
 #echo Waiting 60 seconds...
