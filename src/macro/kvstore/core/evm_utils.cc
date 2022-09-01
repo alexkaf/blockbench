@@ -29,17 +29,13 @@ const std::string SEND_TXN_PREFIX =
     "{\
   \"jsonrpc\": \"2.0\", \
   \"method\": \"eth_sendTransaction\", \
-  \"params\": [{ \"gas\": \"0xa00000\", \
-                \"gasPrice\": \"0x0\", \
-                \"from\": \"";
+  \"params\": [{ \"from\": \"";
 
 const std::string CALL_PREFIX =
     "{\
   \"jsonrpc\": \"2.0\", \
   \"method\": \"eth_call\", \
-  \"params\": [{ \"gas\": \"0xa00000\",\
-                \"gasPrice\": \"0x0\", \
-                \"from\": \"";
+  \"params\": [{ \"from\": \"";
 
 const std::string GET_TXN_PREFIX =
     "{\
@@ -84,9 +80,7 @@ const std::string GET_ACCOUNTS =
 const std::string DEPLOY_SMARTCONTRACT_PREFIX =
     " {\"jsonrpc\":\"2.0\",\
   \"method\":\"eth_sendTransaction\",\
-  \"params\": [{ \"gas\": \"0xa00000\",\
-                \"gasPrice\": \"0x0\", \
-               \"from\": \"";
+  \"params\": [{ \"from\": \"";
 
 const std::string DEPLOY_DONOTHING_SMARTCONTRACT_SUFFIX =
     "\", \"data\": "
