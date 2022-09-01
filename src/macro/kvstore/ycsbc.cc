@@ -24,7 +24,7 @@
 using namespace std;
 
 const unsigned int BLOCK_POLLING_INTERVAL = 2;
-const unsigned int CONFIRM_BLOCK_LENGTH = 5;
+const unsigned int CONFIRM_BLOCK_LENGTH = 0;
 const unsigned int HL_CONFIRM_BLOCK_LENGTH = 1;
 const unsigned int PARITY_CONFIRM_BLOCK_LENGTH = 1;
 
