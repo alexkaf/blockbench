@@ -11,3 +11,5 @@ log.txt
 kvstore/driver
 *.o
 tmp
+target
+debug
