@@ -13,3 +13,5 @@ kvstore/driver
 tmp
 target
 debug
+.temp
+bandwidth
