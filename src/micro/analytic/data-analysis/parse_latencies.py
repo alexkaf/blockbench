@@ -31,6 +31,8 @@ def parse_file(file_name):
                     continue
     return block, latency, end - start
 
+def get_starting_block(blocks):
+    return min(blocks)
 
 def average_latency(latency_list):
     return sum(latency_list) / len(latency_list)
@@ -62,6 +64,7 @@ if __name__ == '__main__':
     plt.plot(blocks_list, txs_per_blk)
     # plt.show()
     print('Total transactions: {}'.format(len(blocks)))
+    print('Starting Block: {}'. format(get_starting_block(blocks)))
     print('Average latency: {}'.format(average))
     print('TPS: {}'.format(1e9 * len(latencies) / total_time))
     print('Total time: {}'.format(total_time / 1e9))
