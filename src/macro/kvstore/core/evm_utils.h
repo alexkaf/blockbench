@@ -65,7 +65,8 @@ std::string submit_do_nothing_txn(const std::string& endpoint,
 std::string submit_set_txn(const std::string& endpoint, const std::string& key,
                            const std::string& val,
                            const std::string& from_address,
-                           const std::string& to_address);
+                           const std::string& to_address,
+                           const int nonce);
 
 ///
 /// submit a async get transaction to the server

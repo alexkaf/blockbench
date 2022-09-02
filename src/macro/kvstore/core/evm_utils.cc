@@ -251,8 +251,13 @@ std::string compose_read(const std::string &key,
 
 std::string compose_write(const std::string &key, const std::string &val,
                           const std::string &from_address,
-                          const std::string &to_address) {
-  return SEND_TXN_PREFIX + from_address + MIDDLE_PART_1 + to_address +
+                          const std::string &to_address,
+                          const int nonce) {
+
+  std::stringstream hexNonce;
+  hexNonce << std::setbase(16) << nonce;
+
+  return SEND_TXN_PREFIX + from_address + MIDDLE_PART_1 + to_address + NONCE_PART + hexNonce.str() +
          MIDDLE_PART_2 + encode_set(key, val) + SEND_TXN_SUFFIX;
 }
 
@@ -365,11 +370,12 @@ std::string submit_do_nothing_txn(const std::string &endpoint,
 std::string submit_set_txn(const std::string &endpoint, const std::string &key,
                            const std::string &val,
                            const std::string &from_address,
-                           const std::string &to_address) {
+                           const std::string &to_address,
+                           const int nonce) {
 
   auto r =
       send_jsonrpc_request(endpoint, REQUEST_HEADERS,
-                           compose_write(key, val, from_address, to_address));
+                           compose_write(key, val, from_address, to_address, nonce));
   return get_json_field(r, "result");
 }
 

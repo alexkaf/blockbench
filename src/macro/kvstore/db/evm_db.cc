@@ -64,7 +64,7 @@ int EVMDB::Update(const string &table, const string &key,
   std::string txn_hash =
       (sctype_ == BBUtils::SmartContractType::DoNothing)
           ? submit_do_nothing_txn(endpoint_, from_address_, to_address_, nonce_++)
-          : submit_set_txn(endpoint_, key, val, from_address_, to_address_);
+          : submit_set_txn(endpoint_, key, val, from_address_, to_address_, nonce_++);
   nonceLock_->unlock();
   txlock_->lock();
   if (txn_hash != ":"){
