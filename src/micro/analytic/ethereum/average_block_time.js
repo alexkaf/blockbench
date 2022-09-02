@@ -27,7 +27,7 @@ const averageFromFirstBlock = async(fromBlock) => {
 
     const endIndex = await web3.eth.getBlockNumber();
     if (!isNaN(fromBlock)) {
-        startIdx = endIndex - fromBlock;
+        startIdx = fromBlock;
     } else {
         startIdx = 1;
     }
