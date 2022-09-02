@@ -22,8 +22,14 @@ function average(theList) {
     return sumOfList / theList.length;
 }
 
-const averageFromFirstBlock = async() => {
-    let currentIdx = 0;
+const averageFromFirstBlock = async(fromBlock) => {
+    let currentIdx;
+    if (fromBlock !== undefined) {
+        currentIdx = fromBlock;
+    } else {
+        currentIdx = 0;
+    }
+    
     let timestamps = [];
 
     while (true) {
