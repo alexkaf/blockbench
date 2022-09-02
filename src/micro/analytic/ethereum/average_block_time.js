@@ -23,9 +23,14 @@ function average(theList) {
 }
 
 const averageFromFirstBlock = async(fromBlock, toBlock) => {
-    let startIdx;
+    let startIdx, endIndex;
 
-    const endIndex = toBlock;
+    if (!isNaN(toBlock)) {
+        endIndex = toBlock;    
+    }else {
+        endIndex = await web3.eth.getBlockNumber();
+    }
+
     if (!isNaN(fromBlock)) {
         startIdx = fromBlock;
     } else {
