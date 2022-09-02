@@ -71,5 +71,5 @@ const monitor = async () => {
     })
 };
 
-averageFromFirstBlock();
+averageFromFirstBlock(parseInt(process.argv[2]));
 // monitor();
