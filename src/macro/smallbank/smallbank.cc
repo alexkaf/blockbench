@@ -29,7 +29,7 @@ Timer<double> stat_timer;
 
 const int HL_CONFIRM_BLOCK_LENGTH = 1;
 const int BLOCK_POLLING_INTERVAL = 2; 
-const int CONFIRM_BLOCK_LENGTH = 5;
+const int CONFIRM_BLOCK_LENGTH = 0;
 const int PARITY_CONFIRM_BLOCK_LENGTH = 1;
 
 void UsageMessage(const char *command);
@@ -90,7 +90,6 @@ int StatusThread(DB* sb, string dbname, string endpoint, double interval, int st
   while(true){
     start_time = time_now(); 
     int tip = sb->get_tip_block_number();
-    cout << tip << endl;
     if (tip==-1) // fail
       sleep(interval); 
     while (cur_block_height + confirm_duration <= tip) {      
