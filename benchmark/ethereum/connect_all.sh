@@ -10,7 +10,7 @@ function copy_and_connect() {
 
   cd "$ETH_HOME"
   for com in $(cat addPeer.txt); do
-    ssh -oStrictHostKeyChecking=no "$CURRENT_USER@$1" "geth attach ~/ethereum/data/geth.ipc --exec $com"
+    ssh -oStrictHostKeyChecking=no "$CURRENT_USER@$1" "geth attach --exec $com ~/ethereum/data/geth.ipc"
   done
 }
 
