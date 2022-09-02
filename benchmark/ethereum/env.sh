@@ -3,7 +3,7 @@ HOSTS=$ETH_HOME/hosts
 CLIENTS=$ETH_HOME/clients
 ETH_DATA=/home/ubuntu/ethereum/data
 LOG_DIR=$ETH_HOME/logs
-EXE_HOME=/home/ubuntu/assesments/blockbench/src/macro/kvstore
+EXE_HOME=/home/ubuntu/assesments/blockbench/src/macro/smallbank
 BENCHMARK=ycsb
 CURRENT_USER=ubuntu
 
