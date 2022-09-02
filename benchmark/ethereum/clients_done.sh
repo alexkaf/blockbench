@@ -16,4 +16,6 @@ TESTS_DONE=$(cat .temp | grep End | wc -l)
 
 if [ "$TESTS_DONE" = "$1" ]; then
     echo true
+else 
+    echo $TESTS_DONE/$1
 fi
