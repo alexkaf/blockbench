@@ -54,22 +54,24 @@ def txs_per_block(block_list):
     return [list(c_tuple) for c_tuple in tuples]
 
 
+def average(data):
+    return sum(data) / len(data)
+
+
 if __name__ == '__main__':
-    # file = '/home/alexandros/Desktop/solana/tps100_s'
     file = sys.argv[1]
-    # # file = '../../../../benchmark/solaninstall/all'
-    # file = "/home/alexandros/alls"
 
     blocks, latencies, total_time = parse_file(file)
-    average = average_latency(latencies)
+    average_lat = average_latency(latencies)
     blocks_list, txs_per_blk = txs_per_block(blocks)
 
     plt.plot(blocks_list, txs_per_blk)
-    # plt.show()
+
     print('Total transactions: {}'.format(len(blocks)))
+    print('Transactions per block: {}'.format(average(txs_per_blk)))
     print('Starting Block: {}'. format(get_starting_block(blocks)))
     print('Ending Block: {}'. format(get_ending_block(blocks)))
-    print('Average latency: {}'.format(average))
+    print('Average latency: {}'.format(average_lat))
     print('TPS: {}'.format(1e9 * len(latencies) / total_time))
     print('Total time: {}'.format(total_time / 1e9))
 
