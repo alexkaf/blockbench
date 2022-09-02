@@ -116,13 +116,17 @@ const std::string SEND_TXN_PREFIX =
     "{\
   \"jsonrpc\": \"2.0\", \
   \"method\": \"eth_sendTransaction\", \
-  \"params\": [{\"from\": \"";
+  \"params\": [{ \"gas\": \"0x100000\", \
+                \"gasPrice\": \"0x3b9aca00\", \
+                \"from\": \"";
 
 const std::string CALL_PREFIX =
     "{\
   \"jsonrpc\": \"2.0\", \
   \"method\": \"eth_call\", \
-  \"params\": [{\"from\": \"";
+  \"params\": [{ \"gas\": \"0x100000\", \
+                \"gasPrice\": \"0x3b9aca00\", \
+                \"from\": \"";
 
 const std::string GET_BLOCK_BY_NUMBER_PREFIX =
     "{\"jsonrpc\":\"2.0\", \
