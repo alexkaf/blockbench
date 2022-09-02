@@ -23,31 +23,30 @@ function average(theList) {
 }
 
 const averageFromFirstBlock = async(fromBlock) => {
-    let currentIdx;
-    if (fromBlock !== undefined) {
-        currentIdx = fromBlock;
-    } else {
-        currentIdx = 0;
-    }
-    
-    let timestamps = [];
+    let startIdx;
 
-    while (true) {
-        try {
-            let blockContents = await web3.eth.getBlock(currentIdx++);
-            timestamps.push(blockContents.timestamp);
-        } catch (_) {
-            break;
-        }
+    const endIndex = await web3.eth.getBlockNumber();
+    if (!isNaN(fromBlock)) {
+        startIdx = endIndex - fromBlock;
+    } else {
+        startIdx = 1;
     }
-    let blockTimes = [];
+
+    let timestamps = [];
+    for (let idx = startIdx; idx < endIndex; idx++) {
+        let blockContents = await web3.eth.getBlock(idx);
+        timestamps.push(blockContents.timestamp);
+    }
     
-    for (let idx=1; idx<currentIdx - 2; idx++) {
+    const timestampsCount = timestamps.length;
+    let blockTimes = [];
+
+    for (let idx = 0; idx < timestampsCount - 1; idx++) {
         blockTimes.push(timestamps[idx + 1] - timestamps[idx]);
     }
 
     console.log(blockTimes);
-    console.log(`Average of ${currentIdx - 1} blocks: ${average(blockTimes)}s`);
+    console.log(`Average of last ${timestampsCount} blocks: ${average(blockTimes)}s`);
 }
 
 const monitor = async () => {
