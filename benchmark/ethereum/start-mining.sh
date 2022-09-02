@@ -21,6 +21,5 @@ geth --datadir=$ETH_DATA \
      --metrics.port 6061 \
      --metrics.expensive \
      --nodiscover \
-     --txpool.pricelimit 2 \
      --pprof \
      --miner.threads 6 > $ETH_DATA/log 2>&1 &
