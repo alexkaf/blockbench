@@ -5,8 +5,7 @@ source $HOME/.cargo/env
 here=$(dirname "$0")
 source $here/env.sh
 
-export PATH="$PATH:$SOLANA/target/release"
-
+PATH=$PATH:/home/ubuntu/.local/share/solana/install/active_release/bin
 
 cd $BLOCKBENCH
 
