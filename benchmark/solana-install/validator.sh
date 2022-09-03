@@ -39,6 +39,9 @@ then
                         --tpu-use-quic \
                         --log $LOGS/validator.log &
 else
+
+  export PATH="$PATH:/home/ubuntu/.local/share/solana/install/active_release/bin"
+
   [ ! -d $ACCOUNTS ] && mkdir -p $ACCOUNTS
 
   args=()

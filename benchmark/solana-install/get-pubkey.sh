@@ -3,7 +3,7 @@
 here=$(dirname "$0")
 source $here/env.sh
 
-export PATH="$PATH:$SOLANA/target/release"
+export PATH="$PATH:/home/ubuntu/.local/share/solana/install/active_release/bin"
 
 BOOTSTRAP_NODE=$(head -n 1 $here/hosts)
 
