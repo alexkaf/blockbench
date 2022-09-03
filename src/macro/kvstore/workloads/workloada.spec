@@ -8,7 +8,7 @@
 
 recordcount=1250
 operationcount=1250
-workload=ycsb
+workload=donpthing
 
 readallfields=true
 
