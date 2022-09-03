@@ -164,7 +164,7 @@ fn status_thread(db: Rc<RefCell<Solana>>, props: Arc<Wrap<Properties>>, total_op
 
     loop {
         while new_db.get_tip() == last_tip {
-            sleep(Duration::from_millis(100));
+            sleep(Duration::from_millis(200));
         }
         let current_time = Utc::now();
         last_tip += 1;
