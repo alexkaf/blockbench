@@ -31,7 +31,7 @@ then
 
   # Start validator
   echo STARTING BOOTSTRAP NODE
-  nohup ./multinode-demo/bootstrap-validator.sh \
+  ./multinode-demo/bootstrap-validator.sh \
                         --enable-rpc-transaction-history \
                         --enable-cpi-and-log-storage \
                         --gossip-host $1 \
