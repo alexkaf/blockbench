@@ -1,5 +1,6 @@
 import math
 import matplotlib.pyplot as plt
+from get_bandwidth import collect_traffic
 import sys
 
 def parse_file(file_name):
@@ -58,6 +59,9 @@ def average(data):
     return sum(data) / len(data)
 
 
+def get_nodes(file_name):
+    return int(file_name.split('/')[-1].split('_')[1])
+
 if __name__ == '__main__':
     file = sys.argv[1]
 
@@ -67,6 +71,8 @@ if __name__ == '__main__':
 
     plt.plot(blocks_list, txs_per_blk)
 
+    ingress, egress = collect_traffic(get_nodes(file))
+
     print('Total transactions: {}'.format(len(blocks)))
     print('Transactions per block: {}'.format(average(txs_per_blk)))
     print('Starting Block: {}'. format(get_starting_block(blocks)))
@@ -74,4 +80,6 @@ if __name__ == '__main__':
     print('Average latency: {}'.format(average_lat))
     print('TPS: {}'.format(1e9 * len(latencies) / total_time))
     print('Total time: {}'.format(total_time / 1e9))
+    print('Average Ingress: {}'.format(average(ingress)))
+    print('Average Egress: {}'.format(average(egress)))
 

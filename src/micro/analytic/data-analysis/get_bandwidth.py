@@ -29,7 +29,7 @@ def total_traffic(metrics_list):
 
     return ingress, egress
 
-def collect_ingress(nodes_count):
+def collect_traffic(nodes_count):
     # Collect metrics from nodes
     subprocess.call('./collect_raw_metrics.sh {}'.format(nodes_count), shell=True)
 
@@ -38,7 +38,7 @@ def collect_ingress(nodes_count):
 
 if __name__ == '__main__':
 
-    ingress, egress = collect_ingress(int(sys.argv[1]))
+    ingress, egress = collect_traffic(int(sys.argv[1]))
 
     print('Ingress:', ingress)
     print('Egress:', egress)
