@@ -7,6 +7,7 @@ source $here/env.sh
 
 PATH=$PATH:/home/ubuntu/.local/share/solana/install/active_release/bin
 
+
 cd $BLOCKBENCH
 
 BOOTSTRAP_NODE=$(head -n 1 hosts)
