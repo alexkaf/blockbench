@@ -18,7 +18,7 @@ do
   if [ $idx -eq 0 ]
   then
     ssh -oStrictHostKeyChecking=no $CURRENT_USER@$host $BLOCKBENCH/validator.sh $host $idx &
-    sleep 60
+    sleep 10
     echo WAITING FOR LEADER TO GENERATE FIRST SNAPSHOT
   else
     start_client $host $idx &

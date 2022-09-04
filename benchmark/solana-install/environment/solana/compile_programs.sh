@@ -15,3 +15,8 @@ for program in ${PROGRAMS[@]}; do
   cd "$CONTRACTS"/"$program"
   cargo build-bpf
 done
+
+DRIVER="$ASSESMENTS"/blockbench/src/macro/rust-driver
+
+cd $DRIVER
+cargo build

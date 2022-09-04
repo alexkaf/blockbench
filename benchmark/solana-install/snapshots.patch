@@ -1,0 +1,13 @@
+diff --git a/multinode-demo/bootstrap-validator.sh b/multinode-demo/bootstrap-validator.sh
+index 5859b7e3c4..8e0bacc5a7 100755
+--- a/multinode-demo/bootstrap-validator.sh
++++ b/multinode-demo/bootstrap-validator.sh
+@@ -131,7 +131,7 @@ fi
+ args+=(
+   --ledger "$ledger_dir"
+   --rpc-port 8899
+-  --snapshot-interval-slots 200
++  --snapshot-interval-slots 100
+   --no-incremental-snapshots
+   --identity "$identity"
+   --vote-account "$vote_account"
