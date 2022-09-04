@@ -5,7 +5,6 @@ source $here/env.sh
 
 function start_client() {
     ssh -oStrictHostKeyChecking=no $CURRENT_USER@$host $BLOCKBENCH/validator.sh $host $idx &
-    ssh -oStrictHostKeyChecking=no $CURRENT_USER@$host "nohup sudo iftop -t > io &" &
 }
 
 idx=0
