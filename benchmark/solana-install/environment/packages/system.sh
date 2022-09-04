@@ -29,4 +29,6 @@ sudo apt install -y curl \
                     linux-headers-generic \
                     pkg-config \
                     zip \
-                    moreutils
+                    moreutils \
+                    htop \
+                    iftop

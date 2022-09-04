@@ -9,6 +9,7 @@ function fetch_repo() {
   ssh -oStrictHostKeyChecking=no "$CURRENT_USER"@"$1" "mkdir -p $ASSESMENTS"
   ssh -oStrictHostKeyChecking=no "$CURRENT_USER"@"$1" "git config --global user.name alexkaf"
   ssh -oStrictHostKeyChecking=no "$CURRENT_USER"@"$1" "git config --global user.email alexkafiris@gmail.com"
+  ssh -oStrictHostKeyChecking=no "$CURRENT_USER"@"$1" "ssh-keyscan github.com >> ~/.ssh/known_hosts"
   ssh -oStrictHostKeyChecking=no "$CURRENT_USER"@"$1" "cd $ASSESMENTS && git clone git@github.com:alexkaf/blockbench.git"
   ssh -oStrictHostKeyChecking=no "$CURRENT_USER"@"$1" "cd $BLOCKBENCH_REPO && git checkout micro-develop"
 }
