@@ -86,7 +86,7 @@ fn main() {
     for handle in handles {
         handle.join().unwrap();
     }
-    println!("Sent! {}", pending_transactions.lock().unwrap().len());
+
     status_handle.join().unwrap();
     // println!("{}", (Utc::now() - now).num_milliseconds());
     // println!("{:?}", pending_transactions.lock().unwrap().len());
@@ -152,7 +152,7 @@ fn status_thread(db: Rc<RefCell<Solana>>, props: Arc<Wrap<Properties>>, total_op
     let props = props.value.try_borrow().unwrap();
     let file_name = format!("/home/ubuntu/test.txt");
 
-    let new_db = Solana::new_without_deploy(&props["endpoint"][..], &props["workload"][..], Arc::clone(&pending_transactions));
+    let mut new_db = Solana::new_without_deploy(&props["endpoint"][..], &props["workload"][..], Arc::clone(&pending_transactions));
     let mut results_file = File::create(file_name).unwrap();
 
     let mut current_tip = tip;
@@ -161,13 +161,30 @@ fn status_thread(db: Rc<RefCell<Solana>>, props: Arc<Wrap<Properties>>, total_op
     let mut found = 0u64;
 
     results_file.write_all(format!("Start, {:?} \n", Utc::now().timestamp_nanos()).as_bytes());
+    
+    // loop {        
+    //     current_tip = new_db.wait_for_next_slot(current_tip);
+
+    //     println!("Got new slot: {}", current_tip);
+
+    //     // loop {
+    //     //     let current_block = new_db.poll_transaction_by_block(current_tip);
+    //     //     if current_block == None {
+    //     //         println!
+    //     //         continue;
+    //     //     }
+    //     //     break;
+    //     //     // if let Some(_) = current_block {
+    //     //     //     break;
+    //     //     // } else {
+    //     //     //     println!("Cannot find");
+    //     //     // }
+    //     // }
+    // }
 
     loop {
-        while new_db.get_tip() == last_tip {
-            sleep(Duration::from_millis(200));
-        }
-        let current_time = Utc::now();
-        last_tip += 1;
+        current_tip = new_db.wait_for_next_slot(current_tip);
+        
         let current_block = db.borrow().poll_transaction_by_block(current_tip);
         let mut pending_transactions = pending_transactions.lock().unwrap();
         let mut end_time = Utc::now();
@@ -186,7 +203,6 @@ fn status_thread(db: Rc<RefCell<Solana>>, props: Arc<Wrap<Properties>>, total_op
                 }
                 // results_file.write_all(format!("{:?}, {:?}, {:?}\n", current_tip, tx_found_in_block, current_time.timestamp_millis() - s.timestamp_millis()).as_bytes());
                 println!("[{}]: {}txs", current_tip, found);
-                current_tip += 1;
             }
             None => {
                 results_file.write_all(format!("End, {:?} \n", Utc::now().timestamp_nanos()).as_bytes());

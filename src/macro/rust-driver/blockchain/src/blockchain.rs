@@ -9,6 +9,8 @@ pub trait BlockChain {
 
     fn get_tip(&self) -> u64;
 
+    fn wait_for_next_slot(&self, from: u64) -> u64;
+
     fn poll_transaction_by_block(&self, block_number: u64) -> Option<Vec<EncodedTransactionWithStatusMeta>>;
 }
 

@@ -21,6 +21,7 @@ use chrono::Utc;
 use solana_client::rpc_config::{RpcBlockConfig, RpcSendTransactionConfig};
 use solana_program::clock::UnixTimestamp;
 use solana_sdk::commitment_config::CommitmentLevel;
+use solana_sdk::clock::Slot;
 use solana_sdk::signature::Signature;
 use crate::blockchain::{BlockChain, TransactionInfo};
 use crate::solana::contract;
@@ -76,11 +77,21 @@ impl Solana {
 
         let hash = connection.request_airdrop(&Signer::pubkey(&fee_payer), 100_000_000_000_000).unwrap();
 
-        while connection
-            .confirm_transaction_with_commitment(&hash, CommitmentConfig::finalized())
-            .as_ref()
-            .unwrap().value { println!("Inside!"); }
+        println!("Waiting to confirm transaction...");
 
+        loop {
+            let account_balance = connection.get_balance(&Signer::pubkey(&fee_payer)).unwrap();
+
+            if account_balance != 0 {
+                break;
+            }
+        }
+        // while connection
+        //     .confirm_transaction_with_commitment(&hash, CommitmentConfig::finalized())
+        //     .as_ref()
+        //     .unwrap().value { println!("Inside!"); }
+
+        println!("Balance... {:?}", connection.get_balance(&Signer::pubkey(&fee_payer)));
         Self::store_keypair(&fee_payer, "feePayer.json");
         Self::store_keypair(&program, "programId.json");
 
@@ -232,8 +243,22 @@ impl Solana {
 impl BlockChain for Solana {
     type Object = Solana;
 
-    fn get_tip(&self) -> u64 {
+    fn get_tip(&self) -> Slot {
         self.connection.get_block_height_with_commitment(CommitmentConfig::confirmed()).unwrap()
+        // self.connection.get_first_available_block().unwrap()
+    }
+    
+    fn wait_for_next_slot(&self, from: u64) -> u64 {
+        
+        let mut block_pairs = vec![];
+
+        loop {
+            block_pairs = self.connection.get_blocks_with_limit_and_commitment(from, 2, CommitmentConfig::confirmed()).unwrap();
+            if block_pairs.len() == 2 {
+                return block_pairs[1];
+            }
+
+        }
     }
 
     fn poll_transaction_by_block(&self, block_number: u64) -> Option<Vec<EncodedTransactionWithStatusMeta>> {
