@@ -1,0 +1,13 @@
+diff --git a/multinode-demo/common.sh b/multinode-demo/common.sh
+index 9ae9331cb7..28bcd43b9d 100644
+--- a/multinode-demo/common.sh
++++ b/multinode-demo/common.sh
+@@ -10,6 +10,8 @@
+ # shellcheck source=net/common.sh
+ source "$(cd "$(dirname "${BASH_SOURCE[0]}")"/.. || exit 1; pwd)"/net/common.sh
+ 
++USE_INSTALL=1
++
+ prebuild=
+ if [[ $1 = "--prebuild" ]]; then
+   prebuild=true
