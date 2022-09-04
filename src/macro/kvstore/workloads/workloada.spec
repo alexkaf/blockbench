@@ -8,7 +8,7 @@
 
 recordcount=5000
 operationcount=5000
-workload=donothing
+workload=kvstore
 
 readallfields=true
 
