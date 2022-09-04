@@ -5,6 +5,7 @@ source $here/env.sh
 
 function start_client() {
     ssh -oStrictHostKeyChecking=no $CURRENT_USER@$host $BLOCKBENCH/validator.sh $host $idx &
+    ssh -oStrictHostKeyChecking=no $CURRENT_USER@$host "nohup sudo iftop -t > io &" &
 }
 
 idx=0
@@ -17,7 +18,7 @@ do
 
   if [ $idx -eq 0 ]
   then
-    ssh -oStrictHostKeyChecking=no $CURRENT_USER@$host $BLOCKBENCH/validator.sh $host $idx &
+    start_client $host $idx &
     sleep 10
     echo WAITING FOR LEADER TO GENERATE FIRST SNAPSHOT
   else
