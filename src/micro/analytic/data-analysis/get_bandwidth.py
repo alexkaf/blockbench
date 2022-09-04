@@ -14,7 +14,7 @@ def parse_json_to_dict():
         return parsed
 
 
-def total_traffic(metrics_list):
+def total_traffic_eth(metrics_list):
     ingress = []
     egress = []
     
@@ -29,12 +29,66 @@ def total_traffic(metrics_list):
 
     return ingress, egress
 
-def collect_traffic(nodes_count):
-    # Collect metrics from nodes
-    subprocess.call('./collect_raw_metrics.sh {}'.format(nodes_count), shell=True)
 
-    metrics = parse_json_to_dict()
-    return total_traffic(metrics)
+def parse_iftop_output(nodes_count):
+    
+    bandwidths = {
+        'ingress': [], 
+        'egress': []
+    }
+
+    for node in range(nodes_count):
+        file_name = 'band_{}'.format(node)
+
+        with open(file_name) as bandwidth_contents:
+            lines = bandwidth_contents.readlines()
+            
+            lines.reverse()
+
+            # sent, received, total = get_cumulative(lines)
+            traffic = get_cumulative(lines)
+
+            bandwidths['ingress'] += [convert_to_bytes(traffic[0])]
+            bandwidths['egress'] += [convert_to_bytes(traffic[1])]
+
+    return bandwidths['ingress'], bandwidths['egress']
+
+def convert_to_bytes(data):
+    try:
+        int(data[-2])
+        return float(data[:-1])
+    except ValueError:
+        if data[-2:] == 'KB':
+            return float(data[:-2]) * 1e3
+        elif data[-2:] == 'MB':
+            return float(data[:-2]) * 1e6
+        elif data[-2:] == 'GB':
+            return float(data[:-2]) * 1e9
+
+
+def get_cumulative(lines):
+    for line in lines:
+        if line.startswith('Cumulative'):
+            if len(line) != 82:
+                continue
+
+            rest = line.split(':')[-1]
+            rest = rest.strip(' ').strip('\n').split(' ')
+            rest = list(filter(lambda x: x != '', rest))
+            
+            return rest
+
+def collect_traffic(nodes_count, network):
+    # Collect metrics from nodes
+    if network == 'eth':
+        subprocess.call('./collect_raw_metrics.sh {}'.format(nodes_count), shell=True)
+        metrics = parse_json_to_dict()
+        return total_traffic_eth(metrics)
+    else:
+        subprocess.call('./collect_io.sh {}'.format(nodes_count), shell=True)
+        ingress, egress = parse_iftop_output(nodes_count)
+        subprocess.call('./clear_bandwidth_files.sh', shell=True)
+        return ingress, egress
 
 if __name__ == '__main__':
 

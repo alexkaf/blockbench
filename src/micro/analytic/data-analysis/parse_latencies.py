@@ -30,7 +30,7 @@ def parse_file(file_name):
                     #     print(line)
                 except (ValueError, IndexError):
                     continue
-    return block, latency, end - start
+    return block, latency, (start, end), end - start
 
 def get_starting_block(blocks):
     return min(blocks)
@@ -59,20 +59,33 @@ def average(data):
     return sum(data) / len(data)
 
 
-def get_nodes(file_name):
-    return int(file_name.split('/')[-1].split('_')[1])
+def get_meta(file_name):
+    return int(file_name.split('/')[-1].split('_')[1]), file_name.split('/')[-1].split('_')[2]
+
+def eject_block_times(blocks, latencies, times):
+    first_block = blocks[0]
+    for idx, block in enumerate(blocks):
+        if block != first_block:
+            break
+    
+    first_tx = min(latencies[:idx])
+    print(first_tx)
+
 
 if __name__ == '__main__':
     file = sys.argv[1]
 
-    blocks, latencies, total_time = parse_file(file)
+    blocks, latencies, time_bounds, total_time = parse_file(file)
     average_lat = average_latency(latencies)
     blocks_list, txs_per_blk = txs_per_block(blocks)
 
-    plt.plot(blocks_list, txs_per_blk)
+    # plt.plot(blocks_list, txs_per_blk)
 
-    ingress, egress = collect_traffic(get_nodes(file))
+    nodes_count, net = get_meta(file)
 
+    ingress, egress = collect_traffic(nodes_count, net)
+    
+    eject_block_times(blocks, latencies, time_bounds)
     print('Total transactions: {}'.format(len(blocks)))
     print('Transactions per block: {}'.format(average(txs_per_blk)))
     print('Starting Block: {}'. format(get_starting_block(blocks)))
