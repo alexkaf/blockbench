@@ -105,7 +105,6 @@ const startBenchmark = async (provider, accounts, args) => {
 
 const monitorTxs = async (wsProvider, pendingTxs, totalTxs) => {
     let allTxsDone = 0;
-    let isDone = false;
 
     wsProvider.eth.subscribe('newBlockHeaders', async (_, data) => {
         const currentBlock = await wsProvider.eth.getBlock(data.number);
@@ -129,12 +128,12 @@ const monitorTxs = async (wsProvider, pendingTxs, totalTxs) => {
 
         console.log(`[${data.number}]: ${txsFound} txs`);
 
-        if (allTxsDone == totalTxs && !isDone) {
+        if (allTxsDone == totalTxs) {
             const endTime = Date.now();
             fs.appendFileSync(resultsFile, `End, ${endTime}\n`);
             console.log('DONE');
-
-            isDone = true;
+            
+            process.exit(0);
         }
     });
 }   
@@ -147,7 +146,7 @@ const sleep = async (sleepTime) => {
 
 
 const generateTxs = (accounts, numberOfTransactions) => {
-    console.log(`Generating ${number} transactions...`);
+    console.log(`Generating ${numberOfTransactions} transactions...`);
     let transactionsToBeExecuted =  [];
 
     for (let i = 0; i < numberOfTransactions; i++) {
