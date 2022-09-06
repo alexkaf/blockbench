@@ -106,6 +106,7 @@ impl Transactions {
 
                 loop {
                     block_pairs = client.get_blocks_with_limit(current_slot, 2).unwrap();
+                    print("{:?}", block_pairs);
                     if block_pairs.len() == 2 {
                         current_slot = block_pairs[1];
                         break;
