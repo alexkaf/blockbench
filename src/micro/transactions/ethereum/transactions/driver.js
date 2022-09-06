@@ -3,9 +3,11 @@ const eth = require('./eth.js');
 
 const argsObject = parser();
 
-const p = eth.getProvider(argsObject["endpoint"][0]);
+const ws = eth.getWsProvider(argsObject["endpoint"][0]);
+const http = eth.getHttpProvider(argsObject["endpoint"][0]);
 
 (async() => {
-    console.log(await p.eth.getBlockNumber());
-    console.log(await eth.collectAccounts(p));
+    const accounts = await eth.createAccounts(http, argsObject.keypairs);
+
+    await eth.startBenchmark(ws, accounts, argsObject);
 })();
