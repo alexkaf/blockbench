@@ -23,7 +23,7 @@ for client in $(cat clients); do
   else
     if [[ "$1" == "smallbank" ]]
     then 
-        ssh -oStrictHostKeyChecking=no "$CURRENT_USER@$client" "cd $SERVER_HOME/assesments/blockbench/src/macro/rust-driver && source ~/.cargo/env && cargo run -- -db solana -endpoint http://localhost:8899 -txrate $4 -threads $3 -wl smallbank -ops $5" &
+        ssh -oStrictHostKeyChecking=no "$CURRENT_USER@$client" "cd $SERVER_HOME/assesments/blockbench/src/macro/rust-driver && source ~/.cargo/env && cargo run -- -db solana -endpoint http://localhost:8899 -txrate $4 -threads $3 -wl smallbank -ops $5 > $BLOCKBENCH/validator/logs/run" &
     else
       ssh -oStrictHostKeyChecking=no "$CURRENT_USER@$client" "cd $SERVER_HOME/assesments/blockbench/src/macro/rust-driver && source ~/.cargo/env && cargo run -- -db solana -endpoint http://localhost:8899 -txrate $4 -threads $3 -P $SERVER_HOME/assesments/blockbench/src/macro/kvstore/workloads/workload$5.spec > $BLOCKBENCH/validator/logs/run" &
     fi

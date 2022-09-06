@@ -14,7 +14,8 @@ done
 
 wait
 
-cat temp_* > "results"
-rm temp_*
+cat temp_* > $2
+mv $2 /home/alexandros/Desktop/new_results
 
+rm temp_*
 echo Done

@@ -48,8 +48,8 @@ def parse_iftop_output(nodes_count):
             # sent, received, total = get_cumulative(lines)
             traffic = get_cumulative(lines)
 
-            bandwidths['ingress'] += [convert_to_bytes(traffic[0])]
-            bandwidths['egress'] += [convert_to_bytes(traffic[1])]
+            bandwidths['egress'] += [convert_to_bytes(traffic[0])]
+            bandwidths['ingress'] += [convert_to_bytes(traffic[1])]
 
     return bandwidths['ingress'], bandwidths['egress']
 
