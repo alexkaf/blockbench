@@ -125,7 +125,7 @@ impl Transactions {
 
     }
 
-    fn send_transactions(env: Arc<Environment>, pending: Arc<RwLock<HashMap<String, DateTime<Utc>>>>, total_txs: u64, sleep_time: Duration) {
+    fn send_transactions(env: Arc<Environment>, transactions_list: Arc<Vec<Transaction>>, pending: Arc<RwLock<HashMap<String, DateTime<Utc>>>>, start: usize, end: usize, sleep_time: Duration) {
         let mut client_cycle = env.clients().iter().cycle();
         for tx_idx in start..end {
             let current_transaction = &transactions_list[tx_idx];
