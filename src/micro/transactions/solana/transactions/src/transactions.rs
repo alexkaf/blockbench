@@ -125,20 +125,7 @@ impl Transactions {
 
     }
 
-    fn wait_for_next_slot(&self, from: u64) -> u64 {
-        
-        let mut block_pairs = vec![];
-
-        loop {
-            block_pairs = self.connection.get_blocks_with_limit_and_commitment(from, 2, CommitmentConfig::confirmed()).unwrap();
-            if block_pairs.len() == 2 {
-                return block_pairs[1];
-            }
-
-        }
-    }
-
-    fn send_transactions(env: Arc<Environment>, transactions_list: Arc<Vec<Transaction>>, pending: Arc<RwLock<HashMap<String, DateTime<Utc>>>>, start: usize, end: usize, sleep_time: Duration) {
+    fn send_transactions(env: Arc<Environment>, pending: Arc<RwLock<HashMap<String, DateTime<Utc>>>>, total_txs: u64, sleep_time: Duration) {
         let mut client_cycle = env.clients().iter().cycle();
         for tx_idx in start..end {
             let current_transaction = &transactions_list[tx_idx];
