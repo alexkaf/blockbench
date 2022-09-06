@@ -7,7 +7,7 @@ const ws = eth.getWsProvider(argsObject["endpoint"][0]);
 const http = eth.getHttpProvider(argsObject["endpoint"][0]);
 
 console.log(`Keypairs: ${argsObject.keypairs}`);
-console.log(`Transactions: ${argsObject.keypairs}`);
+console.log(`Transactions: ${argsObject.txs}`);
 console.log(`Rate: ${argsObject.rate}`);
 
 (async() => {

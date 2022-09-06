@@ -99,10 +99,8 @@ const startBenchmark = async (provider, accounts, args) => {
     for (let tx of txsToExecute) {
         provider.eth.sendTransaction(tx).on('transactionHash', (hash) => {
             pendingTxs[hash] = Date.now();
-        }).catch((error) => {
-            console.log('=============================================================This is an error!')
-            console.log(error)
         });
+        
         console.log(`${idx++}`);
 
         await sleep(msPerTx);
