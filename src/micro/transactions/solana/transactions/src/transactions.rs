@@ -86,7 +86,7 @@ impl Transactions {
                     if pending.read().unwrap().contains_key(&signature) {
                         total_found += 1;
                         if total_found % 100 == 0 {
-                            println!("[{}]: {}/{}", next_slot, total_found, total_threads * txs_per_thread);
+                            println!("[{}]: {}/{}", current_slot, total_found, total_threads * txs_per_thread);
                         }
                         results.write_all(format!("{}, , {:?}\n", current_slot, (Utc::now().timestamp_nanos() - pending.read().unwrap().get(&signature).unwrap().timestamp_nanos())).as_bytes());
                         pending.write().unwrap().remove(&signature);
@@ -105,7 +105,7 @@ impl Transactions {
                 let mut block_pairs = vec![];
 
                 loop {
-                    block_pairs = client.get_blocks_with_limit(from, 2).unwrap();
+                    block_pairs = client.get_blocks_with_limit(current_slot, 2).unwrap();
                     if block_pairs.len() == 2 {
                         current_slot = block_pairs[1];
                     }
