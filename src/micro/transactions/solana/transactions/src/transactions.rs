@@ -71,14 +71,6 @@ impl Transactions {
 
             let mut total_found = 0;
             loop {
-                let next_slot = client.get_block_height_with_commitment(CommitmentConfig::confirmed()).unwrap();
-
-                if next_slot == current_slot {
-                    // sleep(Duration::from_millis(100));
-                    continue
-                } else {
-                    current_slot = next_slot;
-                }
 
                 let contents = client.get_block_with_config(current_slot, RpcBlockConfig {
                     encoding: None,
@@ -94,7 +86,7 @@ impl Transactions {
                     if pending.read().unwrap().contains_key(&signature) {
                         total_found += 1;
                         if total_found % 100 == 0 {
-                            println!("[{}]: {}/{}", next_slot, total_found, total_threads * txs_per_thread);
+                            println!("[{}]: {}/{}", current_slot, total_found, total_threads * txs_per_thread);
                         }
                         results.write_all(format!("{}, , {:?}\n", current_slot, (Utc::now().timestamp_nanos() - pending.read().unwrap().get(&signature).unwrap().timestamp_nanos())).as_bytes());
                         pending.write().unwrap().remove(&signature);
@@ -108,6 +100,15 @@ impl Transactions {
                 } else {
                     // println!("{}", total_found);
                     println!("{} left...", pending.read().unwrap().len());
+                }
+
+                let next_slot = client.get_block_height_with_commitment(CommitmentConfig::confirmed()).unwrap();
+
+                if next_slot == current_slot {
+                    // sleep(Duration::from_millis(100));
+                    continue
+                } else {
+                    current_slot = next_slot;
                 }
             }
         });
