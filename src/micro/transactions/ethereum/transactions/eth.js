@@ -98,7 +98,6 @@ const startBenchmark = async (provider, accounts, args) => {
     let idx = 0;
     for (let tx of txsToExecute) {
         provider.eth.sendTransaction(tx).on('transactionHash', (hash) => {
-            console.log('Hi!');
             pendingTxs[hash] = Date.now();
         });
 
