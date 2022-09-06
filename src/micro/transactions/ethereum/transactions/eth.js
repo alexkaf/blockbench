@@ -92,7 +92,7 @@ const startBenchmark = async (provider, accounts, args) => {
     monitorTxs(provider , pendingTxs, txsCount);
 
     const startTime = Date.now();
-    fs.writeFileSync(resultsFile, `Start, ${startTime}\n`);
+    fs.writeFileSync(resultsFile, `Start, ${startTime * 1e6}\n`);
 
     console.log('Started benchmark');
     for (let tx of txsToExecute) {
@@ -130,7 +130,7 @@ const monitorTxs = async (wsProvider, pendingTxs, totalTxs) => {
 
         if (allTxsDone == totalTxs) {
             const endTime = Date.now();
-            fs.appendFileSync(resultsFile, `End, ${endTime}\n`);
+            fs.appendFileSync(resultsFile, `End, ${endTime * 1e6}\n`);
             console.log('DONE');
             
             process.exit(0);
