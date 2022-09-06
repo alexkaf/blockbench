@@ -71,6 +71,14 @@ impl Transactions {
 
             let mut total_found = 0;
             loop {
+                let next_slot = client.get_slot_with_commitment(CommitmentConfig::confirmed()).unwrap();
+
+                if next_slot == current_slot {
+                    // sleep(Duration::from_millis(100));
+                    continue
+                } else {
+                    current_slot = next_slot;
+                }
 
                 let contents = client.get_block_with_config(current_slot, RpcBlockConfig {
                     encoding: None,
@@ -100,15 +108,6 @@ impl Transactions {
                 } else {
                     // println!("{}", total_found);
                     println!("{} left...", pending.read().unwrap().len());
-                }
-
-                let next_slot = client.get_block_height_with_commitment(CommitmentConfig::confirmed()).unwrap();
-
-                if next_slot == current_slot {
-                    // sleep(Duration::from_millis(100));
-                    continue
-                } else {
-                    current_slot = next_slot;
                 }
             }
         });
