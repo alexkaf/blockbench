@@ -92,7 +92,7 @@ const startBenchmark = async (provider, accounts, args) => {
     monitorTxs(provider , pendingTxs, txsCount);
 
     const startTime = Date.now();
-    fs.writeFileSync(resultsFile, `Start, ${startTime * 1e6}\n`);
+    fs.appendFile(resultsFile, `Start, ${startTime * 1e6}\n`);
 
     console.log('Started benchmark');
     let idx = 0;
@@ -104,7 +104,7 @@ const startBenchmark = async (provider, accounts, args) => {
             console.log(error)
         });
         console.log(`${idx++}`);
-        
+
         await sleep(msPerTx);
     }
 }
@@ -125,7 +125,7 @@ const monitorTxs = async (wsProvider, pendingTxs, totalTxs) => {
                 const timeSpent = currentTime - pendingTxs[tx];
                 const toWrite = `${data.number}, ${tx}, ${timeSpent * 1e6}\n`;
 
-                fs.appendFileSync(resultsFile, toWrite);
+                fs.appendFile(resultsFile, toWrite);
 
                 delete pendingTxs[tx];
             }
@@ -136,7 +136,7 @@ const monitorTxs = async (wsProvider, pendingTxs, totalTxs) => {
 
         if (allTxsDone == totalTxs) {
             const endTime = Date.now();
-            fs.appendFileSync(resultsFile, `End, ${endTime * 1e6}\n`);
+            fs.appendFile(resultsFile, `End, ${endTime * 1e6}\n`);
             console.log('DONE');
             
             process.exit(0);
