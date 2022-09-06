@@ -33,12 +33,15 @@ impl Transactions {
         let total_threads = env.threads();
         let txs_per_thread = env.transactions() / env.threads();
         let sleep_time = Duration::from_millis(total_threads * 1000 / env.rate());
+        
+        println!("{}", txs_per_thread);
 
         let clients = env.clients();
 
 
         let transactions = Arc::new(Self::create_transactions(&clients[0], &env.keypairs(), env.transactions()));
         let mut handles = vec![];
+        let mut current_slot = clients[0].get_block_height().unwrap();
 
         for thread_idx in 0..total_threads {
             let mut pending = Arc::clone(&pending);
@@ -57,7 +60,7 @@ impl Transactions {
 
         let mut monitors = vec![];
 
-        let mut results = File::create("/root/results.txt").unwrap();
+        let mut results = File::create("/home/ubuntu/test.txt").unwrap();
         let mut pending = Arc::clone(&pending);
         let env = Arc::clone(&env);
 
@@ -66,13 +69,12 @@ impl Transactions {
             println!("Started monitoring transactions...");
             let client = &env.clients()[0];
 
-            let mut current_slot = client.get_block_height().unwrap();
             let mut total_found = 0;
             loop {
                 let next_slot = client.get_block_height_with_commitment(CommitmentConfig::confirmed()).unwrap();
 
                 if next_slot == current_slot {
-                    sleep(Duration::from_millis(100));
+                    // sleep(Duration::from_millis(100));
                     continue
                 } else {
                     current_slot = next_slot;
@@ -92,18 +94,19 @@ impl Transactions {
                     if pending.read().unwrap().contains_key(&signature) {
                         total_found += 1;
                         if total_found % 100 == 0 {
-                            println!("{}/{}", total_found, total_threads * txs_per_thread);
+                            println!("[{}]: {}/{}", next_slot, total_found, total_threads * txs_per_thread);
                         }
                         results.write_all(format!("{}, , {:?}\n", current_slot, (Utc::now().timestamp_nanos() - pending.read().unwrap().get(&signature).unwrap().timestamp_nanos())).as_bytes());
                         pending.write().unwrap().remove(&signature);
                     }
                 }
                 
-                if total_found == (total_threads * txs_per_thread) as usize {
+                if total_found == env.transactions() as usize {
                     println!("Done!");
                     results.write_all(format!("End, {}\n", Utc::now().timestamp_nanos()).as_bytes());
                     return ;
                 } else {
+                    // println!("{}", total_found);
                     println!("{} left...", pending.read().unwrap().len());
                 }
             }
@@ -168,6 +171,25 @@ impl Transactions {
             }
         }
         transactions
+    }
+
+    fn create_transaction(client: &RpcClient, keypairs: &Vec<Keypair>, tx_count: u64) -> Transaction {
+        let keypair_count = keypairs.len();
+        let recent_blockhash = client.get_latest_blockhash().unwrap();
+
+        #[allow(irrefutable_let_patterns)]
+        let (from_idx, to_idx) = Self::get_random_pair(keypair_count) ;
+        let from_keypair = &keypairs[from_idx];
+        let to_keypair = &keypairs[to_idx];
+
+        let instruction = transfer(&from_keypair.pubkey(), &to_keypair.pubkey(), Self::get_random_lamports());
+
+        Transaction::new_signed_with_payer(
+            &[instruction],
+            Some(&from_keypair.pubkey()),
+            &[from_keypair],
+            recent_blockhash,
+        )
     }
 
     fn get_random_pair(keypair_count: usize) -> (usize, usize) {

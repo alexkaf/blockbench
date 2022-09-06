@@ -144,5 +144,14 @@ impl Environment {
         for hash in hashes {
             while  !client_to_use.confirm_transaction_with_commitment(&hash, CommitmentConfig::confirmed()).unwrap().value {};
         }
+
+        for keypair in keypairs {
+            loop {
+                let balance = client_to_use.get_balance(&keypair.pubkey()).unwrap();
+                if balance != 0 {
+                    break;
+                }
+            }
+        }
     }
 }
