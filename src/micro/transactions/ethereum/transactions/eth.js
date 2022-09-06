@@ -92,15 +92,16 @@ const startBenchmark = async (provider, accounts, args) => {
     monitorTxs(provider , pendingTxs, txsCount);
 
     const startTime = Date.now();
-    fs.appendFile(resultsFile, `Start, ${startTime * 1e6}\n`);
+    fs.appendFileSync(resultsFile, `Start, ${startTime * 1e6}\n`);
 
     console.log('Started benchmark');
     let idx = 0;
     for (let tx of txsToExecute) {
         provider.eth.sendTransaction(tx).on('transactionHash', (hash) => {
+            console.log('Hi!');
             pendingTxs[hash] = Date.now();
         });
-        
+
         console.log(`${idx++}`);
 
         await sleep(msPerTx);
@@ -123,7 +124,7 @@ const monitorTxs = async (wsProvider, pendingTxs, totalTxs) => {
                 const timeSpent = currentTime - pendingTxs[tx];
                 const toWrite = `${data.number}, ${tx}, ${timeSpent * 1e6}\n`;
 
-                fs.appendFile(resultsFile, toWrite);
+                fs.appendFileSync(resultsFile, toWrite);
 
                 delete pendingTxs[tx];
             }
@@ -134,7 +135,7 @@ const monitorTxs = async (wsProvider, pendingTxs, totalTxs) => {
 
         if (allTxsDone == totalTxs) {
             const endTime = Date.now();
-            fs.appendFile(resultsFile, `End, ${endTime * 1e6}\n`);
+            fs.appendFileSync(resultsFile, `End, ${endTime * 1e6}\n`);
             console.log('DONE');
             
             process.exit(0);
