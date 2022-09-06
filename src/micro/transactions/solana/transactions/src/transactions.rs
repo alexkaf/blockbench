@@ -71,6 +71,14 @@ impl Transactions {
 
             let mut total_found = 0;
             loop {
+                let next_slot = client.get_block_height_with_commitment(CommitmentConfig::confirmed()).unwrap();
+
+                if next_slot == current_slot {
+                    // sleep(Duration::from_millis(100));
+                    continue
+                } else {
+                    current_slot = next_slot;
+                }
 
                 let contents = client.get_block_with_config(current_slot, RpcBlockConfig {
                     encoding: None,
@@ -86,7 +94,7 @@ impl Transactions {
                     if pending.read().unwrap().contains_key(&signature) {
                         total_found += 1;
                         if total_found % 100 == 0 {
-                            println!("[{}]: {}/{}", current_slot, total_found, total_threads * txs_per_thread);
+                            println!("[{}]: {}/{}", next_slot, total_found, total_threads * txs_per_thread);
                         }
                         results.write_all(format!("{}, , {:?}\n", current_slot, (Utc::now().timestamp_nanos() - pending.read().unwrap().get(&signature).unwrap().timestamp_nanos())).as_bytes());
                         pending.write().unwrap().remove(&signature);
@@ -100,18 +108,6 @@ impl Transactions {
                 } else {
                     // println!("{}", total_found);
                     println!("{} left...", pending.read().unwrap().len());
-                }
-
-                let mut block_pairs = vec![];
-
-                loop {
-                    block_pairs = client.get_blocks_with_limit(current_slot, 2).unwrap();
-                    print("{:?}", block_pairs);
-                    if block_pairs.len() == 2 {
-                        current_slot = block_pairs[1];
-                        break;
-                    }
-        
                 }
             }
         });
@@ -127,6 +123,19 @@ impl Transactions {
         }
 
 
+    }
+
+    fn wait_for_next_slot(&self, from: u64) -> u64 {
+        
+        let mut block_pairs = vec![];
+
+        loop {
+            block_pairs = self.connection.get_blocks_with_limit_and_commitment(from, 2, CommitmentConfig::confirmed()).unwrap();
+            if block_pairs.len() == 2 {
+                return block_pairs[1];
+            }
+
+        }
     }
 
     fn send_transactions(env: Arc<Environment>, transactions_list: Arc<Vec<Transaction>>, pending: Arc<RwLock<HashMap<String, DateTime<Utc>>>>, start: usize, end: usize, sleep_time: Duration) {
