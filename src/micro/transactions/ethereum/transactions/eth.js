@@ -117,7 +117,7 @@ const monitorTxs = async (wsProvider, pendingTxs, totalTxs) => {
                 txsFound += 1;
                 
                 const timeSpent = currentTime - pendingTxs[tx];
-                const toWrite = `${data.number}, ${tx}, ${timeSpent * 1e3}\n`;
+                const toWrite = `${data.number}, ${tx}, ${timeSpent * 1e6}\n`;
 
                 fs.appendFileSync(resultsFile, toWrite);
 
