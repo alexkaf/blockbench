@@ -107,7 +107,7 @@ impl Transactions {
                     return ;
                 } else {
                     // println!("{}", total_found);
-                    println!("{} left...", pending.read().unwrap().len());
+                    // println!("{} left...", pending.read().unwrap().len());
                 }
             }
         });
