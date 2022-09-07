@@ -47,6 +47,10 @@ class Getter:
         node_idxs = [ config.NODES.index(node) for node in nodes]
         return [raw.data[experiment][blockchain][metric][node] for node in node_idxs]
 
+    @staticmethod
+    def get_saturation(metric):
+        return raw.data['saturation_sol']['rate'], raw.data['saturation_sol'][metric]
+
 class Results:
 
     _experiment = 'donothing'
@@ -57,7 +61,9 @@ class Results:
     metric_a = 'latency'
     metric_b = 'latency'
 
+    _saturation = False
     _nodes = config.NODES
+    _tps = 2000
     _plot = None
 
     def __init__(self, experiments_directory):
@@ -93,6 +99,10 @@ class Results:
         
         return self
 
+    def saturation(self):
+        self._saturation = True
+        return self
+
     def plot(self, plot_type=None):
         data_a = \
             Getter.get_data(self._experiment, 
@@ -117,9 +127,13 @@ class Results:
                             self.metric_b,
                             self._nodes)
 
-        self._plot = Plot(self._experiment, self._nodes, self.blockchain_a, self.blockchain_b, self.metric_a, self.metric_b, data_a, data_b, range_a, range_b, self.directory)
+        self._plot = Plot(self._experiment, self._nodes, self.blockchain_a, self.blockchain_b, self.metric_a, self.metric_b, self._tps, data_a, data_b, range_a, range_b, self.directory)
 
         return self._plot
+    
+    def tps(self, tps=2000):
+        self._tps = tps
+        return self
 
 class Plot:
     _title = None
@@ -127,12 +141,13 @@ class Plot:
     _axes = None
     ax_twinx = None
 
-    def __init__(self, experiment, nodes, blockchain_a, blockchain_b, metric_a, metric_b, data_a, data_b, range_a, range_b, experiments_directory=None):
+    def __init__(self, experiment, nodes, blockchain_a, blockchain_b, metric_a, metric_b, tps,  data_a, data_b, range_a, range_b, experiments_directory=None):
         plt.clf()
 
         self.experiments_directory = experiments_directory
         self.experiment = experiment
         self.nodes = nodes
+        self._tps = tps
 
         self.metric_a = metric_a
         self.metric_b = metric_b
@@ -153,17 +168,32 @@ class Plot:
         plt.yscale('log')
         return self
 
-    def line(self):
+    def saturation(self):
+        rate, data = Getter.get_saturation('tps')
 
+        plt.plot(rate, rate)
+        plt.plot(rate, data)
+        self.legend(['Send Rate (tps)', 'Response'])
+        return self 
+
+    def latency(self, plot_type='line', bins=100):
+
+        rate, latency = Getter.get_saturation('latency')
+
+        if plot_type == 'line':
+            plt.plot(rate, latency)
+        elif plot_type == 'hist':
+            experiment_path = os.path.join(self.experiments_directory, 'sat_{}'.format(self._tps))
+            _, latencies, _, _ = parse_file(experiment_path)
+
+            plt.hist(latencies, bins)
+
+        return self
+
+    def line(self):
         plt.plot(self.nodes, self.data_a)
 
         if not self.single_data:
-            # if self.metric_a != self.metric_b:
-            #     ax = plt.gca()
-            #     self.ax_twinx = ax.twinx()
-            #     self.ax_twinx.plot(self.nodes, self.data_b)
-            #     plt.ylim(min(min(self.data_a), min(self.data_b)), max(max(self.data_a), max(self.data_b)))
-            # else:
             plt.plot(self.nodes, self.data_b)
 
         return self
@@ -251,8 +281,12 @@ class Plot:
 
         return self
 
+    def set_ylim(self, limit):
+        plt.ylim(limit)
+        return self
+
     def legend(self, legend=None):
-        self._legend = _legend
+        self._legend = legend
         plt.legend(self._legend)
 
         return self 
@@ -294,6 +328,7 @@ if __name__ == '__main__':
     x = Results(path)
     # x.nodes(2, 4, 8)
     # x.experiment().plot().bar().show()
-    x.experiment('donothing').blockchain('eth').metrics('latency', 'blocktime').plot().line().title('Alex').box().show()
+    # x.experiment('kvstore').blockchain().metrics('tps').plot().set_ylim([0, 140]).line().title('Alex').show()
+    x.plot().latency('hist', 2000).show()
     # print(x.blockchain_b)
     # x.plot_vs('donothing', 'totaltime', 'eth', 'sol')

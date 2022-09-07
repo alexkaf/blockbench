@@ -81,9 +81,9 @@ if __name__ == '__main__':
 
     # plt.plot(blocks_list, txs_per_blk)
 
-    nodes_count, net = get_meta(file)
+    # nodes_count, net = get_meta(file)
 
-    ingress, egress = collect_traffic(nodes_count, net)
+    # ingress, egress = collect_traffic(nodes_count, net)
     
     eject_block_times(blocks, latencies, time_bounds)
     print('Total transactions: {}'.format(len(blocks)))
@@ -93,6 +93,6 @@ if __name__ == '__main__':
     print('Average latency: {}'.format(average_lat))
     print('TPS: {}'.format(1e9 * len(latencies) / total_time))
     print('Total time: {}'.format(total_time / 1e9))
-    print('Average Ingress: {}'.format(average(ingress)))
-    print('Average Egress: {}'.format(average(egress)))
+    # print('Average Ingress: {}'.format(average(ingress)))
+    # print('Average Egress: {}'.format(average(egress)))
 
