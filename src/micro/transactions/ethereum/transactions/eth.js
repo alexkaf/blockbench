@@ -36,9 +36,13 @@ const createAccounts = async(httpProviders, wsProviders, numberOfKeypairs) => {
 
     let currentProvider;
     for (let idx=0; idx<numberOfKeypairs; idx++){
-        let currentProviderIdx = providerIdx++ % totalNumberOfProviders
+        const randomNumber = Math.floor(Math.random() * 1e4);
+        let currentProviderIdx = (providerIdx + randomNumber) % totalNumberOfProviders
+        providerIdx += randomNumber;
+
         currentProvider = httpProviders[currentProviderIdx];
-        accountsPerProvider[currentProviderIdx].push(currentProvider.eth.personal.newAccount(''));
+        accountsPerProvider[currentProviderIdx].push(await currentProvider.eth.personal.newAccount(''));
+        await sleep(1000);
     }
 
     const accountCreations = flattenObjectWithLists(accountsPerProvider);
@@ -121,7 +125,7 @@ const unlockAccounts = async  (providerPerAccount) => {
         if (selectedAccounts.length === numberOfKeypairs) {
             break;
         }
-        
+
         continue
         const currentProvider = providerPerAccount[nextAccount].httpProvider;
         await currentProvider.eth.personal.unlockAccount(nextAccount, '', 99999);
