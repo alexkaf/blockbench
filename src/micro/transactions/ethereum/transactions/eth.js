@@ -124,19 +124,21 @@ const monitorTxs = async (wsProvider, pendingTxs, totalTxs) => {
     let allTxsDone = 0;
     
     let currentBlockIdx = await wsProvider.eth.getBlockNumber();
-    let latestBlockChecked = currentBlockIdx;
+    let alreadyInside = false;
 
     setInterval(async () => {
+        if (alreadyInside) {
+            console.log('Already in...');
+            return;
+        }
+
         let newBlock = await wsProvider.eth.getBlockNumber();
         
         console.log(currentBlockIdx + 1, newBlock);
         for (let blockIdx = currentBlockIdx + 1; blockIdx <= newBlock; blockIdx++){
+            
+            alreadyInside = true;
 
-            if (latestBlockChecked >= blockIdx) {
-                return;
-            }
-
-            latestBlockChecked = blockIdx;
             const currentBlock = await wsProvider.eth.getBlock(blockIdx);
             const blockTxs = currentBlock.transactions;
             const currentTime = Date.now();
@@ -165,8 +167,10 @@ const monitorTxs = async (wsProvider, pendingTxs, totalTxs) => {
                 
                 process.exit(0);
             }
-            currentBlockIdx = blockIdx;
         }
+        alreadyInside = false;
+        console.log('Next first block: ', blockIdx);
+        currentBlockIdx = blockIdx;
     }, 1000);
     // wsProvider.eth.subscribe('newBlockHeaders', async (_, data) => {
     //     const currentBlock = await wsProvider.eth.getBlock(data.number);
