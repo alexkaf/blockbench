@@ -188,11 +188,27 @@ const startBenchmark = async (accounts, args) => {
     console.log(`Sent ${txsCount} txs`);
 }
 
+const findTxTimes = async (accounts, pendingTxs, blockFindTime) => {
+    const blockNumbers = Object.keys(blockFindTime);
+
+    for (let block of blockNumbers) {
+        const blockTransactions = (await accounts[0].httpProvider.eth.getBlock(block)).transactions;
+        
+        for (let tx of blockTransactions) {
+            if (pendingTxs[tx] !== undefined) {
+                pendingTxs[tx] = blockFindTime[block] - pendingTxs[tx];
+            }
+        }
+    }
+    return pendingTxs;
+}
+
 const monitorTxs = async (accounts, pendingTxs, totalTxs, allNodeTxs) => {
     let allTxsDone = 0;
     let blockFindTime = {};
-    let prevBlockIdx;
+    let prevBlockIdx = await accounts[0].wsProvider.eth.getBlockNumber();
     let accountsIdx = 0;
+
     const allAccounts = Object.keys(accounts);
     const totalNumberOfAccounts = allAccounts.length;
 
@@ -208,11 +224,14 @@ const monitorTxs = async (accounts, pendingTxs, totalTxs, allNodeTxs) => {
             continue;
         }
         const blockTxs = await currentProvider.eth.getBlockTransactionCount(currentBlockNumber);
+        blockFindTime[currentBlockNumber] = Date.now();
         allTxsDone += blockTxs;
 
         console.log(`[${currentBlockNumber}]: ${allTxsDone} / ${totalTxs}`);
-        if (allTxsDone >= totalTxs) {
-            return;
+        if (allTxsDone >= allNodeTxs) {
+            const findTimes = await findTxTimes(accounts, pendingTxs, blockFindTime);
+            console.log(findTimes);
+            return
         }
         await sleep(500);
     }
