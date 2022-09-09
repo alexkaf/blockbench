@@ -253,7 +253,7 @@ const monitorTxs = async (accounts, pendingTxs, startingBlock, allNodeTxs, resul
 
         if (currentBlockNumber != prevBlockIdx) {
         } else {
-            await sleep(1000);
+            await sleep(2000);
             continue;
         }
         for (let current = prevBlockIdx + 1; current <= currentBlockNumber; current++) {
@@ -272,7 +272,7 @@ const monitorTxs = async (accounts, pendingTxs, startingBlock, allNodeTxs, resul
             }
         }
         prevBlockIdx = currentBlockNumber;
-        await sleep(500);
+        await sleep(2000);
     }
 }   
 
