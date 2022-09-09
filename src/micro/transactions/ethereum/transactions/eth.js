@@ -126,10 +126,10 @@ const monitorTxs = async (wsProvider, pendingTxs, totalTxs) => {
     let currentBlockIdx = await wsProvider.eth.getBlockNumber();
     let alreadyInside = false;
 
-    const monitor = wsProvider.eth.subscribe('newBlockHeaders', (data) => {
+    const monitor = wsProvider.eth.subscribe('newBlockHeaders', (_, data) => {
         console.log('Got number:', data.number);
     });
-    
+
     // setInterval(async () => {
     //     if (alreadyInside) {
     //         console.log('Already in...');
