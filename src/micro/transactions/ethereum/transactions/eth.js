@@ -28,8 +28,22 @@ const createAccounts = async(provider, numberOfKeypairs) => {
     await Promise.all(accountCreations);
 
     await unlockAccounts(provider, numberOfKeypairs);
-    return await airdropAll(provider, numberOfKeypairs);
+    await airdropAll(provider, numberOfKeypairs);
 
+    return await collectNonces(provider, numberOfKeypairs);
+}
+
+const collectNonces = async (provider, numberOfKeypairs) => {
+    let accountNonces = {};
+    const accounts = await getAccountsToUse(provider, numberOfKeypairs);
+
+    accountNonces[await getBasicAccount(provider)] = await provider.eth.getTransactionCount(await getBasicAccount(provider));
+
+    for (let account of accounts) {
+        accountNonces[account] = await provider.eth.getTransactionCount(account);
+    }
+    
+    return accountNonces;
 }
 
 const unlockAccounts = async  (provider, numberOfKeypairs) => {
@@ -88,7 +102,6 @@ const startBenchmark = async (provider, accounts, args) => {
 
     let pendingTxs = {};
     const txsToExecute = generateTxs(accounts, txsCount);
-
     monitorTxs(provider , pendingTxs, txsCount);
 
     const startTime = Date.now();
@@ -100,8 +113,6 @@ const startBenchmark = async (provider, accounts, args) => {
         provider.eth.sendTransaction(tx).on('transactionHash', (hash) => {
             pendingTxs[hash] = Date.now();
         });
-
-        console.log(`${idx++}`);
 
         await sleep(msPerTx);
     }
@@ -156,6 +167,7 @@ const generateTxs = (accounts, numberOfTransactions) => {
     for (let i = 0; i < numberOfTransactions; i++) {
         transactionsToBeExecuted.push(generateSingleTransaction(accounts));
     }
+
     return transactionsToBeExecuted;
 }
 
@@ -170,21 +182,23 @@ const generateSingleTransaction = (accounts) => {
     return {
         from: accountsForTx[0],
         to: accountsForTx[1],
+        nonce: accounts[accountsForTx[0]]++,
         value: txValue
-    };
+    };;
 }
 
 const getAccountsForTransaction = (accounts) => {    
-    const numberOfAccounts = accounts.length;
-
+    const accountAddresses = Object.keys(accounts);
+    const numberOfAccounts = accountAddresses.length;
+    
     const fromAccountIdx = getRandomAccountIdx(numberOfAccounts);
 
     while (true) {
         const toAccountIdx = getRandomAccountIdx(numberOfAccounts);
         if (toAccountIdx != fromAccountIdx) {
             return [
-                accounts[fromAccountIdx],
-                accounts[toAccountIdx],
+                accountAddresses[fromAccountIdx],
+                accountAddresses[toAccountIdx],
             ];
         }
     }
