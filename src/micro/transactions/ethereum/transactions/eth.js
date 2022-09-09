@@ -132,10 +132,10 @@ const monitorTxs = async (wsProvider, pendingTxs, totalTxs, allNodeTxs) => {
         for (let currentBlockIdx = prevBlockIdx + 1; currentBlockIdx <= nextBlockIdx; currentBlockIdx++) {
             const currentBlockContents = await wsProvider.eth.getBlock(currentBlockIdx);
 
-            allTxsDone += currentBlockContents.transactions;
+            allTxsDone += currentBlockContents.transactions.length;
             blockFindTime[currentBlockIdx] = Date.now();
 
-            console.log(`[${currentBlockIdx}]: ${allTxsDone} / ${allNodeTxs} | ${currentBlockContents.transactions} txs`);
+            console.log(`[${currentBlockIdx}]: ${allTxsDone} / ${allNodeTxs} | ${currentBlockContents.length} txs`);
         }
         await sleep(200);
     }
