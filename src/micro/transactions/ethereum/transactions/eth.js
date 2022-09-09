@@ -3,8 +3,6 @@ const BN = require('bn.js');
 const fs = require('fs');
 const { Console } = require('console');
 
-const resultsFile = '/home/ubuntu/test.txt';
-
 const getWsProvider = (endpoints) => {
     ws = []
     for (let endpoint of endpoints) {
@@ -167,10 +165,11 @@ const startBenchmark = async (accounts, args) => {
 
     let pendingTxs = {};
     const txsToExecute = generateTxs(accounts, txsCount);
-    monitorTxs(accounts, pendingTxs, txsCount, allNodeTxs);
 
     const startTime = Date.now();
+    const resultsFile = `/home/ubuntu/test_${args.name}.txt`;
     fs.appendFileSync(resultsFile, `Start, ${startTime * 1e6}\n`);
+    monitorTxs(accounts, pendingTxs, txsCount, allNodeTxs, resultsFile);
 
     console.log('Started benchmark');
     let idx = 0;
@@ -188,7 +187,7 @@ const startBenchmark = async (accounts, args) => {
     console.log(`Sent ${txsCount} txs`);
 }
 
-const findTxTimes = async (accounts, pendingTxs, blockFindTime) => {
+const findTxTimes = async (accounts, pendingTxs, blockFindTime, resultsFile) => {
     const blockNumbers = Object.keys(blockFindTime);
     const firstAccount = Object.keys(accounts)[0];
 
@@ -198,13 +197,14 @@ const findTxTimes = async (accounts, pendingTxs, blockFindTime) => {
         for (let tx of blockTransactions) {
             if (pendingTxs[tx] !== undefined) {
                 pendingTxs[tx] = blockFindTime[block] - pendingTxs[tx];
+                fs.appendFileSync(resultsFile, `${block}, ${tx}, ${pendingTxs[tx]}\n`);
             }
         }
     }
     return pendingTxs;
 }
 
-const monitorTxs = async (accounts, pendingTxs, totalTxs, allNodeTxs) => {
+const monitorTxs = async (accounts, pendingTxs, totalTxs, allNodeTxs, resultsFile) => {
     let allTxsDone = 0;
     let blockFindTime = {};
     let accountsIdx = 0;
@@ -231,111 +231,14 @@ const monitorTxs = async (accounts, pendingTxs, totalTxs, allNodeTxs) => {
 
         console.log(`[${currentBlockNumber}]: ${allTxsDone} / ${allNodeTxs}`);
         if (allTxsDone >= allNodeTxs) {
-            const findTimes = await findTxTimes(accounts, pendingTxs, blockFindTime);
+            const endTime = Date.now();
+            fs.appendFileSync(resultsFile, `End, ${startTime * 1e6}\n`);
+            const findTimes = await findTxTimes(accounts, pendingTxs, blockFindTime, resultsFile);
             console.log(findTimes);
-            return
+            process.exit(0);
         }
         await sleep(500);
     }
-    // while (true) {
-    //     const nextBlockIdx = await wsProvider.eth.getBlockNumber();
-
-    //     console.log(`[${prevBlockIdx}]: Check for ${nextBlockIdx}`);
-
-    //     for (let currentBlockIdx = prevBlockIdx + 1; currentBlockIdx <= nextBlockIdx; currentBlockIdx++) {
-    //         console.log('Waiting for block ', currentBlockIdx);
-    //         const currentBlockContents = await wsPro vider.eth.getBlock(currentBlockIdx);
-    //         console.log('Got block ', currentBlockIdx);
-
-    //         allTxsDone += currentBlockContents.transactions.length;
-    //         blockFindTime[currentBlockIdx] = Date.now();
-
-    //         console.log(`[${currentBlockIdx}]: ${allTxsDone} / ${allNodeTxs} | ${currentBlockContents.transactions.length} txs`);
-    //     }
-
-    //     if (allTxsDone === totalTxs) {
-    //         break;
-    //     }
-    //     prevBlockIdx = nextBlockIdx;
-    //     await sleep(1000);
-    // }
-
-    // setInterval(async () => {
-    //     if (alreadyInside) {
-    //         console.log('Already in...');
-    //         return;
-    //     }
-
-    //     let newBlock = await wsProvider.eth.getBlockNumber();
-        
-    //     console.log(currentBlockIdx + 1, newBlock);
-    //     for (let blockIdx = currentBlockIdx + 1; blockIdx <= newBlock; blockIdx++){
-            
-    //         alreadyInside = true;
-
-    //         const currentBlock = await wsProvider.eth.getBlock(blockIdx);
-    //         const blockTxs = currentBlock.transactions;
-    //         const currentTime = Date.now();
-
-    //         let txsFound = 0;
-    //         blockTxs.forEach((tx) => {
-    //             if (pendingTxs[tx] != undefined) {
-    //                 txsFound += 1;
-                    
-    //                 const timeSpent = currentTime - pendingTxs[tx];
-    //                 const toWrite = `${blockIdx}, ${tx}, ${timeSpent * 1e6}\n`;
-
-    //                 fs.appendFileSync(resultsFile, toWrite);
-
-    //                 delete pendingTxs[tx];
-    //             }
-    //         });
-    //         allTxsDone += txsFound;
-
-    //         console.log(`[${blockIdx}]: ${txsFound} txs`);
-
-    //         if (allTxsDone == totalTxs) {
-    //             const endTime = Date.now();
-    //             fs.appendFileSync(resultsFile, `End, ${endTime * 1e6}\n`);
-    //             console.log('DONE');
-                
-    //             process.exit(0);
-    //         }
-    //     }
-    //     alreadyInside = false;
-    //     console.log('Next first block: ', newBlock);
-    //     currentBlockIdx = newBlock;
-    // }, 1000);
-    // wsProvider.eth.subscribe('newBlockHeaders', async (_, data) => {
-    //     const currentBlock = await wsProvider.eth.getBlock(data.number);
-    //     const blockTxs = currentBlock.transactions;
-    //     const currentTime = Date.now();
-
-    //     let txsFound = 0;
-    //     blockTxs.forEach((tx) => {
-    //         if (pendingTxs[tx] != undefined) {
-    //             txsFound += 1;
-                
-    //             const timeSpent = currentTime - pendingTxs[tx];
-    //             const toWrite = `${data.number}, ${tx}, ${timeSpent * 1e6}\n`;
-
-    //             fs.appendFileSync(resultsFile, toWrite);
-
-    //             delete pendingTxs[tx];
-    //         }
-    //     });
-    //     allTxsDone += txsFound;
-
-    //     console.log(`[${data.number}]: ${txsFound} txs`);
-
-    //     if (allTxsDone == totalTxs) {
-    //         const endTime = Date.now();
-    //         fs.appendFileSync(resultsFile, `End, ${endTime * 1e6}\n`);
-    //         console.log('DONE');
-            
-    //         process.exit(0);
-    //     }
-    // });
 }   
 
 const sleep = async (sleepTime) => {
@@ -357,7 +260,7 @@ const generateTxs = (accounts, numberOfTransactions) => {
 }
 
 const getRandomAmountToTransfer = () => {
-    return Math.floor(Math.random() * 1e6);
+    return Math.floor(Math.random() * 1e4);
 }
 
 const generateSingleTransaction = (accounts) => {
