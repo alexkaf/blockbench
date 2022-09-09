@@ -123,11 +123,13 @@ const monitorTxs = async (wsProvider, pendingTxs, totalTxs) => {
     let currentBlock = await wsProvider.eth.getBlockNumber();
     setInterval(async () => {
         let newBlock = await wsProvider.eth.getBlockNumber();
-
-        if (currentBlock < newBlock) {
-            console.log('Got block:', newBlock);
-            currentBlock = newBlock;
+        
+        for (let blockIdx = currentBlock; blockIdx <= newBlock; blockIdx++){
+            if (blockIdx != currentBlock) {
+                console.log('Got block:', blockIdx);
+            }
         }
+        currentBlock = newBlock;
     }, 1000);
     // wsProvider.eth.subscribe('newBlockHeaders', async (_, data) => {
     //     const currentBlock = await wsProvider.eth.getBlock(data.number);
