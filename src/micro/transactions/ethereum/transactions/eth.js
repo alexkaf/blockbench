@@ -126,6 +126,7 @@ const monitorTxs = async (wsProvider, pendingTxs, totalTxs) => {
     setInterval(async () => {
         let newBlock = await wsProvider.eth.getBlockNumber();
         
+        console.log(currentBlock + 1, newBlock);
         for (let blockIdx = currentBlock + 1; blockIdx <= newBlock; blockIdx++){
             const currentBlock = await wsProvider.eth.getBlock(blockIdx);
             const blockTxs = currentBlock.transactions;
