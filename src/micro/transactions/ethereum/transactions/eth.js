@@ -223,7 +223,8 @@ const findTxTimes = async (accounts, pendingTxs, blockFindTime, resultsFile) => 
     const firstAccount = Object.keys(accounts)[0];
 
     for (let block of blockNumbers) {
-        const blockTransactions = (await accounts[firstAccount].httpProvider.eth.getBlock(block)).transactions;
+        const blockContents = await accounts[firstAccount].httpProvider.eth.getBlock(block);
+        const blockTransactions = blockContents.transactions;
         
         for (let tx of blockTransactions) {
             if (pendingTxs[tx] !== undefined) {
