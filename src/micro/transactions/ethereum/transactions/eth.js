@@ -120,37 +120,44 @@ const startBenchmark = async (provider, accounts, args) => {
 
 const monitorTxs = async (wsProvider, pendingTxs, totalTxs) => {
     let allTxsDone = 0;
+    let currentBlock = await provider.eth.getBlockNumber();
+    setInterval(async () => {
+        let newBlock = await provider.eth.getBlockNumber();
 
-    wsProvider.eth.subscribe('newBlockHeaders', async (_, data) => {
-        const currentBlock = await wsProvider.eth.getBlock(data.number);
-        const blockTxs = currentBlock.transactions;
-        const currentTime = Date.now();
-
-        let txsFound = 0;
-        blockTxs.forEach((tx) => {
-            if (pendingTxs[tx] != undefined) {
-                txsFound += 1;
-                
-                const timeSpent = currentTime - pendingTxs[tx];
-                const toWrite = `${data.number}, ${tx}, ${timeSpent * 1e6}\n`;
-
-                fs.appendFileSync(resultsFile, toWrite);
-
-                delete pendingTxs[tx];
-            }
-        });
-        allTxsDone += txsFound;
-
-        console.log(`[${data.number}]: ${txsFound} txs`);
-
-        if (allTxsDone == totalTxs) {
-            const endTime = Date.now();
-            fs.appendFileSync(resultsFile, `End, ${endTime * 1e6}\n`);
-            console.log('DONE');
-            
-            process.exit(0);
+        if (currentBlock < newBlock) {
+            console.log('Got block:', newBlock);
         }
-    });
+    }, 2000);
+    // wsProvider.eth.subscribe('newBlockHeaders', async (_, data) => {
+    //     const currentBlock = await wsProvider.eth.getBlock(data.number);
+    //     const blockTxs = currentBlock.transactions;
+    //     const currentTime = Date.now();
+
+    //     let txsFound = 0;
+    //     blockTxs.forEach((tx) => {
+    //         if (pendingTxs[tx] != undefined) {
+    //             txsFound += 1;
+                
+    //             const timeSpent = currentTime - pendingTxs[tx];
+    //             const toWrite = `${data.number}, ${tx}, ${timeSpent * 1e6}\n`;
+
+    //             fs.appendFileSync(resultsFile, toWrite);
+
+    //             delete pendingTxs[tx];
+    //         }
+    //     });
+    //     allTxsDone += txsFound;
+
+    //     console.log(`[${data.number}]: ${txsFound} txs`);
+
+    //     if (allTxsDone == totalTxs) {
+    //         const endTime = Date.now();
+    //         fs.appendFileSync(resultsFile, `End, ${endTime * 1e6}\n`);
+    //         console.log('DONE');
+            
+    //         process.exit(0);
+    //     }
+    // });
 }   
 
 const sleep = async (sleepTime) => {
