@@ -130,7 +130,9 @@ const monitorTxs = async (wsProvider, pendingTxs, totalTxs, allNodeTxs) => {
         const nextBlockIdx = await wsProvider.eth.getBlockNumber();
 
         for (let currentBlockIdx = prevBlockIdx + 1; currentBlockIdx <= nextBlockIdx; currentBlockIdx++) {
+            console.log('Waiting for block ', currentBlockIdx);
             const currentBlockContents = await wsProvider.eth.getBlock(currentBlockIdx);
+            console.log('Got block ', currentBlockIdx);
 
             allTxsDone += currentBlockContents.transactions.length;
             blockFindTime[currentBlockIdx] = Date.now();
