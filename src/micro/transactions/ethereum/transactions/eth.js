@@ -229,7 +229,7 @@ const monitorTxs = async (accounts, pendingTxs, totalTxs, allNodeTxs) => {
         blockFindTime[currentBlockNumber] = Date.now();
         allTxsDone += blockTxs;
 
-        console.log(`[${currentBlockNumber}]: ${allTxsDone} / ${totalTxs}`);
+        console.log(`[${currentBlockNumber}]: ${allTxsDone} / ${allNodeTxs}`);
         if (allTxsDone >= allNodeTxs) {
             const findTimes = await findTxTimes(accounts, pendingTxs, blockFindTime);
             console.log(findTimes);
