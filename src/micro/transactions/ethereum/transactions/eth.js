@@ -294,7 +294,7 @@ const generateTxs = (accounts, numberOfTransactions) => {
 }
 
 const getRandomAmountToTransfer = () => {
-    return Math.floor(Math.random() * 1e3);
+    return Math.floor(Math.random() * 1e5);
 }
 
 const generateSingleTransaction = (accounts) => {
