@@ -137,6 +137,7 @@ const monitorTxs = async (wsProvider, pendingTxs, totalTxs, allNodeTxs) => {
 
             console.log(`[${currentBlockIdx}]: ${allTxsDone} / ${allNodeTxs} | ${currentBlockContents.length} txs`);
         }
+        prevBlockIdx = nextBlockIdx;
         await sleep(200);
     }
 
