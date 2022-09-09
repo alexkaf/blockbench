@@ -129,6 +129,8 @@ const monitorTxs = async (wsProvider, pendingTxs, totalTxs, allNodeTxs) => {
     while (true) {
         const nextBlockIdx = await wsProvider.eth.getBlockNumber();
 
+        console.log(`[${prevBlockIdx}]: Check for ${nextBlockIdx}`);
+
         for (let currentBlockIdx = prevBlockIdx + 1; currentBlockIdx <= nextBlockIdx; currentBlockIdx++) {
             console.log('Waiting for block ', currentBlockIdx);
             const currentBlockContents = await wsProvider.eth.getBlock(currentBlockIdx);
@@ -144,7 +146,7 @@ const monitorTxs = async (wsProvider, pendingTxs, totalTxs, allNodeTxs) => {
             break;
         }
         prevBlockIdx = nextBlockIdx;
-        await sleep(200);
+        await sleep(1000);
     }
 
     // setInterval(async () => {
