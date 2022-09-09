@@ -122,12 +122,17 @@ const startBenchmark = async (provider, accounts, args) => {
 
 const monitorTxs = async (wsProvider, pendingTxs, totalTxs) => {
     let allTxsDone = 0;
-    
+    let blockFindTime = {};
     let currentBlockIdx = await wsProvider.eth.getBlockNumber();
     let alreadyInside = false;
 
-    const monitor = wsProvider.eth.subscribe('newBlockHeaders', (_, data) => {
-        console.log('Got number:', data.number);
+    const monitor = wsProvider.eth.subscribe('newBlockHeaders', async (_, data) => {
+        const blockNumber = data.number;
+        const currentBlockContents = await wsProvider.eth.getBlock(blockNumber);
+        allTxsDone += currentBlockContents.transactions.length;
+        blockFindTime[blockNumber] = Date.now();
+
+        console.log(`[${blockNumber}]: ${allTxsDone} / ${totalTxs}  |  ${currentBlockContents.transactions.length}`);
     });
 
     // setInterval(async () => {
