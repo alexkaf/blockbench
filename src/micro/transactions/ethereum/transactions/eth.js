@@ -120,9 +120,9 @@ const startBenchmark = async (provider, accounts, args) => {
 
 const monitorTxs = async (wsProvider, pendingTxs, totalTxs) => {
     let allTxsDone = 0;
-    let currentBlock = await provider.eth.getBlockNumber();
+    let currentBlock = await wsProvider.eth.getBlockNumber();
     setInterval(async () => {
-        let newBlock = await provider.eth.getBlockNumber();
+        let newBlock = await wsProvider.eth.getBlockNumber();
 
         if (currentBlock < newBlock) {
             console.log('Got block:', newBlock);
