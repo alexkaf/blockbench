@@ -190,9 +190,10 @@ const startBenchmark = async (accounts, args) => {
 
 const findTxTimes = async (accounts, pendingTxs, blockFindTime) => {
     const blockNumbers = Object.keys(blockFindTime);
+    const firstAccount = Object.keys(accounts)[0];
 
     for (let block of blockNumbers) {
-        const blockTransactions = (await accounts[0].httpProvider.eth.getBlock(block)).transactions;
+        const blockTransactions = (await accounts[firstAccount].httpProvider.eth.getBlock(block)).transactions;
         
         for (let tx of blockTransactions) {
             if (pendingTxs[tx] !== undefined) {
@@ -206,12 +207,13 @@ const findTxTimes = async (accounts, pendingTxs, blockFindTime) => {
 const monitorTxs = async (accounts, pendingTxs, totalTxs, allNodeTxs) => {
     let allTxsDone = 0;
     let blockFindTime = {};
-    let prevBlockIdx = await accounts[0].wsProvider.eth.getBlockNumber();
     let accountsIdx = 0;
 
     const allAccounts = Object.keys(accounts);
     const totalNumberOfAccounts = allAccounts.length;
 
+    let prevBlockIdx = await accounts[allAccounts[0]].wsProvider.eth.getBlockNumber();
+    
     while (true) {
         const currentAccount = allAccounts[accountsIdx++ % totalNumberOfAccounts];
         const currentProvider = accounts[currentAccount].wsProvider;
