@@ -117,15 +117,18 @@ const unlockAccounts = async  (providerPerAccount) => {
             nextAccount = selectRandomAccount(providerPerAccount);
         }
         selectedAccounts.push(nextAccount);
-        return
+
+        if (selectedAccounts.length === numberOfKeypairs) {
+            break;
+        }
+        
+        continue
         const currentProvider = providerPerAccount[nextAccount].httpProvider;
         await currentProvider.eth.personal.unlockAccount(nextAccount, '', 99999);
 
         await sleep(1000);
 
-        if (selectedAccounts.length === numberOfKeypairs) {
-            break;
-        }
+        
     }
 
     console.log('Accounts unlocked.');
