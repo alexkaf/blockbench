@@ -191,7 +191,7 @@ const startBenchmark = async (accounts, args) => {
 const monitorTxs = async (accounts, pendingTxs, totalTxs, allNodeTxs) => {
     let allTxsDone = 0;
     let blockFindTime = {};
-    let prevBlockIdx = await wsProvider.eth.getBlockNumber();
+    // let prevBlockIdx = await wsProvider.eth.getBlockNumber();
     let accountsIdx = 0;
     const allAccounts = Object.keys(accounts);
     const totalNumberOfAccounts = allAccounts.length;
