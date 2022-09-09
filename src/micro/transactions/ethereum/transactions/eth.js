@@ -124,17 +124,21 @@ const startBenchmark = async (provider, accounts, args) => {
 const monitorTxs = async (wsProvider, pendingTxs, totalTxs, allNodeTxs) => {
     let allTxsDone = 0;
     let blockFindTime = {};
-    let currentBlockIdx = await wsProvider.eth.getBlockNumber();
-    let alreadyInside = false;
+    let prevBlockIdx = await wsProvider.eth.getBlockNumber();
 
-    const monitor = wsProvider.eth.subscribe('newBlockHeaders', async (_, data) => {
-        const blockNumber = data.number;
-        const currentBlockContents = await wsProvider.eth.getBlock(blockNumber);
-        allTxsDone += currentBlockContents.transactions.length;
-        blockFindTime[blockNumber] = Date.now();
+    while (true) {
+        const nextBlockIdx = await wsProvider.eth.getBlockNumber();
 
-        console.log(`[${blockNumber}]: ${allTxsDone} / ${allNodeTxs}  |  ${currentBlockContents.transactions.length}`);
-    });
+        for (let currentBlockIdx = prevBlockIdx + 1; currentBlockIdx <= nextBlockIdx; currentBlockIdx++) {
+            const currentBlockContents = await wsProvider.eth.getBlock(currentBlockIdx);
+
+            allTxsDone += currentBlockContents.transactions;
+            blockFindTime[currentBlockIdx] = Date.now();
+
+            console.log(`[${currentBlockIdx}]: ${allTxsDone} / ${allNodeTxs} | ${currentBlockContents.transactions} txs`);
+        }
+        await sleep(200);
+    }
 
     // setInterval(async () => {
     //     if (alreadyInside) {
