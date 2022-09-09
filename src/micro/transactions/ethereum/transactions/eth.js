@@ -197,11 +197,11 @@ const findTxTimes = async (accounts, pendingTxs, blockFindTime, resultsFile) => 
         for (let tx of blockTransactions) {
             if (pendingTxs[tx] !== undefined) {
                 pendingTxs[tx] = blockFindTime[block] - pendingTxs[tx];
-                fs.appendFileSync(resultsFile, `${block}, ${tx}, ${pendingTxs[tx]}\n`);
+                fs.appendFileSync(resultsFile, `${block * 1e6}, ${tx}, ${pendingTxs[tx]}\n`);
             }
         }
     }
-    return pendingTxs;
+    return pendingTxs;s
 }
 
 const monitorTxs = async (accounts, pendingTxs, totalTxs, allNodeTxs, resultsFile) => {
