@@ -16,3 +16,5 @@ debug
 .temp
 bandwidth
 driver
+programId.json
+feePayer.json
