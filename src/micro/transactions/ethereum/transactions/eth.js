@@ -1,64 +1,122 @@
 const Web3 = require('web3');
 const BN = require('bn.js');
 const fs = require('fs');
+const { Console } = require('console');
 
 const resultsFile = '/home/ubuntu/test.txt';
 
-const getWsProvider = (endpoint) => {
-    return new Web3(new Web3.providers.WebsocketProvider(`ws://${endpoint}:8546`));
+const getWsProvider = (endpoints) => {
+    ws = []
+    for (let endpoint of endpoints) {
+        ws.push(new Web3(new Web3.providers.WebsocketProvider(`ws://${endpoint}:8546`)));
+    }
+    return ws
 }
 
-const getHttpProvider = (endpoint) => {
-    return new Web3(new Web3.providers.HttpProvider(`http://${endpoint}:8545`));
+const getHttpProvider = (endpoints) => {
+    http = []
+    for (let endpoint of endpoints) {
+        http.push(new Web3(new Web3.providers.HttpProvider(`http://${endpoint}:8545`)));
+    }
+    return http
 }
 
 const collectAccounts = async (provider) => {
     return provider.eth.personal.getAccounts();
 }
 
-const createAccounts = async(provider, numberOfKeypairs) => {
+const createAccounts = async(httpProviders, wsProviders, numberOfKeypairs) => {
     console.log(`Creating ${numberOfKeypairs} accounts...`);
     const accounts = [];
-    
-    let accountCreations = [];
-    for (let idx=0; idx<numberOfKeypairs; idx++){
-        accountCreations.push(provider.eth.personal.newAccount(''));
+    let providerIdx = 0;
+    const totalNumberOfProviders = httpProviders.length;
+    let accountsPerProvider = {};
+
+    for (let providerIdx = 0; providerIdx < totalNumberOfProviders; providerIdx++) {
+        accountsPerProvider[providerIdx] = [];
     }
 
+    let currentProvider;
+    for (let idx=0; idx<numberOfKeypairs; idx++){
+        let currentProviderIdx = providerIdx++ % totalNumberOfProviders
+        currentProvider = httpProviders[currentProviderIdx];
+        accountsPerProvider[currentProviderIdx].push(currentProvider.eth.personal.newAccount(''));
+    }
+
+    const accountCreations = flattenObjectWithLists(accountsPerProvider);
     await Promise.all(accountCreations);
+    await unfoldPromisesFromAccounts(accountsPerProvider);
 
-    await unlockAccounts(provider, numberOfKeypairs);
-    await airdropAll(provider, numberOfKeypairs);
+    let providerPerAccount = createProviderPerAccount(httpProviders, wsProviders, accountsPerProvider);
 
-    return await collectNonces(provider, numberOfKeypairs);
+    await unlockAccounts(providerPerAccount);
+    await airdropAll(httpProviders, accountsPerProvider);
+    
+    providerPerAccount = await collectNonces(providerPerAccount);
+    return providerPerAccount;
 }
 
-const collectNonces = async (provider, numberOfKeypairs) => {
-    let accountNonces = {};
-    const accounts = await getAccountsToUse(provider, numberOfKeypairs);
+const createProviderPerAccount = (httpProviders, wsProviders, accountsPerProvider) => {
+    let providerPerAccount = {};
+    const providerKeys = Object.keys(accountsPerProvider);
+    
+    providerKeys.map((providerKey) => {
+        const httpProvider = httpProviders[providerKey];
+        const wsProvider = wsProviders[providerKey];
+        accountsPerProvider[providerKey].map((account) => {
+            providerPerAccount[account] = {
+                'httpProvider': httpProvider,
+                'wsProvider': wsProvider,
+            };
+        })
+    });
+    return providerPerAccount;
+}
 
-    accountNonces[await getBasicAccount(provider)] = await provider.eth.getTransactionCount(await getBasicAccount(provider));
+const unfoldPromisesFromAccounts = async (accountsPerProvider) => {
+    const keys = Object.keys(accountsPerProvider);
+
+    for (let key of keys) {
+        const accountsLength = accountsPerProvider[key].length;
+        
+        for (let accountIdx = 0; accountIdx <accountsLength; accountIdx++) {
+            accountsPerProvider[key][accountIdx] = await accountsPerProvider[key][accountIdx];
+        }
+    }
+}
+
+const flattenObjectWithLists = (theObject) => {
+    const values = Object.values(theObject);
+
+    let listOfValues = [];
+    for (let value of values) {
+        listOfValues = listOfValues.concat(value);
+    }
+    return listOfValues;
+}
+
+const collectNonces = async (providerPerAccount) => {
+    const accounts = Object.keys(providerPerAccount);
 
     for (let account of accounts) {
-        accountNonces[account] = await provider.eth.getTransactionCount(account);
+        const currentProvider = providerPerAccount[account].httpProvider;
+        providerPerAccount[account]['nonce'] = await currentProvider.eth.getTransactionCount(account);
     }
-    
-    return accountNonces;
+    return providerPerAccount;
 }
 
-const unlockAccounts = async  (provider, numberOfKeypairs) => {
+const unlockAccounts = async  (providerPerAccount) => {
+    const accounts = Object.keys(providerPerAccount);
+    const numberOfKeypairs = accounts.length;
     console.log(`Unlocking ${numberOfKeypairs} accounts...`);
-
-    const accountsToUnlock = await getAccountsToUse(provider, numberOfKeypairs);
-
-    const pendingUnlocks = accountsToUnlock.map((account) => {
-        provider.eth.personal.unlockAccount(account, '', 99999);
-    });
-
+    
+    const pendingUnlocks = accounts.map((account) => {
+        const currentProvider = providerPerAccount[account].httpProvider;
+        return currentProvider.eth.personal.unlockAccount(account, '', 99999);
+    })
+    
     await Promise.all(pendingUnlocks);
-
     console.log('Accounts unlocked.');
-    return accountsToUnlock;
 }
 
 const getBasicAccount = async (provider) => {
@@ -74,44 +132,53 @@ const getAccountsToUse = async (provider, numberOfKeypairs) => {
     return accounts.slice(startingIndex);
 }
 
-const airdropAll = async (provider, numberOfKeypairs) => {
+const airdropAll = async (providers, accountsPerProvider) => {
     console.log('Airdropping..');
 
-    const basicAccount = await getBasicAccount(provider);
-    const accountsToAirdrop = await getAccountsToUse(provider, numberOfKeypairs);
-    
-    const basicAccountBalance = await provider.eth.getBalance(basicAccount);
+    let airdrops = [];
+    const providerKeys = Object.keys(accountsPerProvider);
 
-    const balancePerAccount = new BN(basicAccountBalance).div(new BN(numberOfKeypairs + 1));
+    for (let key of providerKeys) {
+        const currentProvider = providers[key];
+        const basicAccount = await getBasicAccount(currentProvider);
 
-    const airdrops = accountsToAirdrop.map((account) => {
-        return provider.eth.sendTransaction({
-            from: basicAccount,
-            to: account,
-            value: balancePerAccount,
-        });;
-    });
+        const accountsToAirdrop = accountsPerProvider[key];
+        const numberOfKeypairs = accountsToAirdrop.length;
+        const basicAccountBalance = await currentProvider.eth.getBalance(basicAccount);
+
+        const balancePerAccount = new BN(basicAccountBalance).div(new BN(numberOfKeypairs + 1));
+        airdrops = airdrops.concat(accountsToAirdrop.map((account) => {
+            return currentProvider.eth.sendTransaction({
+                from: basicAccount,
+                to: account,
+                value: balancePerAccount,
+            });
+        }));
+    }
 
     await Promise.all(airdrops);
-    return accountsToAirdrop;
+    console.log('Airdrop done...');
 }
 
-const startBenchmark = async (provider, accounts, args) => {
+const startBenchmark = async (accounts, args) => {
     const txsCount = args.txs;
     const allNodeTxs = args.totalTxs;
     const msPerTx = 1000 / args.rate;
 
     let pendingTxs = {};
     const txsToExecute = generateTxs(accounts, txsCount);
-    monitorTxs(provider , pendingTxs, txsCount, allNodeTxs);
+    monitorTxs(accounts, pendingTxs, txsCount, allNodeTxs);
 
     const startTime = Date.now();
     fs.appendFileSync(resultsFile, `Start, ${startTime * 1e6}\n`);
 
     console.log('Started benchmark');
     let idx = 0;
+
     for (let tx of txsToExecute) {
-        provider.eth.sendTransaction(tx).on('transactionHash', (hash) => {
+        const currentProvider = tx[0];
+        const currentTx = tx[1];
+        currentProvider.eth.sendTransaction(currentTx).on('transactionHash', (hash) => {
             pendingTxs[hash] = Date.now();
         });
 
@@ -121,33 +188,42 @@ const startBenchmark = async (provider, accounts, args) => {
     console.log(`Sent ${txsCount} txs`);
 }
 
-const monitorTxs = async (wsProvider, pendingTxs, totalTxs, allNodeTxs) => {
+const monitorTxs = async (accounts, pendingTxs, totalTxs, allNodeTxs) => {
     let allTxsDone = 0;
     let blockFindTime = {};
     let prevBlockIdx = await wsProvider.eth.getBlockNumber();
+    let accountsIdx = 0;
+    const allAccounts = Object.keys(accounts);
+    const totalNumberOfAccounts = allAccounts.length;
 
     while (true) {
-        const nextBlockIdx = await wsProvider.eth.getBlockNumber();
+        const provider = accounts[accountsIdx++].wsProvider;
 
-        console.log(`[${prevBlockIdx}]: Check for ${nextBlockIdx}`);
-
-        for (let currentBlockIdx = prevBlockIdx + 1; currentBlockIdx <= nextBlockIdx; currentBlockIdx++) {
-            console.log('Waiting for block ', currentBlockIdx);
-            const currentBlockContents = await wsProvider.eth.getBlock(currentBlockIdx);
-            console.log('Got block ', currentBlockIdx);
-
-            allTxsDone += currentBlockContents.transactions.length;
-            blockFindTime[currentBlockIdx] = Date.now();
-
-            console.log(`[${currentBlockIdx}]: ${allTxsDone} / ${allNodeTxs} | ${currentBlockContents.transactions.length} txs`);
-        }
-
-        if (allTxsDone === totalTxs) {
-            break;
-        }
-        prevBlockIdx = nextBlockIdx;
-        await sleep(1000);
+        const currentBlockNumber = await provider.eth.getBlockNumber();
+        console.log(currentBlockNumber);
     }
+    // while (true) {
+    //     const nextBlockIdx = await wsProvider.eth.getBlockNumber();
+
+    //     console.log(`[${prevBlockIdx}]: Check for ${nextBlockIdx}`);
+
+    //     for (let currentBlockIdx = prevBlockIdx + 1; currentBlockIdx <= nextBlockIdx; currentBlockIdx++) {
+    //         console.log('Waiting for block ', currentBlockIdx);
+    //         const currentBlockContents = await wsProvider.eth.getBlock(currentBlockIdx);
+    //         console.log('Got block ', currentBlockIdx);
+
+    //         allTxsDone += currentBlockContents.transactions.length;
+    //         blockFindTime[currentBlockIdx] = Date.now();
+
+    //         console.log(`[${currentBlockIdx}]: ${allTxsDone} / ${allNodeTxs} | ${currentBlockContents.transactions.length} txs`);
+    //     }
+
+    //     if (allTxsDone === totalTxs) {
+    //         break;
+    //     }
+    //     prevBlockIdx = nextBlockIdx;
+    //     await sleep(1000);
+    // }
 
     // setInterval(async () => {
     //     if (alreadyInside) {
@@ -253,12 +329,12 @@ const generateSingleTransaction = (accounts) => {
     const accountsForTx = getAccountsForTransaction(accounts);
     const txValue = getRandomAmountToTransfer();
 
-    return {
+    return [accounts[accountsForTx[0]].httpProvider, {
         from: accountsForTx[0],
         to: accountsForTx[1],
-        nonce: accounts[accountsForTx[0]]++,
+        nonce: accounts[accountsForTx[0]].nonce++,
         value: txValue
-    };;
+    }];
 }
 
 const getAccountsForTransaction = (accounts) => {    
