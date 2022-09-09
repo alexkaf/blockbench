@@ -126,8 +126,9 @@ const monitorTxs = async (wsProvider, pendingTxs, totalTxs) => {
 
         if (currentBlock < newBlock) {
             console.log('Got block:', newBlock);
+            currentBlock = newBlock;
         }
-    }, 2000);
+    }, 1000);
     // wsProvider.eth.subscribe('newBlockHeaders', async (_, data) => {
     //     const currentBlock = await wsProvider.eth.getBlock(data.number);
     //     const blockTxs = currentBlock.transactions;
