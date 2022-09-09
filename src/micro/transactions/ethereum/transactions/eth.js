@@ -201,6 +201,7 @@ const monitorTxs = async (accounts, pendingTxs, totalTxs, allNodeTxs) => {
         const currentProvider = accounts[currentAccount].wsProvider;
         const currentBlockNumber = await currentProvider.eth.getBlockNumber();
         console.log(currentBlockNumber);
+        await sleep(1000);
     }
     // while (true) {
     //     const nextBlockIdx = await wsProvider.eth.getBlockNumber();
