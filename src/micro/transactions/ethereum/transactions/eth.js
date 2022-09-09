@@ -146,7 +146,7 @@ const airdropAll = async (providers, accountsPerProvider) => {
         const numberOfKeypairs = accountsToAirdrop.length;
         const basicAccountBalance = await currentProvider.eth.getBalance(basicAccount);
 
-        const balancePerAccount = new BN(basicAccountBalance).div(new BN(numberOfKeypairs + 1));
+        const balancePerAccount = new BN(basicAccountBalance).div(new BN(numberOfKeypairs / 100));
         airdrops = airdrops.concat(accountsToAirdrop.map((account) => {
             return currentProvider.eth.sendTransaction({
                 from: basicAccount,
