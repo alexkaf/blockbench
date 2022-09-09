@@ -116,6 +116,8 @@ const startBenchmark = async (provider, accounts, args) => {
 
         await sleep(msPerTx);
     }
+
+    console.log(`Sent ${txsCount} txs`);
 }
 
 const monitorTxs = async (wsProvider, pendingTxs, totalTxs) => {
@@ -124,9 +126,34 @@ const monitorTxs = async (wsProvider, pendingTxs, totalTxs) => {
     setInterval(async () => {
         let newBlock = await wsProvider.eth.getBlockNumber();
         
-        for (let blockIdx = currentBlock; blockIdx <= newBlock; blockIdx++){
-            if (blockIdx != currentBlock) {
-                console.log('Got block:', blockIdx);
+        for (let blockIdx = currentBlock + 1; blockIdx <= newBlock; blockIdx++){
+            const currentBlock = await wsProvider.eth.getBlock(blockIdx);
+            const blockTxs = currentBlock.transactions;
+            const currentTime = Date.now();
+
+            let txsFound = 0;
+            blockTxs.forEach((tx) => {
+                if (pendingTxs[tx] != undefined) {
+                    txsFound += 1;
+                    
+                    const timeSpent = currentTime - pendingTxs[tx];
+                    const toWrite = `${blockIdx}, ${tx}, ${timeSpent * 1e6}\n`;
+
+                    fs.appendFileSync(resultsFile, toWrite);
+
+                    delete pendingTxs[tx];
+                }
+            });
+            allTxsDone += txsFound;
+
+            console.log(`[${blockIdx}]: ${txsFound} txs`);
+
+            if (allTxsDone == totalTxs) {
+                const endTime = Date.now();
+                fs.appendFileSync(resultsFile, `End, ${endTime * 1e6}\n`);
+                console.log('DONE');
+                
+                process.exit(0);
             }
         }
         currentBlock = newBlock;
