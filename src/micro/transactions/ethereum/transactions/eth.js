@@ -257,14 +257,14 @@ const monitorTxs = async (accounts, pendingTxs, startingBlock, allNodeTxs, resul
         }
         for (let current = prevBlockIdx + 1; current <= currentBlockNumber; current++) {
             const blockTxs = await currentProvider.eth.getBlockTransactionCount(current);
-            blockFindTime[currentBlockNumber] = Date.now();
+            blockFindTime[current] = Date.now();
             allTxsDone += blockTxs;
 
-            console.log(`[${currentBlockNumber}]: ${allTxsDone} / ${allNodeTxs}`);
+            console.log(`[${current}]: ${allTxsDone} / ${allNodeTxs}`);
             if (allTxsDone >= allNodeTxs) {
                 const endTime = Date.now();
                 fs.appendFileSync(resultsFile, `End, ${endTime * 1e6}\n`);
-                const findTimes = await findTxTimes(accounts, pendingTxs, blockFindTime, resultsFile);
+                await findTxTimes(accounts, pendingTxs, blockFindTime, resultsFile);
                 
                 console.log('Done');
                 process.exit(0);
