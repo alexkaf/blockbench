@@ -107,13 +107,35 @@ const unlockAccounts = async  (providerPerAccount) => {
     const accounts = Object.keys(providerPerAccount);
     const numberOfKeypairs = accounts.length;
     console.log(`Unlocking ${numberOfKeypairs} accounts...`);
-    
-    for (let account of accounts) {
-        const currentProvider = providerPerAccount[account].httpProvider;
-        await  currentProvider.eth.personal.unlockAccount(account, '', 99999);
+    let selectedAccounts = [];
+
+    while (true) {
+        let nextAccount = selectRandomAccount(providerPerAccount);
+
+        while (selectedAccounts.includes(nextAccount)) {
+            nextAccount = selectRandomAccount(providerPerAccount);
+        }
+
+        const currentProvider = providerPerAccount[nextAccount].httpProvider;
+        await currentProvider.eth.personal.unlockAccount(nextAccount, '', 99999);
+
+        await sleep(1000);
+
+        if (selectedAccounts.length === numberOfKeypairs) {
+            break;
+        }
     }
 
     console.log('Accounts unlocked.');
+}
+
+const selectRandomAccount = (accounts) => {
+    const allAccounts = Object.keys(accounts);
+    const accountsNumber = allAccounts.length;
+
+    const accountIdx = Math.floor(Math.random() * accountsNumber);
+
+    return allAccounts[accountIdx];
 }
 
 const getBasicAccount = async (provider) => {
