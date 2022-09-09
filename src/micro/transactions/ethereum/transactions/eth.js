@@ -197,9 +197,9 @@ const monitorTxs = async (accounts, pendingTxs, totalTxs, allNodeTxs) => {
     const totalNumberOfAccounts = allAccounts.length;
 
     while (true) {
-        const provider = accounts[accountsIdx++].wsProvider;
-
-        const currentBlockNumber = await provider.eth.getBlockNumber();
+        const currentAccount = allAccounts[accountsIdx++ % totalNumberOfAccounts];
+        const currentProvider = accounts[currentAccount].wsProvider;
+        const currentBlockNumber = await currentProvider.eth.getBlockNumber();
         console.log(currentBlockNumber);
     }
     // while (true) {
@@ -209,7 +209,7 @@ const monitorTxs = async (accounts, pendingTxs, totalTxs, allNodeTxs) => {
 
     //     for (let currentBlockIdx = prevBlockIdx + 1; currentBlockIdx <= nextBlockIdx; currentBlockIdx++) {
     //         console.log('Waiting for block ', currentBlockIdx);
-    //         const currentBlockContents = await wsProvider.eth.getBlock(currentBlockIdx);
+    //         const currentBlockContents = await wsPro vider.eth.getBlock(currentBlockIdx);
     //         console.log('Got block ', currentBlockIdx);
 
     //         allTxsDone += currentBlockContents.transactions.length;
