@@ -238,7 +238,7 @@ const monitorTxs = async (accounts, pendingTxs, totalTxs, allNodeTxs, resultsFil
     const allAccounts = Object.keys(accounts);
     const totalNumberOfAccounts = allAccounts.length;
 
-    let prevBlockIdx = await accounts[allAccounts[0]].wsProvider.eth.getBlockNumber();
+    let prevBlockIdx = (await accounts[allAccounts[0]].wsProvider.eth.getBlockNumber()) - 1;
     
     while (true) {
         const currentAccount = allAccounts[accountsIdx++ % totalNumberOfAccounts];
