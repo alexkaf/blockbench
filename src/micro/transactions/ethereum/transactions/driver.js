@@ -13,6 +13,6 @@ console.log(`Rate: ${argsObject.rate}`);
 
 (async() => {
     const accounts = await eth.createAccounts(http, ws, argsObject.keypairs);
-
-    await eth.startBenchmark(accounts, argsObject);
+    
+    // await eth.startBenchmark(accounts, argsObject);
 })();
