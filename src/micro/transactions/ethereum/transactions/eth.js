@@ -168,7 +168,7 @@ const startBenchmark = async (accounts, args) => {
 
     const startTime = Date.now();
     const resultsFile = `/home/ubuntu/test_${args.name}.txt`;
-    fs.appendFileSync(resultsFile, `Start, ${startTime * 1e6}\n`);
+    fs.writeFileSync(resultsFile, `Start, ${startTime * 1e6}\n`);
     monitorTxs(accounts, pendingTxs, txsCount, allNodeTxs, resultsFile);
 
     console.log('Started benchmark');
@@ -232,9 +232,10 @@ const monitorTxs = async (accounts, pendingTxs, totalTxs, allNodeTxs, resultsFil
         console.log(`[${currentBlockNumber}]: ${allTxsDone} / ${allNodeTxs}`);
         if (allTxsDone >= allNodeTxs) {
             const endTime = Date.now();
-            fs.appendFileSync(resultsFile, `End, ${startTime * 1e6}\n`);
+            fs.appendFileSync(resultsFile, `End, ${endTime * 1e6}\n`);
             const findTimes = await findTxTimes(accounts, pendingTxs, blockFindTime, resultsFile);
-            console.log(findTimes);
+            
+            console.log('Done');
             process.exit(0);
         }
         await sleep(500);
