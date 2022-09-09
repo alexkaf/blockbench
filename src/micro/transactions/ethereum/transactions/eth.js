@@ -52,7 +52,6 @@ const createAccounts = async(httpProviders, wsProviders, numberOfKeypairs) => {
     let providerPerAccount = createProviderPerAccount(httpProviders, wsProviders, accountsPerProvider);
 
     await unlockAccounts(providerPerAccount);
-    return
     await airdropAll(httpProviders, accountsPerProvider);
     
     providerPerAccount = await collectNonces(providerPerAccount);
@@ -122,17 +121,14 @@ const unlockAccounts = async  (providerPerAccount) => {
         }
         selectedAccounts.push(nextAccount);
 
+        const currentProvider = providerPerAccount[nextAccount].httpProvider;
+        await currentProvider.eth.personal.unlockAccount(nextAccount, '', 99999);
+
         if (selectedAccounts.length === numberOfKeypairs) {
             break;
         }
 
-        continue
-        const currentProvider = providerPerAccount[nextAccount].httpProvider;
-        await currentProvider.eth.personal.unlockAccount(nextAccount, '', 99999);
-
         await sleep(1000);
-
-        
     }
 
     console.log('Accounts unlocked.');
