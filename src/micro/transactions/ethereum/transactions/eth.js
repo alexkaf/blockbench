@@ -123,14 +123,14 @@ const startBenchmark = async (provider, accounts, args) => {
 const monitorTxs = async (wsProvider, pendingTxs, totalTxs) => {
     let allTxsDone = 0;
     
-    let currentBlock = await wsProvider.eth.getBlockNumber();
+    let currentBlockIdx = await wsProvider.eth.getBlockNumber();
     let latestBlockChecked = currentBlock;
 
     setInterval(async () => {
         let newBlock = await wsProvider.eth.getBlockNumber();
         
-        console.log(currentBlock + 1, newBlock);
-        for (let blockIdx = currentBlock + 1; blockIdx <= newBlock; blockIdx++){
+        console.log(currentBlockIdx + 1, newBlock);
+        for (let blockIdx = currentBlockIdx + 1; blockIdx <= newBlock; blockIdx++){
 
             if (latestBlockChecked >= blockIdx) {
                 return;
@@ -165,7 +165,7 @@ const monitorTxs = async (wsProvider, pendingTxs, totalTxs) => {
                 
                 process.exit(0);
             }
-            currentBlock = blockIdx;
+            currentBlockIdx = blockIdx;
         }
     }, 1000);
     // wsProvider.eth.subscribe('newBlockHeaders', async (_, data) => {
