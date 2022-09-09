@@ -169,8 +169,8 @@ const monitorTxs = async (wsProvider, pendingTxs, totalTxs) => {
             }
         }
         alreadyInside = false;
-        console.log('Next first block: ', blockIdx);
-        currentBlockIdx = blockIdx;
+        console.log('Next first block: ', newBlock);
+        currentBlockIdx = newBlock;
     }, 1000);
     // wsProvider.eth.subscribe('newBlockHeaders', async (_, data) => {
     //     const currentBlock = await wsProvider.eth.getBlock(data.number);
