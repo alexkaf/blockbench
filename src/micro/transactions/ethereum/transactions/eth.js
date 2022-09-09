@@ -243,12 +243,12 @@ const monitorTxs = async (accounts, pendingTxs, startingBlock, allNodeTxs, resul
     const allAccounts = Object.keys(accounts);
     const totalNumberOfAccounts = allAccounts.length;
 
-    let prevBlockIdx = startingBlock;
+    let prevBlockIdx = startingBlock - 3;
     
     while (true) {
         const currentAccount = allAccounts[accountsIdx++ % totalNumberOfAccounts];
         const currentProvider = accounts[currentAccount].wsProvider;
-        const currentBlockNumber = startingBlock - 3;
+        const currentBlockNumber = await currentProvider.eth.getBlockNumber();
 
         if (currentBlockNumber != prevBlockIdx) {
         } else {
