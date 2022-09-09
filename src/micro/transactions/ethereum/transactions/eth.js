@@ -108,12 +108,11 @@ const unlockAccounts = async  (providerPerAccount) => {
     const numberOfKeypairs = accounts.length;
     console.log(`Unlocking ${numberOfKeypairs} accounts...`);
     
-    const pendingUnlocks = accounts.map((account) => {
+    for (let account of accounts) {
         const currentProvider = providerPerAccount[account].httpProvider;
-        return currentProvider.eth.personal.unlockAccount(account, '', 99999);
-    })
-    
-    await Promise.all(pendingUnlocks);
+        await  currentProvider.eth.personal.unlockAccount(account, '', 99999);
+    }
+
     console.log('Accounts unlocked.');
 }
 
