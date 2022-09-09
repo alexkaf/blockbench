@@ -195,7 +195,12 @@ const startBenchmark = async (accounts, args) => {
     const startTime = Date.now();
     const resultsFile = `/home/ubuntu/test_${args.name}.txt`;
     fs.writeFileSync(resultsFile, `Start, ${startTime * 1e6}\n`);
-    monitorTxs(accounts, pendingTxs, txsCount, allNodeTxs, resultsFile);
+
+    const allAccounts = Object.keys(accounts);
+
+    const startingBlock = await accounts[allAccounts[0]].eth.getBlockNumber();
+
+    monitorTxs(accounts, pendingTxs, startingBlock, allNodeTxs, resultsFile);
 
     console.log('Started benchmark');
     let idx = 0;
@@ -230,7 +235,7 @@ const findTxTimes = async (accounts, pendingTxs, blockFindTime, resultsFile) => 
     return pendingTxs;
 }
 
-const monitorTxs = async (accounts, pendingTxs, totalTxs, allNodeTxs, resultsFile) => {
+const monitorTxs = async (accounts, pendingTxs, startingBlock, allNodeTxs, resultsFile) => {
     let allTxsDone = 0;
     let blockFindTime = {};
     let accountsIdx = 0;
@@ -238,7 +243,7 @@ const monitorTxs = async (accounts, pendingTxs, totalTxs, allNodeTxs, resultsFil
     const allAccounts = Object.keys(accounts);
     const totalNumberOfAccounts = allAccounts.length;
 
-    let prevBlockIdx = (await accounts[allAccounts[0]].wsProvider.eth.getBlockNumber()) - 1;
+    let prevBlockIdx = startingBlock;
     
     while (true) {
         const currentAccount = allAccounts[accountsIdx++ % totalNumberOfAccounts];
