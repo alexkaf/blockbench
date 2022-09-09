@@ -220,7 +220,6 @@ const monitorTxs = async (accounts, pendingTxs, totalTxs, allNodeTxs, resultsFil
         const currentBlockNumber = await currentProvider.eth.getBlockNumber();
 
         if (currentBlockNumber != prevBlockIdx) {
-            prevBlockIdx = currentBlockNumber;
         } else {
             await sleep(1000);
             continue;
@@ -240,6 +239,7 @@ const monitorTxs = async (accounts, pendingTxs, totalTxs, allNodeTxs, resultsFil
                 process.exit(0);
             }
         }
+        prevBlockIdx = currentBlockNumber;
         await sleep(500);
     }
 }   
