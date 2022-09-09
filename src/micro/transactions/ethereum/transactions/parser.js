@@ -31,6 +31,7 @@ const parse = () => {
             }
             case "-name": {
                 parsedArguments["name"] = arguments.shift();
+                break;
             }
             case "-txs": {
                 parsedArguments["txs"] = parseInt(arguments.shift());
