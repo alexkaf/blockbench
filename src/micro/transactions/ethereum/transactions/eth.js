@@ -201,7 +201,7 @@ const findTxTimes = async (accounts, pendingTxs, blockFindTime, resultsFile) => 
             }
         }
     }
-    return pendingTxs;s
+    return pendingTxs;
 }
 
 const monitorTxs = async (accounts, pendingTxs, totalTxs, allNodeTxs, resultsFile) => {
