@@ -126,52 +126,56 @@ const monitorTxs = async (wsProvider, pendingTxs, totalTxs) => {
     let currentBlockIdx = await wsProvider.eth.getBlockNumber();
     let alreadyInside = false;
 
-    setInterval(async () => {
-        if (alreadyInside) {
-            console.log('Already in...');
-            return;
-        }
+    const monitor = wsProvider.eth.subscribe('newBlockHeaders', (data) => {
+        console.log('Got number:', data.number);
+    });
+    
+    // setInterval(async () => {
+    //     if (alreadyInside) {
+    //         console.log('Already in...');
+    //         return;
+    //     }
 
-        let newBlock = await wsProvider.eth.getBlockNumber();
+    //     let newBlock = await wsProvider.eth.getBlockNumber();
         
-        console.log(currentBlockIdx + 1, newBlock);
-        for (let blockIdx = currentBlockIdx + 1; blockIdx <= newBlock; blockIdx++){
+    //     console.log(currentBlockIdx + 1, newBlock);
+    //     for (let blockIdx = currentBlockIdx + 1; blockIdx <= newBlock; blockIdx++){
             
-            alreadyInside = true;
+    //         alreadyInside = true;
 
-            const currentBlock = await wsProvider.eth.getBlock(blockIdx);
-            const blockTxs = currentBlock.transactions;
-            const currentTime = Date.now();
+    //         const currentBlock = await wsProvider.eth.getBlock(blockIdx);
+    //         const blockTxs = currentBlock.transactions;
+    //         const currentTime = Date.now();
 
-            let txsFound = 0;
-            blockTxs.forEach((tx) => {
-                if (pendingTxs[tx] != undefined) {
-                    txsFound += 1;
+    //         let txsFound = 0;
+    //         blockTxs.forEach((tx) => {
+    //             if (pendingTxs[tx] != undefined) {
+    //                 txsFound += 1;
                     
-                    const timeSpent = currentTime - pendingTxs[tx];
-                    const toWrite = `${blockIdx}, ${tx}, ${timeSpent * 1e6}\n`;
+    //                 const timeSpent = currentTime - pendingTxs[tx];
+    //                 const toWrite = `${blockIdx}, ${tx}, ${timeSpent * 1e6}\n`;
 
-                    fs.appendFileSync(resultsFile, toWrite);
+    //                 fs.appendFileSync(resultsFile, toWrite);
 
-                    delete pendingTxs[tx];
-                }
-            });
-            allTxsDone += txsFound;
+    //                 delete pendingTxs[tx];
+    //             }
+    //         });
+    //         allTxsDone += txsFound;
 
-            console.log(`[${blockIdx}]: ${txsFound} txs`);
+    //         console.log(`[${blockIdx}]: ${txsFound} txs`);
 
-            if (allTxsDone == totalTxs) {
-                const endTime = Date.now();
-                fs.appendFileSync(resultsFile, `End, ${endTime * 1e6}\n`);
-                console.log('DONE');
+    //         if (allTxsDone == totalTxs) {
+    //             const endTime = Date.now();
+    //             fs.appendFileSync(resultsFile, `End, ${endTime * 1e6}\n`);
+    //             console.log('DONE');
                 
-                process.exit(0);
-            }
-        }
-        alreadyInside = false;
-        console.log('Next first block: ', newBlock);
-        currentBlockIdx = newBlock;
-    }, 1000);
+    //             process.exit(0);
+    //         }
+    //     }
+    //     alreadyInside = false;
+    //     console.log('Next first block: ', newBlock);
+    //     currentBlockIdx = newBlock;
+    // }, 1000);
     // wsProvider.eth.subscribe('newBlockHeaders', async (_, data) => {
     //     const currentBlock = await wsProvider.eth.getBlock(data.number);
     //     const blockTxs = currentBlock.transactions;
