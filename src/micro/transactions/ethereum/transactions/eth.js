@@ -198,7 +198,7 @@ const startBenchmark = async (accounts, args) => {
 
     const allAccounts = Object.keys(accounts);
 
-    const startingBlock = await accounts[allAccounts[0]].eth.getBlockNumber();
+    const startingBlock = await accounts[allAccounts[0]].httpProvider.eth.getBlockNumber();
 
     monitorTxs(accounts, pendingTxs, startingBlock, allNodeTxs, resultsFile);
 
