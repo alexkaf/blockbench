@@ -207,8 +207,14 @@ const monitorTxs = async (accounts, pendingTxs, totalTxs, allNodeTxs) => {
             await sleep(1000);
             continue;
         }
-        console.log(currentBlockNumber, await currentProvider.eth.getBlockTransactionCount(currentBlockNumber));
-        await sleep(1000);
+        const blockTxs = await currentProvider.eth.getBlockTransactionCount(currentBlockNumber);
+        allTxsDone += blockTxs;
+
+        console.log(`[${currentBlockNumber}]: ${allTxsDone} / ${totalTxs}`);
+        if (allTxsDone === totalTxs) {
+            return;
+        }
+        await sleep(500);
     }
     // while (true) {
     //     const nextBlockIdx = await wsProvider.eth.getBlockNumber();
