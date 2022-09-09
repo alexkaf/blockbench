@@ -124,7 +124,7 @@ const monitorTxs = async (wsProvider, pendingTxs, totalTxs) => {
     let allTxsDone = 0;
     
     let currentBlockIdx = await wsProvider.eth.getBlockNumber();
-    let latestBlockChecked = currentBlock;
+    let latestBlockChecked = currentBlockIdx;
 
     setInterval(async () => {
         let newBlock = await wsProvider.eth.getBlockNumber();
