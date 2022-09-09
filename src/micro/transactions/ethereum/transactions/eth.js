@@ -211,7 +211,7 @@ const monitorTxs = async (accounts, pendingTxs, totalTxs, allNodeTxs) => {
         allTxsDone += blockTxs;
 
         console.log(`[${currentBlockNumber}]: ${allTxsDone} / ${totalTxs}`);
-        if (allTxsDone === totalTxs) {
+        if (allTxsDone >= totalTxs) {
             return;
         }
         await sleep(500);
