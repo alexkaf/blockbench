@@ -98,11 +98,12 @@ const airdropAll = async (provider, numberOfKeypairs) => {
 
 const startBenchmark = async (provider, accounts, args) => {
     const txsCount = args.txs;
+    const allNodeTxs = args.totalTxs;
     const msPerTx = 1000 / args.rate;
 
     let pendingTxs = {};
     const txsToExecute = generateTxs(accounts, txsCount);
-    monitorTxs(provider , pendingTxs, txsCount);
+    monitorTxs(provider , pendingTxs, txsCount, allNodeTxs);
 
     const startTime = Date.now();
     fs.appendFileSync(resultsFile, `Start, ${startTime * 1e6}\n`);
@@ -120,7 +121,7 @@ const startBenchmark = async (provider, accounts, args) => {
     console.log(`Sent ${txsCount} txs`);
 }
 
-const monitorTxs = async (wsProvider, pendingTxs, totalTxs) => {
+const monitorTxs = async (wsProvider, pendingTxs, totalTxs, allNodeTxs) => {
     let allTxsDone = 0;
     let blockFindTime = {};
     let currentBlockIdx = await wsProvider.eth.getBlockNumber();
@@ -132,7 +133,7 @@ const monitorTxs = async (wsProvider, pendingTxs, totalTxs) => {
         allTxsDone += currentBlockContents.transactions.length;
         blockFindTime[blockNumber] = Date.now();
 
-        console.log(`[${blockNumber}]: ${allTxsDone} / ${totalTxs}  |  ${currentBlockContents.transactions.length}`);
+        console.log(`[${blockNumber}]: ${allTxsDone} / ${allNodeTxs}  |  ${currentBlockContents.transactions.length}`);
     });
 
     // setInterval(async () => {

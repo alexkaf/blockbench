@@ -25,6 +25,10 @@ const parse = () => {
                 }
                 break;
             }
+            case "-total": {
+                parsedArguments["totalTxs"] = parseInt(arguments.shift());
+                break;
+            }
             case "-txs": {
                 parsedArguments["txs"] = parseInt(arguments.shift());
                 break;

@@ -31,7 +31,7 @@ for host in `head -n $NUMBER_OF_HOSTS $ETH_CONFIG_DIRECTORY/hosts`; do
     ssh -oStrictHostKeyChecking=no "$CURRENT_USER@$host" "rm ~/test.txt || touch ~/test.txt" & 
     for ((IDX=0; IDX<$THREADS; IDX++)); do 
         echo $idx $IDX
-        ssh -oStrictHostKeyChecking=no "$CURRENT_USER@$host" "/home/ubuntu/assesments/blockbench/src/micro/transactions/ethereum/transactions/run.sh 9 $TXS_PER_THREAD $RATE_PER_THREAD $idx $IDX > ~/results_$IDX.txt"  &
+        ssh -oStrictHostKeyChecking=no "$CURRENT_USER@$host" "/home/ubuntu/assesments/blockbench/src/micro/transactions/ethereum/transactions/run.sh 9 $TXS_COUNT $TXS_PER_THREAD $RATE_PER_THREAD $idx $IDX > ~/results_$IDX.txt"  &
     done
     let idx=$idx+1
 done
