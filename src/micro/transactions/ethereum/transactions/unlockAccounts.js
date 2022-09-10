@@ -16,7 +16,7 @@ const sleep = async (sleepTime) => {
 const unlockAccounts = async () => {
     const numberOfAccounts = getNumberOfAccounts();
     const nodeAccounts = await http.eth.personal.getAccounts();
-    const accountsToUnlock = nodeAccounts.slice(numberOfAccounts);
+    const accountsToUnlock = nodeAccounts;
 
     for (let account of accountsToUnlock) {
         console.log(account);
