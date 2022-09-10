@@ -50,13 +50,13 @@ int sender(Eth *eth, int ops, int rate) {
 }
 
 int monitor(Eth *eth) {
-  int previousTip = eth->tip - 6;
+  int previousTip = eth->tip;
   int current_tip;
   double waitTime = 1.0;
   int found = 0;
 
   while (true) {
-    current_tip = eth->get_tip_block_number() - 6;
+    current_tip = eth->get_tip_block_number();
 
     for (int current=previousTip+1; current<=current_tip; current++) {
       long block_time = utils::time_now();
