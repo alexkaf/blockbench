@@ -48,7 +48,8 @@ class Eth {
             collect_accounts();
             
             int totalNumberOfAccounts = accounts_.size();
-            dist_.set(0,totalNumberOfAccounts);
+            
+            dist_.set(0,totalNumberOfAccounts - 1);
         };
 
         std::string endpoint;
@@ -79,7 +80,7 @@ class Eth {
             tx.value = "0x3e8";
 
             nonceLock_->lock();
-            tx.nonce = std::to_string(account_nonces_[tx.from]++);
+            tx.nonce = "0x" + dec_to_hex(account_nonces_[tx.from]++);
             nonceLock_->unlock();
             return tx;
         }
@@ -87,11 +88,44 @@ class Eth {
         void send_transaction() {
             Transaction tx = create_transaction();
 
-            txlock_->lock();
             std::string req = send_tx_request(&tx);
-            std::cout << req << std::endl;
+            
+            std::string resp = send_jsonrpc_request(endpoint, REQUEST_HEADERS, req);
+
+            std::string hash = get_json_field(
+                resp,
+                "result"
+            );
+
+            txlock_->lock();
+            (*pendingtx_)[hash] = utils::time_now();
             txlock_->unlock();
         }
+
+        int getBlockTransactionCount(int blockNumber) {
+            std::string request = GET_BLOCK_TX_COUNT_PREFIX + "0x" + dec_to_hex(blockNumber) + GET_BLOCK_TX_COUNT_SUFFIX;
+            return decode_hex(
+                        get_json_field(
+                            send_jsonrpc_request(endpoint, REQUEST_HEADERS, request),
+                            "result"
+                            )
+                        );
+        }
+
+        std::vector<std::string> poll_txs_by_block_number(int block_number) {
+            std::string request = GET_BLOCK_BY_NUMBER_PREFIX +
+                                    ("0x" + dec_to_hex(block_number)) +
+                                    GET_BLOCK_BY_NUMBER_SUFFIX;
+            auto r = send_jsonrpc_request(endpoint, REQUEST_HEADERS, request);
+
+            std::vector<std::string> ret = get_list_field(r, "transactions");
+            std::vector<std::string> uncles = get_list_field(r, "uncles");
+            for (std::string uncle : uncles) {
+                std::vector<std::string> uncletxs = poll_txs_by_block_hash(endpoint, uncle);
+                for (std::string tx : uncletxs) ret.push_back(tx);
+            }
+            return ret;
+            }
 
     private:
         void unlock_address(const std::string &address) {
