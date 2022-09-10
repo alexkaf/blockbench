@@ -14,10 +14,13 @@ const sleep = async (sleepTime) => {
 }
 
 const makeAirdrops = async () => {
-    const numberOfAccounts = getNumberOfAccounts();
-    const nodeAccounts = await http.eth.personal.getAccounts();
-    const basicAccount = nodeAccounts[0];
+    let accountsToAirdrop = await http.eth.personal.getAccounts();
+    const numberOfAccounts = accountsToAirdrop.length;
+    const basicAccount = accountsToAirdrop[0];
+    accountsToAirdrop.slice(1);
     let balancePerAccount;
+
+    console.log(numberOfAccounts)
 
     while (true) {
         console.log('Checking balance per account');
@@ -32,8 +35,6 @@ const makeAirdrops = async () => {
         console.log('Not enough', balancePerAccount.toString());
         await sleep(5000);
     }
-
-    const accountsToAirdrop = nodeAccounts.slice(-numberOfAccounts);
 
     const pendingTransfers = accountsToAirdrop.map((account) => {
         return  http.eth.sendTransaction({
