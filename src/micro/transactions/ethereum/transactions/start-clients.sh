@@ -1,58 +1,41 @@
 #!/bin/bash
 
-NUMBER_OF_HOSTS=$1
-KEYPAIRS=$2
-TXS_COUNT=$3
-THREADS=$4
-RATE=$5
-RESULTS_NAME=$6
+CLIENTS=$1
+TXS=$2
+RATE=$3
+THREADS_PER_CLIENT=$4
+RESULTS_FILE=$5
+
+TXS_PER_CLIENT=$(expr $TXS / $CLIENTS)
+RATE_PER_CLIENT=$(expr $RATE / $CLIENTS)
 
 ETH_CONFIG_DIRECTORY='../../../../../benchmark/ethereum'
-source $ETH_CONFIG_DIRECTORY/env.sh
 
-KEYPAIRS_PER_NODE=$(expr $KEYPAIRS / $NUMBER_OF_HOSTS)
-KEYPAIRS_PER_THREAD=$(expr $KEYPAIRS_PER_NODE / $THREADS)
-TXS_PER_NODE=$(expr $TXS_COUNT / $NUMBER_OF_HOSTS)
-TXS_PER_THREAD=$(expr $TXS_PER_NODE / $THREADS)
-RATE_PER_NODE=$(expr $RATE / $NUMBER_OF_HOSTS)
-RATE_PER_THREAD=$(expr $RATE_PER_NODE / $THREADS)
+HOSTS=$(head -n $CLIENTS $ETH_CONFIG_DIRECTORY/hosts);
 
-echo Keypairs per node: $KEYPAIRS_PER_NODE
-echo Keypairs per thread: $KEYPAIRS_PER_THREAD
+rm test_*
 
-echo Transactions per node: $TXS_PER_NODE
-echo Transactions per thread: $TXS_PER_THREAD
-
-echo Rate per node: $RATE_PER_NODE
-echo Rate per thread: $RATE_PER_THREAD
-
-idx=0
-
-HOSTS=$(head -n 8 $ETH_CONFIG_DIRECTORY/hosts);
-NODES=$(tail -n $NUMBER_OF_HOSTS $ETH_CONFIG_DIRECTORY/hosts)
-
-ETH_HOSTS=""
-for host in $HOSTS; do 
-    ETH_HOSTS="-e $host $ETH_HOSTS"
-done
-
-for node in $NODES; do
-    ssh -oStrictHostKeyChecking=no "$CURRENT_USER@$node" "rm ~/test*" & 
-    for ((IDX=0; IDX<$THREADS; IDX++)); do 
-        ssh -oStrictHostKeyChecking=no "$CURRENT_USER@$node" "/home/ubuntu/assesments/blockbench/src/micro/transactions/ethereum/transactions/run.sh -k 10 -total $TXS_COUNT $ETH_HOSTS -txs $TXS_PER_THREAD -r $RATE_PER_THREAD -name $idx$IDX > ~/results_$idx$IDX.txt"  &
-    done
-    let idx=$idx+1
+for host in $HOSTS; do
+    ssh -oStrictHostKeyChecking=no "ubuntu@$host" "rm ~/test*" &
 done
 
 wait
 
-for node in $NODES; do 
-    ssh -oStrictHostKeyChecking=no "$CURRENT_USER@$node" "cat ~/test_* > test"
-    scp -oStrictHostKeyChecking=no "$CURRENT_USER@$node:~/test" test_$node
+for host in $HOSTS; do 
+    ssh -oStrictHostKeyChecking=no "ubuntu@$host" "/home/ubuntu/assesments/blockbench/src/micro/transactions/ethereum/transactions/sender/driver -txcount $TXS_PER_CLIENT -threads $THREADS_PER_CLIENT -txrate $RATE_PER_CLIENT -endpoint localhost > ~/results.txt" &
 done
 
-cat test_* > $RESULTS_NAME
+echo All started...
+
+wait 
+
+idx=0
+for host in $HOSTS; do 
+    scp -oStrictHostKeyChecking=no "ubuntu@$host:~/test.txt"  test_$idx 
+    let idx=$idx+1
+done
+
+cat test_* > $RESULTS_FILE
 rm test_*
 
 echo Done
-
