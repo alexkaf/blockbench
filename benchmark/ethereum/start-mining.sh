@@ -22,6 +22,7 @@ geth --datadir=$ETH_DATA \
      --metrics.expensive \
      --nodiscover \
      --pprof \
-     --txpool.globalslots 11000 \
-     --txpool.globalqueue 30000 \
+     --txpool.globalslots 40000 \
+     --txpool.globalqueue 40000 \
+     --txpool.accountqueue 40000 \
      --miner.threads 6 > $ETH_DATA/log 2>&1 &
