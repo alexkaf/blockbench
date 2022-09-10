@@ -91,7 +91,7 @@ class Eth {
             std::string req = send_tx_request(&tx);
             
             std::string resp = send_jsonrpc_request(endpoint, REQUEST_HEADERS, req);
-
+            std::cout << resp << std::endl;
             std::string hash = get_json_field(
                 resp,
                 "result"
