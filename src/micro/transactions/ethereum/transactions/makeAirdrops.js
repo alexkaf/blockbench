@@ -25,7 +25,7 @@ const makeAirdrops = async () => {
     while (true) {
         console.log('Checking balance per account');
         const basicAccountBalance = await http.eth.getBalance(basicAccount);
-        balancePerAccount = new BN(basicAccountBalance).div(new BN(100 * (numberOfAccounts + 1)));
+        balancePerAccount = new BN(basicAccountBalance).div(new BN(10 * (numberOfAccounts + 1)));
 
         if (balancePerAccount.gt(new BN(1e6))) {
             console.log('Balance Ok');
