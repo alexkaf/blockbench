@@ -3,7 +3,7 @@ cd `dirname ${BASH_SOURCE-$0}`
 . env.sh
 
 geth --datadir=$ETH_DATA \
-     --http.api="db,eth,net,web3,personal,web3" \
+     --http.api="db,eth,net,web3,personal,txpool,web3" \
      --http \
      --http.addr 0.0.0.0 \
      --allow-insecure-unlock \
