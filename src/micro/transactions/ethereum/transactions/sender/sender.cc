@@ -74,7 +74,7 @@ int monitor(Eth *eth) {
       }
       txlock.unlock();
 
-      std::cout << "Found: " << found << std::endl;
+      std::cout << "[" << current << "]" << "Found: " << found << std::endl;
 
       if (found == totalTxs) {
         resultsFile << "End, " << utils::time_now() << endl;
