@@ -78,6 +78,7 @@ int monitor(Eth *eth) {
 
       if (found == totalTxs) {
         resultsFile << "End, " << utils::time_now() << endl;
+        exit(0);
         break;
       }
     } 
