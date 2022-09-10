@@ -3,14 +3,14 @@
 ACCOUNTS=$(expr $1 - 1)
 HOSTS_NUMBER=$2
 
-HOSTS=/home/ubuntu/assesments/blockbench/benchmark/ethereum/hosts
+HOSTS_FILE=../../../../../benchmark/ethereum/hosts
 
 function sendFromBasic() {
     ACCOUNTS=$1
-    node makeAirdrops.js $ACCOUNTS
+    ssh -oStrictHostKeyChecking=no "ubuntu@$host" "cd /home/ubuntu/assesments/blockbench/src/micro/transactions/ethereum/transactions; node makeAirdrops.js $ACCOUNTS"
 }
 
-for host in `head -n $HOSTS_NUMBER $HOSTS`; do
+for host in `head -n $HOSTS_NUMBER $HOSTS_FILE`; do
     echo $host
     sendFromBasic $ACCOUNTS &
 done

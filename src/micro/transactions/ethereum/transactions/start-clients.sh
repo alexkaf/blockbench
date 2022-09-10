@@ -27,17 +27,32 @@ echo Rate per node: $RATE_PER_NODE
 echo Rate per thread: $RATE_PER_THREAD
 
 idx=0
-for host in `head -n $NUMBER_OF_HOSTS $ETH_CONFIG_DIRECTORY/hosts`; do
-    ssh -oStrictHostKeyChecking=no "$CURRENT_USER@$host" "rm ~/test.txt || touch ~/test.txt" & 
+
+HOSTS=$(head -n 8 $ETH_CONFIG_DIRECTORY/hosts);
+NODES=$(tail -n $NUMBER_OF_HOSTS $ETH_CONFIG_DIRECTORY/hosts)
+
+ETH_HOSTS=""
+for host in $HOSTS; do 
+    ETH_HOSTS="-e $host $ETH_HOSTS"
+done
+
+for node in $NODES; do
+    ssh -oStrictHostKeyChecking=no "$CURRENT_USER@$node" "rm ~/test*" & 
     for ((IDX=0; IDX<$THREADS; IDX++)); do 
-        echo $idx $IDX
-        ssh -oStrictHostKeyChecking=no "$CURRENT_USER@$host" "/home/ubuntu/assesments/blockbench/src/micro/transactions/ethereum/transactions/run.sh 9 $TXS_COUNT $TXS_PER_THREAD $RATE_PER_THREAD $idx $IDX > ~/results_$IDX.txt"  &
+        ssh -oStrictHostKeyChecking=no "$CURRENT_USER@$node" "/home/ubuntu/assesments/blockbench/src/micro/transactions/ethereum/transactions/run.sh -k 10 -total $TXS_COUNT $ETH_HOSTS -txs $TXS_PER_THREAD -r $RATE_PER_THREAD -name $idx$IDX > ~/results_$idx$IDX.txt"  &
     done
     let idx=$idx+1
 done
 
 wait
 
-./collect.sh $NUMBER_OF_HOSTS $RESULTS_NAME
+for node in $NODES; do 
+    ssh -oStrictHostKeyChecking=no "$CURRENT_USER@$node" "cat ~/test_* > test"
+    scp -oStrictHostKeyChecking=no "$CURRENT_USER@$node:~/test" test_$node
+done
+
+cat test_* > $RESULTS_NAME
+rm test_*
+
 echo Done
 

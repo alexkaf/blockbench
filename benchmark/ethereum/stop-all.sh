@@ -11,7 +11,7 @@ i=0
 
 for host in `cat hosts`; do
   if [[ $i -lt $1 ]]; then
-    ssh -oStrictHostKeyChecking=no $CURRENT_USER@$host "sudo $ETH_HOME/stop.sh"
+    ssh -oStrictHostKeyChecking=no $CURRENT_USER@$host "sudo $ETH_HOME/stop.sh" &
     echo done node $host
   fi
   let i=$i+1
