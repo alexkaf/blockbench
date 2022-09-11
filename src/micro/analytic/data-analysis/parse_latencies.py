@@ -1,5 +1,6 @@
 import math
 import matplotlib.pyplot as plt
+import numpy as np
 from get_bandwidth import collect_traffic
 import sys
 
@@ -41,6 +42,10 @@ def get_ending_block(blocks):
 def average_latency(latency_list):
     return sum(latency_list) / len(latency_list)
 
+def remove_percentile(blocks, latencies):
+    np_array = np.array(latencies)
+    percentiles = np.percentile(np_array, 80)
+    print(percentiles)
 
 def txs_per_block(block_list):
     txs = {}
@@ -78,7 +83,7 @@ if __name__ == '__main__':
     blocks, latencies, time_bounds, total_time = parse_file(file)
     average_lat = average_latency(latencies)
     blocks_list, txs_per_blk = txs_per_block(blocks)
-
+    remove_percentile(blocks, latencies)
     # plt.plot(blocks_list, txs_per_blk)
 
     # nodes_count, net = get_meta(file)

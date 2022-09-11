@@ -51,6 +51,17 @@ class Getter:
     def get_saturation(metric):
         return raw.data['saturation_sol']['rate'], raw.data['saturation_sol'][metric]
 
+    @staticmethod
+    def get_gas():
+
+        gas_limit = raw.data['gas_eth']['gas']
+        tpb = raw.data['gas_eth']['tpb']
+        latency = raw.data['gas_eth']['latency']
+
+        gas_limit = map(lambda x: int(x, 16), gas_limit)
+
+        return list(gas_limit), tpb, latency
+
 class Results:
 
     _experiment = 'donothing'
@@ -176,6 +187,27 @@ class Plot:
         self.legend(['Send Rate (tps)', 'Response'])
         return self 
 
+    def gas(self, metric='latency'):
+        gas, tpb, latency = Getter.get_gas()
+    
+        gas = list(map(lambda x: hex(x), gas))
+
+        # tpb = [tpb[idx] for idx in sort_idx]
+        # latency = [latency[idx] for idx in sort_idx]
+
+        positions = list(range(1, len(gas) + 1))
+
+        if metric == 'latency':
+            plt.bar(positions, latency)
+        else:
+            plt.bar(positions, tpb)
+
+        # positions = list(range(1, len(gas) + 1))
+        plt.xticks(positions, gas, rotation=45)
+        # plt.xlabel('Block Gas Limit')
+        plt.xlabel('Block Gas Limit')
+        return self
+
     def latency(self, plot_type='line', bins=100):
 
         rate, latency = Getter.get_saturation('latency')
@@ -281,7 +313,7 @@ class Plot:
 
         return self
 
-    def set_ylim(self, limit):
+    def ylim(self, limit):
         plt.ylim(limit)
         return self
 
@@ -292,7 +324,7 @@ class Plot:
         return self 
 
     def make_axes(self):
-        plt.xlabel('Nodes')
+        # plt.xlabel('Nodes')
         if self._axes is not None:
             return
 
@@ -329,6 +361,7 @@ if __name__ == '__main__':
     # x.nodes(2, 4, 8)
     # x.experiment().plot().bar().show()
     # x.experiment('kvstore').blockchain().metrics('tps').plot().set_ylim([0, 140]).line().title('Alex').show()
-    x.plot().latency('hist', 2000).show()
+    # x.plot().latency('hist', 2000).show()
+    x.plot().gas('latency').log().show()
     # print(x.blockchain_b)
     # x.plot_vs('donothing', 'totaltime', 'eth', 'sol')

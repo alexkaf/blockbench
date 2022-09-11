@@ -31,7 +31,7 @@ wait
 
 idx=0
 for host in $HOSTS; do 
-    scp -oStrictHostKeyChecking=no "ubuntu@$host:~/test.txt"  test_$idx 
+    scp -oStrictHostKeyChecking=no "ubuntu@$host:~/test.txt" test_$idx 
     let idx=$idx+1
 done
 
