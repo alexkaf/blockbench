@@ -6,8 +6,8 @@
 #   Default data size: 1 KB records (10 fields, 100 bytes each, plus key)
 #   Request distribution: zipfian
 
-recordcount=2500
-operationcount=2500
+recordcount=4000
+operationcount=4000
 workload=kvstore
 
 readallfields=true
