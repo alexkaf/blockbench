@@ -13,12 +13,13 @@ git clone https://github.com/solana-labs/solana.git
 cd solana
 
 git checkout v1.10.24
-# git apply "$BLOCKBENCH/compute_budget.patch"
+git apply "$BLOCKBENCH/compute_budget.patch"
 # git apply "$BLOCKBENCH/ips.patch"
 git apply "$BLOCKBENCH/scripts.patch"
 git apply "$BLOCKBENCH/snapshots.patch"
 
+cargo build --release
 
 
+echo "export PATH=/home/ubuntu/assesments/blockbench/benchmark/solana-install/solana/target/release:\$PATH" >> ~/.profile
 sh -c "$(curl -sSfL https://release.solana.com/v1.10.24/install)"
-
